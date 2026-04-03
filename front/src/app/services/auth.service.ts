@@ -53,7 +53,7 @@ export class AuthService {
     }
     const routeMap: Record<string, string> = {
       super_admin: '/dashboard/organisms',
-      rssi:        '/dashboard/clause4',
+      rssi:        '/dashboard/rssi',
       dpo:              '/dashboard/dpo',        // ← AJOUT
       pilote_processus: '/dashboard/processus',
       membre_equipe_technique: '/dashboard/fiche-technique', // ← AJOUT
