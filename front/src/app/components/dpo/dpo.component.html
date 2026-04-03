@@ -1,0 +1,430 @@
+<div class="dpo-page">
+
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="dpo-badge">DPO — ISO 27701</div>
+      <div>
+        <h1 class="page-title">Section Protection des Données</h1>
+        <p class="page-sub">{{ currentUser?.prenom }} {{ currentUser?.nom }} · Délégué à la Protection des Données</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toasts -->
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error"   *ngIf="error">{{ error }}</div>
+
+  <!-- Chargement -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div> Chargement des fiches...
+  </div>
+
+  <div class="dpo-layout" *ngIf="!loading">
+
+    <!-- Liste des fiches -->
+    <div class="fiches-list">
+      <div class="list-header">Fiches à traiter</div>
+
+      <div *ngIf="fiches.length === 0" class="empty-list">
+        Aucune fiche en attente
+      </div>
+
+      <div *ngFor="let fiche of fiches"
+        class="fiche-item"
+        [class.selected]="selectedFiche?.id === fiche.id"
+        (click)="selectFiche(fiche)">
+        <div class="fiche-item-title">{{ fiche.intitule }}</div>
+        <div class="fiche-item-meta">
+          <span class="{{ getStatutClass(fiche.statut) }}">
+            {{ getStatutLabel(fiche.statut) }}
+          </span>
+          <span class="fiche-version">{{ fiche.version }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire DPO -->
+    <div class="dpo-form" *ngIf="selectedFiche; else noSelection">
+
+      <div class="form-header">
+        <div>
+          <h2>{{ selectedFiche.intitule }}</h2>
+          <p>Finalité : {{ selectedFiche.finalite || '—' }}</p>
+        </div>
+        <span class="{{ getStatutClass(selectedFiche.statut) }}">
+          {{ getStatutLabel(selectedFiche.statut) }}
+        </span>
+      </div>
+
+      <form [formGroup]="form">
+
+        <!-- ══ BASE LÉGALE ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">01</span>
+            Base légale du traitement
+          </div>
+          <div class="field required">
+            <label>Base légale (RGPD Art. 6)</label>
+            <select formControlName="base_legale">
+              <option value="">-- Sélectionner --</option>
+              <option *ngFor="let bl of basesLegales" [value]="bl.value">{{ bl.label }}</option>
+            </select>
+            <span class="err" *ngIf="form.get('base_legale')?.invalid && form.get('base_legale')?.touched">Requis</span>
+          </div>
+          <div class="field" *ngIf="form.get('base_legale')?.value === 'interet_legitime'">
+            <label>Détail de l'intérêt légitime</label>
+            <textarea formControlName="base_legale_detail" rows="2"
+              placeholder="Décrire l'intérêt légitime poursuivi..."></textarea>
+          </div>
+        </div>
+
+        <!-- ══ PERSONNES CONCERNÉES ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">02</span>
+            Personnes concernées
+          </div>
+          <div class="field required">
+            <label>Catégories de personnes concernées</label>
+            <div class="checkbox-grid">
+              <label *ngFor="let cat of categoriesPersonnes" class="checkbox-item">
+                <input type="checkbox"
+                  [checked]="isChecked('categories_personnes', cat)"
+                  (change)="toggleCheckbox('categories_personnes', cat)"/>
+                {{ cat }}
+              </label>
+            </div>
+            <span class="err" *ngIf="form.get('categories_personnes')?.value?.length === 0 && form.get('categories_personnes')?.touched">
+              Sélectionner au moins une catégorie
+            </span>
+          </div>
+          <div class="field required">
+            <label>Nombre de personnes concernées (tranche)</label>
+            <select formControlName="nombre_personnes">
+              <option value="">-- Sélectionner --</option>
+              <option value="moins_100">Moins de 100</option>
+              <option value="100_1000">100 à 1 000</option>
+              <option value="1000_10000">1 000 à 10 000</option>
+              <option value="plus_10000">Plus de 10 000</option>
+            </select>
+            <span class="err" *ngIf="form.get('nombre_personnes')?.invalid && form.get('nombre_personnes')?.touched">Requis</span>
+          </div>
+        </div>
+
+        <!-- ══ DONNÉES TRAITÉES ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">03</span>
+            Données personnelles traitées
+          </div>
+          <div class="field">
+            <label>Catégories de données</label>
+            <div class="checkbox-grid">
+              <label *ngFor="let cat of categoriesDonnees" class="checkbox-item">
+                <input type="checkbox"
+                  [checked]="isChecked('categories_donnees', cat)"
+                  (change)="toggleCheckbox('categories_donnees', cat)"/>
+                {{ cat }}
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Données sensibles (Art. 9 RGPD)</label>
+            <div class="checkbox-grid">
+              <label *ngFor="let ds of donneesSensibles" class="checkbox-item">
+                <input type="checkbox"
+                  [checked]="isChecked('donnees_sensibles', ds)"
+                  (change)="toggleCheckbox('donnees_sensibles', ds)"/>
+                {{ ds }}
+              </label>
+            </div>
+          </div>
+          <div class="field-checkbox">
+            <input type="checkbox" id="hdp" formControlName="donnees_hautement_perso"/>
+            <label for="hdp">Données hautement personnelles (communications électroniques, soldes financiers, données bancaires...)</label>
+          </div>
+          <div class="field required">
+            <label>Source / Mode de collecte</label>
+            <textarea formControlName="source_donnees" rows="2"
+              placeholder="Ex: Formulaire web, contrat, collecte directe..."></textarea>
+            <span class="err" *ngIf="form.get('source_donnees')?.invalid && form.get('source_donnees')?.touched">Requis</span>
+          </div>
+          <div class="field required">
+            <label>Durée de conservation</label>
+            <textarea formControlName="duree_conservation" rows="2"
+              placeholder="Ex: 3 ans après fin de contrat, 5 ans pour données comptables..."></textarea>
+            <span class="err" *ngIf="form.get('duree_conservation')?.invalid && form.get('duree_conservation')?.touched">Requis</span>
+          </div>
+        </div>
+
+        <!-- ══ DROITS DES PERSONNES ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">04</span>
+            Droits des personnes concernées
+          </div>
+          <div class="field-checkbox">
+            <input type="checkbox" id="info" formControlName="personnes_informees"/>
+            <label for="info">Les personnes sont informées de leurs droits</label>
+          </div>
+          <div class="field" *ngIf="form.get('personnes_informees')?.value">
+            <label>Modalité d'information</label>
+            <input formControlName="modalite_information"
+              placeholder="Ex: Mention légale sur formulaire, email d'information..."/>
+          </div>
+          <div class="field" *ngIf="form.get('base_legale')?.value === 'consentement'">
+            <label>Modalité de recueil du consentement</label>
+            <input formControlName="modalite_consentement"
+              placeholder="Ex: Case à cocher, signature formulaire..."/>
+          </div>
+
+          <div class="rights-grid">
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="droit_acces"/> Droit d'accès
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="droit_rectification"/> Droit de rectification
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="droit_opposition"/> Droit d'opposition
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="droit_portabilite"/> Droit à la portabilité
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="droit_limitation"/> Droit à la limitation
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="notification_violation"/> Notification des violations possible
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="gestion_duree_traitee"/> Durée de conservation gérée
+            </label>
+          </div>
+        </div>
+
+        <!-- ══ ACCÈS ET DESTINATAIRES ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">05</span>
+            Accès aux données et destinataires
+          </div>
+          <div class="two-cols">
+            <div class="field">
+              <label>Qui a accès aux données ?</label>
+              <input formControlName="qui_acces"
+                placeholder="Ex: Service RH, responsable IT..."/>
+            </div>
+            <div class="field">
+              <label>Nombre de personnes ayant accès</label>
+              <input formControlName="nombre_acces" placeholder="Ex: 5 personnes"/>
+            </div>
+          </div>
+          <div class="field-checkbox">
+            <input type="checkbox" id="partage" formControlName="partage_inter_services"/>
+            <label for="partage">Partage/échange entre services ou filiales</label>
+          </div>
+        </div>
+
+        <!-- ══ SOUS-TRAITANTS ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">06</span>
+            Sous-traitants et prestataires
+          </div>
+          <div class="field">
+            <label>Nom du prestataire / sous-traitant</label>
+            <input formControlName="sous_traitant_nom"
+              placeholder="Ex: AWS, Salesforce, prestataire paie..."/>
+          </div>
+          <div class="field">
+            <label>Référence du contrat</label>
+            <input formControlName="sous_traitant_contrat"
+              placeholder="Ex: Contrat n° 2024-001"/>
+          </div>
+          <div class="field-checkbox">
+            <input type="checkbox" id="clause" formControlName="sous_traitant_clause"/>
+            <label for="clause">Le contrat contient une clause de protection des données suffisante</label>
+          </div>
+        </div>
+
+        <!-- ══ TRANSFERTS HORS EU ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">07</span>
+            Transferts hors Union Européenne
+          </div>
+          <div class="field-checkbox">
+            <input type="checkbox" id="transfert" formControlName="transfert_hors_eu"/>
+            <label for="transfert">Des données sont transférées hors de l'UE</label>
+          </div>
+          <div *ngIf="form.get('transfert_hors_eu')?.value">
+            <div class="two-cols">
+              <div class="field">
+                <label>Pays de destination</label>
+                <input formControlName="pays_destination" placeholder="Ex: États-Unis, Maroc..."/>
+              </div>
+              <div class="field">
+                <label>Fondement juridique</label>
+                <select formControlName="fondement_juridique">
+                  <option value="">-- Sélectionner --</option>
+                  <option value="adequation">Décision d'adéquation</option>
+                  <option value="bcr">BCR (Binding Corporate Rules)</option>
+                  <option value="cct">Clauses contractuelles types</option>
+                  <option value="derogation">Dérogation (Art. 49)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ OUTIL INFORMATIQUE ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">08</span>
+            Outil informatique utilisé
+          </div>
+          <div class="two-cols">
+            <div class="field">
+              <label>Nom de l'outil / logiciel</label>
+              <input formControlName="outil_nom" placeholder="Ex: SAP, Salesforce, Excel..."/>
+            </div>
+            <div class="field">
+              <label>Format de stockage</label>
+              <select formControlName="stockage_format">
+                <option value="electronique">Électronique</option>
+                <option value="papier">Papier</option>
+                <option value="mixte">Mixte</option>
+              </select>
+            </div>
+          </div>
+          <div class="two-cols">
+            <div class="field">
+              <label>Lieu de stockage</label>
+              <input formControlName="stockage_lieu" placeholder="Ex: Datacenter Paris, Cloud AWS..."/>
+            </div>
+            <div class="field">
+              <label>Pays de localisation</label>
+              <input formControlName="stockage_pays" placeholder="France"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ MESURES DE SÉCURITÉ ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">09</span>
+            Mesures techniques et organisationnelles
+          </div>
+          <div class="rights-grid">
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="acces_physique_protege"/> Accès physiques protégés
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="authentification"/> Authentification requise
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="journalisation"/> Journalisation des connexions
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="reseau_interne"/> Traitement sur réseau interne
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="chiffrement"/> Données chiffrées
+            </label>
+          </div>
+          <div class="field">
+            <label>Autres mesures de sécurité</label>
+            <textarea formControlName="autres_mesures" rows="2"
+              placeholder="Ex: Pseudonymisation, habilitations, PSSI..."></textarea>
+          </div>
+        </div>
+
+        <!-- ══ RESPONSABLE DE TRAITEMENT ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">10</span>
+            Responsable de traitement
+          </div>
+          <div class="field required">
+            <label>Nom / Entité responsable du traitement</label>
+            <input formControlName="responsable_nom"
+              placeholder="Ex: Direction des Ressources Humaines — TechSecure SAS"/>
+            <span class="err" *ngIf="form.get('responsable_nom')?.invalid && form.get('responsable_nom')?.touched">Requis</span>
+          </div>
+          <div class="two-cols">
+            <div class="field">
+              <label>Département / Contact interne</label>
+              <input formControlName="responsable_departement" placeholder="Ex: DRH, DSI"/>
+            </div>
+            <div class="field">
+              <label>Région</label>
+              <input formControlName="responsable_region" placeholder="Ex: Île-de-France"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Déclaration CNIL (référence)</label>
+            <input formControlName="declaration_cnil"
+              placeholder="Ex: DEC-2024-001 ou N/A"/>
+          </div>
+        </div>
+
+        <!-- ══ PIA ET ACTIONS ══ -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">11</span>
+            Analyse d'impact et conformité
+          </div>
+          <div class="field-checkbox">
+            <input type="checkbox" id="pia" formControlName="pia_realise"/>
+            <label for="pia">Une analyse d'impact (PIA / DPIA) a été réalisée</label>
+          </div>
+          <div class="field">
+            <label>Actions / Plan de mise en conformité</label>
+            <textarea formControlName="actions_conformite" rows="3"
+              placeholder="Décrire les actions à mettre en œuvre pour assurer la conformité RGPD..."></textarea>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- Footer -->
+      <div class="form-footer">
+        <div class="rejet-msg" *ngIf="selectedFiche.statut === 'rejete'">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="6" stroke="#A32D2D" stroke-width="1.3"/>
+            <path d="M7 4v3.5" stroke="#A32D2D" stroke-width="1.3" stroke-linecap="round"/>
+            <circle cx="7" cy="9.5" r="0.7" fill="#A32D2D"/>
+          </svg>
+          Fiche rejetée — vous pouvez modifier et soumettre à nouveau
+        </div>
+        <button class="btn-draft" (click)="saveDraft()" [disabled]="saving">
+          <span *ngIf="!saving">Sauvegarder brouillon</span>
+          <span *ngIf="saving">...</span>
+        </button>
+        <button class="btn-submit"
+          (click)="submitDpo()"
+          [disabled]="submitting || selectedFiche.statut === 'complete_dpo' || selectedFiche.statut === 'valide'">
+          <span *ngIf="!submitting">
+            {{ selectedFiche.statut === 'complete_dpo' ? '✓ Soumis au RSSI' : 'Soumettre au RSSI' }}
+          </span>
+          <span *ngIf="submitting">...</span>
+        </button>
+      </div>
+
+    </div>
+
+    <ng-template #noSelection>
+      <div class="no-selection">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect x="4" y="8" width="32" height="26" rx="3" stroke="#d1d5db" stroke-width="1.5"/>
+          <path d="M12 16h16M12 22h10" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <p>Sélectionner une fiche pour compléter la section DPO</p>
+      </div>
+    </ng-template>
+
+  </div>
+</div>

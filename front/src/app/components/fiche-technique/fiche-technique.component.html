@@ -1,0 +1,552 @@
+<div class="tech-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="tech-badge">Équipe Technique</div>
+      <div>
+        <h1 class="page-title">Fiche des actifs techniques</h1>
+        <p class="page-sub">{{ currentUser?.prenom }} {{ currentUser?.nom }}</p>
+      </div>
+    </div>
+    <div class="header-right" *ngIf="fiche">
+      <span class="{{ getStatutClass(fiche.statut) }}">{{ getStatutLabel(fiche.statut) }}</span>
+    </div>
+  </div>
+
+  <!-- Toasts -->
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error"   *ngIf="error">{{ error }}</div>
+
+  <!-- Rejet -->
+  <div class="rejet-banner" *ngIf="fiche?.statut === 'rejete' && fiche?.commentaire_rejet">
+    <strong>Fiche rejetée par le RSSI :</strong> {{ fiche.commentaire_rejet }}
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div> Chargement de votre fiche...
+  </div>
+
+  <div *ngIf="!loading && fiche" class="tech-layout">
+
+    <!-- Navigation sections -->
+    <div class="sections-nav">
+      <button *ngFor="let sec of sections; let i = index"
+        class="sec-btn" [class.active]="activeSection === i"
+        (click)="activeSection = i">
+        <span class="sec-icon">{{ sec.icon }}</span>
+        <span class="sec-label">{{ sec.label }}</span>
+      </button>
+    </div>
+
+    <!-- Contenu -->
+    <div class="section-content" [formGroup]="form">
+
+      <!-- ══ SECTION 0 : IDENTIFICATION ══ -->
+      <div *ngIf="activeSection === 0" class="section-panel">
+        <div class="panel-title">📋 Identification de la fiche</div>
+
+        <div class="field required">
+          <label>Intitulé de la fiche</label>
+          <input formControlName="intitule"
+            placeholder="Ex: Fiche technique Infrastructure Réseau"/>
+          <span class="err" *ngIf="form.get('intitule')?.invalid && form.get('intitule')?.touched">Requis</span>
+        </div>
+
+        <div class="field">
+          <label>Périmètre couvert</label>
+          <textarea formControlName="perimetre" rows="4"
+            placeholder="Décrire le périmètre technique couvert par cette fiche : quels systèmes, quels sites, quelles équipes..."></textarea>
+        </div>
+
+        <div class="info-box">
+          <strong>Acteur :</strong> {{ currentUser?.prenom }} {{ currentUser?.nom }}
+          ({{ currentUser?.role }}) · Organisme : {{ fiche.organism_id }}
+        </div>
+      </div>
+
+      <!-- ══ SECTION 1 : SERVEURS ══ -->
+      <div *ngIf="activeSection === 1" class="section-panel">
+        <div class="panel-header">
+          <div class="panel-title">🖥️ Serveurs (physiques et virtuels)</div>
+          <button type="button" class="btn-add" (click)="add(serveurs, newServeur())" [disabled]="!canEdit()">
+            + Ajouter un serveur
+          </button>
+        </div>
+
+        <div *ngIf="serveurs.length === 0" class="empty-section">
+          Aucun serveur déclaré
+        </div>
+
+        <div formArrayName="actifs_serveurs">
+          <div *ngFor="let s of serveurs.controls; let i = index" [formGroupName]="i" class="actif-card">
+            <div class="actif-card-header">
+              <span class="actif-num">{{ i + 1 }}</span>
+              <button type="button" class="btn-remove" (click)="remove(serveurs, i)" [disabled]="!canEdit()">✕</button>
+            </div>
+            <div class="grid-3">
+              <div class="field required"><label>Nom / Hostname</label><input formControlName="nom" placeholder="Ex: SRV-WEB-01"/></div>
+              <div class="field"><label>Type</label>
+                <select formControlName="type">
+                  <option value="physique">Physique</option>
+                  <option value="virtuel">Virtuel / VM</option>
+                  <option value="conteneur">Conteneur</option>
+                  <option value="cloud">Cloud</option>
+                </select>
+              </div>
+              <div class="field"><label>Localisation</label><input formControlName="localisation" placeholder="Ex: Salle serveurs RDC"/></div>
+            </div>
+            <div class="grid-2">
+              <div class="field"><label>OS / Système</label><input formControlName="os" placeholder="Ex: Ubuntu 22.04, Windows Server 2022"/></div>
+              <div class="field"><label>Version</label><input formControlName="version" placeholder="Ex: 22.04 LTS"/></div>
+            </div>
+            <div class="cia-row">
+              <div class="cia-item">
+                <label>Confidentialité</label>
+                <select formControlName="confidentialite">
+                  <option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option>
+                </select>
+              </div>
+              <div class="cia-item">
+                <label>Intégrité</label>
+                <select formControlName="integrite">
+                  <option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option>
+                </select>
+              </div>
+              <div class="cia-item">
+                <label>Disponibilité</label>
+                <select formControlName="disponibilite">
+                  <option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SECTION 2 : POSTES & RÉSEAU ══ -->
+      <div *ngIf="activeSection === 2" class="section-panel">
+
+        <!-- Postes -->
+        <div class="sub-section">
+          <div class="panel-header">
+            <div class="panel-title">💻 Postes de travail et périphériques</div>
+            <button type="button" class="btn-add" (click)="add(postes, newPoste())" [disabled]="!canEdit()">+ Ajouter</button>
+          </div>
+          <div *ngIf="postes.length === 0" class="empty-section">Aucun poste déclaré</div>
+          <div formArrayName="actifs_postes">
+            <div *ngFor="let p of postes.controls; let i = index" [formGroupName]="i" class="actif-card">
+              <div class="actif-card-header"><span class="actif-num">{{ i + 1 }}</span><button type="button" class="btn-remove" (click)="remove(postes, i)" [disabled]="!canEdit()">✕</button></div>
+              <div class="grid-3">
+                <div class="field required"><label>Nom / Groupe</label><input formControlName="nom" placeholder="Ex: PC Bureau commerciaux"/></div>
+                <div class="field"><label>Type</label>
+                  <select formControlName="type">
+                    <option value="fixe">Fixe</option>
+                    <option value="portable">Portable</option>
+                    <option value="serveur_terminal">Serveur terminal</option>
+                    <option value="imprimante">Imprimante / Périphérique</option>
+                  </select>
+                </div>
+                <div class="field"><label>Nombre</label><input type="number" formControlName="nb" min="1"/></div>
+              </div>
+              <div class="grid-2">
+                <div class="field"><label>OS</label><input formControlName="os" placeholder="Ex: Windows 11 Pro"/></div>
+                <div class="field"><label>Localisation</label><input formControlName="localisation" placeholder="Ex: Open space 2ème étage"/></div>
+              </div>
+              <div class="cia-row">
+                <div class="cia-item"><label>Confidentialité</label><select formControlName="confidentialite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Intégrité</label><select formControlName="integrite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Disponibilité</label><select formControlName="disponibilite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Réseau -->
+        <div class="sub-section">
+          <div class="panel-header">
+            <div class="panel-title">🔌 Équipements réseau</div>
+            <button type="button" class="btn-add" (click)="add(reseau, newReseau())" [disabled]="!canEdit()">+ Ajouter</button>
+          </div>
+          <div *ngIf="reseau.length === 0" class="empty-section">Aucun équipement réseau déclaré</div>
+          <div formArrayName="actifs_reseau">
+            <div *ngFor="let r of reseau.controls; let i = index" [formGroupName]="i" class="actif-card">
+              <div class="actif-card-header"><span class="actif-num">{{ i + 1 }}</span><button type="button" class="btn-remove" (click)="remove(reseau, i)" [disabled]="!canEdit()">✕</button></div>
+              <div class="grid-3">
+                <div class="field required"><label>Nom</label><input formControlName="nom" placeholder="Ex: FW-DMZ-01"/></div>
+                <div class="field"><label>Type</label>
+                  <select formControlName="type">
+                    <option value="switch">Switch</option>
+                    <option value="routeur">Routeur</option>
+                    <option value="firewall">Firewall</option>
+                    <option value="waf">WAF</option>
+                    <option value="load_balancer">Load Balancer</option>
+                    <option value="proxy">Proxy</option>
+                    <option value="borne_wifi">Borne WiFi</option>
+                  </select>
+                </div>
+                <div class="field"><label>Localisation</label><input formControlName="localisation" placeholder="Ex: DMZ, LAN, WAN"/></div>
+              </div>
+              <div class="grid-2">
+                <div class="field"><label>Marque</label><input formControlName="marque" placeholder="Ex: Cisco, Palo Alto"/></div>
+                <div class="field"><label>Modèle</label><input formControlName="modele" placeholder="Ex: ASA 5506-X"/></div>
+              </div>
+              <div class="cia-row">
+                <div class="cia-item"><label>Confidentialité</label><select formControlName="confidentialite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Intégrité</label><select formControlName="integrite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Disponibilité</label><select formControlName="disponibilite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SECTION 3 : APPLICATIONS & BDD ══ -->
+      <div *ngIf="activeSection === 3" class="section-panel">
+
+        <!-- Applications -->
+        <div class="sub-section">
+          <div class="panel-header">
+            <div class="panel-title">📱 Applications métiers</div>
+            <button type="button" class="btn-add" (click)="add(applications, newApplication())" [disabled]="!canEdit()">+ Ajouter</button>
+          </div>
+          <div *ngIf="applications.length === 0" class="empty-section">Aucune application déclarée</div>
+          <div formArrayName="actifs_applications">
+            <div *ngFor="let a of applications.controls; let i = index" [formGroupName]="i" class="actif-card">
+              <div class="actif-card-header"><span class="actif-num">{{ i + 1 }}</span><button type="button" class="btn-remove" (click)="remove(applications, i)" [disabled]="!canEdit()">✕</button></div>
+              <div class="grid-3">
+                <div class="field required"><label>Nom</label><input formControlName="nom" placeholder="Ex: SAP ERP, Salesforce"/></div>
+                <div class="field"><label>Éditeur</label><input formControlName="editeur" placeholder="Ex: SAP, Microsoft"/></div>
+                <div class="field"><label>Version</label><input formControlName="version" placeholder="Ex: 2024.1"/></div>
+              </div>
+              <div class="field"><label>Usage / Description</label><input formControlName="usage" placeholder="Ex: Gestion comptable, CRM clients..."/></div>
+              <div class="cia-row">
+                <div class="cia-item"><label>Confidentialité</label><select formControlName="confidentialite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Intégrité</label><select formControlName="integrite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Disponibilité</label><select formControlName="disponibilite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Licences -->
+        <div class="sub-section">
+          <div class="panel-header">
+            <div class="panel-title">📜 Licences logicielles</div>
+            <button type="button" class="btn-add" (click)="add(licences, newLicence())" [disabled]="!canEdit()">+ Ajouter</button>
+          </div>
+          <div *ngIf="licences.length === 0" class="empty-section">Aucune licence déclarée</div>
+          <div formArrayName="actifs_licences">
+            <div *ngFor="let l of licences.controls; let i = index" [formGroupName]="i" class="actif-card">
+              <div class="actif-card-header"><span class="actif-num">{{ i + 1 }}</span><button type="button" class="btn-remove" (click)="remove(licences, i)" [disabled]="!canEdit()">✕</button></div>
+              <div class="grid-3">
+                <div class="field required"><label>Logiciel</label><input formControlName="nom" placeholder="Ex: Microsoft Office 365"/></div>
+                <div class="field"><label>Éditeur</label><input formControlName="editeur" placeholder="Ex: Microsoft"/></div>
+                <div class="field"><label>Nb de licences</label><input type="number" formControlName="nb_licences" min="1"/></div>
+              </div>
+              <div class="field"><label>Date d'expiration</label><input type="date" formControlName="expiration"/></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BDD -->
+        <div class="sub-section">
+          <div class="panel-header">
+            <div class="panel-title">🗄️ Bases de données</div>
+            <button type="button" class="btn-add" (click)="add(bdd, newBdd())" [disabled]="!canEdit()">+ Ajouter</button>
+          </div>
+          <div *ngIf="bdd.length === 0" class="empty-section">Aucune base de données déclarée</div>
+          <div formArrayName="actifs_bdd">
+            <div *ngFor="let b of bdd.controls; let i = index" [formGroupName]="i" class="actif-card">
+              <div class="actif-card-header"><span class="actif-num">{{ i + 1 }}</span><button type="button" class="btn-remove" (click)="remove(bdd, i)" [disabled]="!canEdit()">✕</button></div>
+              <div class="grid-3">
+                <div class="field required"><label>Nom de la BDD</label><input formControlName="nom" placeholder="Ex: smsi_db, clients_prod"/></div>
+                <div class="field"><label>SGBD</label>
+                  <select formControlName="type">
+                    <option value="postgresql">PostgreSQL</option>
+                    <option value="mysql">MySQL / MariaDB</option>
+                    <option value="oracle">Oracle</option>
+                    <option value="sqlserver">SQL Server</option>
+                    <option value="mongodb">MongoDB</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </div>
+                <div class="field"><label>Serveur hébergeant</label><input formControlName="serveur" placeholder="Ex: SRV-BDD-01"/></div>
+              </div>
+              <div class="field"><label>Version</label><input formControlName="version" placeholder="Ex: PostgreSQL 15.2"/></div>
+              <div class="cia-row">
+                <div class="cia-item"><label>Confidentialité</label><select formControlName="confidentialite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Intégrité</label><select formControlName="integrite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Disponibilité</label><select formControlName="disponibilite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SECTION 4 : DONNÉES & STOCKAGE ══ -->
+      <div *ngIf="activeSection === 4" class="section-panel">
+
+        <!-- Sauvegardes -->
+        <div class="sub-section">
+          <div class="panel-header">
+            <div class="panel-title">💾 Sauvegardes et archivage</div>
+            <button type="button" class="btn-add" (click)="add(sauvegardes, newSauvegarde())" [disabled]="!canEdit()">+ Ajouter</button>
+          </div>
+          <div *ngIf="sauvegardes.length === 0" class="empty-section">Aucune sauvegarde déclarée</div>
+          <div formArrayName="actifs_sauvegardes">
+            <div *ngFor="let s of sauvegardes.controls; let i = index" [formGroupName]="i" class="actif-card">
+              <div class="actif-card-header"><span class="actif-num">{{ i + 1 }}</span><button type="button" class="btn-remove" (click)="remove(sauvegardes, i)" [disabled]="!canEdit()">✕</button></div>
+              <div class="grid-3">
+                <div class="field required"><label>Nom / Périmètre</label><input formControlName="nom" placeholder="Ex: Backup BDD production"/></div>
+                <div class="field"><label>Type</label>
+                  <select formControlName="type">
+                    <option value="complete">Complète</option>
+                    <option value="incrementale">Incrémentale</option>
+                    <option value="differentielle">Différentielle</option>
+                    <option value="snapshot">Snapshot</option>
+                  </select>
+                </div>
+                <div class="field"><label>Fréquence</label>
+                  <select formControlName="frequence">
+                    <option value="temps_reel">Temps réel</option>
+                    <option value="horaire">Horaire</option>
+                    <option value="quotidienne">Quotidienne</option>
+                    <option value="hebdomadaire">Hebdomadaire</option>
+                    <option value="mensuelle">Mensuelle</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid-2">
+                <div class="field"><label>Rétention</label><input formControlName="retention" placeholder="Ex: 30 jours, 1 an"/></div>
+                <div class="field"><label>Lieu de stockage</label><input formControlName="lieu" placeholder="Ex: NAS local, Cloud S3, Bande magnétique"/></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stockages -->
+        <div class="sub-section">
+          <div class="panel-header">
+            <div class="panel-title">🗂️ Systèmes de stockage</div>
+            <button type="button" class="btn-add" (click)="add(stockages, newStockage())" [disabled]="!canEdit()">+ Ajouter</button>
+          </div>
+          <div *ngIf="stockages.length === 0" class="empty-section">Aucun stockage déclaré</div>
+          <div formArrayName="actifs_stockages">
+            <div *ngFor="let s of stockages.controls; let i = index" [formGroupName]="i" class="actif-card">
+              <div class="actif-card-header"><span class="actif-num">{{ i + 1 }}</span><button type="button" class="btn-remove" (click)="remove(stockages, i)" [disabled]="!canEdit()">✕</button></div>
+              <div class="grid-3">
+                <div class="field required"><label>Nom</label><input formControlName="nom" placeholder="Ex: NAS-PROD-01"/></div>
+                <div class="field"><label>Type</label>
+                  <select formControlName="type">
+                    <option value="nas">NAS</option>
+                    <option value="san">SAN</option>
+                    <option value="cloud">Cloud (S3, Blob...)</option>
+                    <option value="local">Stockage local</option>
+                    <option value="bande">Bande magnétique</option>
+                  </select>
+                </div>
+                <div class="field"><label>Capacité</label><input formControlName="capacite" placeholder="Ex: 10 To, 500 Go"/></div>
+              </div>
+              <div class="field"><label>Lieu</label><input formControlName="lieu" placeholder="Ex: Salle serveurs, AWS S3 eu-west-1"/></div>
+              <div class="cia-row">
+                <div class="cia-item"><label>Confidentialité</label><select formControlName="confidentialite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Intégrité</label><select formControlName="integrite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Disponibilité</label><select formControlName="disponibilite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SECTION 5 : SERVICES & ACCÈS ══ -->
+      <div *ngIf="activeSection === 5" class="section-panel">
+
+        <!-- Cloud -->
+        <div class="sub-section">
+          <div class="panel-header">
+            <div class="panel-title">☁️ Services cloud et SaaS</div>
+            <button type="button" class="btn-add" (click)="add(cloud, newCloud())" [disabled]="!canEdit()">+ Ajouter</button>
+          </div>
+          <div *ngIf="cloud.length === 0" class="empty-section">Aucun service cloud déclaré</div>
+          <div formArrayName="actifs_cloud">
+            <div *ngFor="let c of cloud.controls; let i = index" [formGroupName]="i" class="actif-card">
+              <div class="actif-card-header"><span class="actif-num">{{ i + 1 }}</span><button type="button" class="btn-remove" (click)="remove(cloud, i)" [disabled]="!canEdit()">✕</button></div>
+              <div class="grid-3">
+                <div class="field required"><label>Nom du service</label><input formControlName="nom" placeholder="Ex: AWS EC2, Microsoft 365"/></div>
+                <div class="field"><label>Fournisseur</label><input formControlName="fournisseur" placeholder="Ex: AWS, Microsoft, Google"/></div>
+                <div class="field"><label>Type</label>
+                  <select formControlName="type">
+                    <option value="SaaS">SaaS</option>
+                    <option value="PaaS">PaaS</option>
+                    <option value="IaaS">IaaS</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field"><label>Région / Localisation des données</label><input formControlName="region" placeholder="Ex: EU-West-1 (Irlande), Europe"/></div>
+              <div class="cia-row">
+                <div class="cia-item"><label>Confidentialité</label><select formControlName="confidentialite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Intégrité</label><select formControlName="integrite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Disponibilité</label><select formControlName="disponibilite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accès distants -->
+        <div class="sub-section">
+          <div class="panel-header">
+            <div class="panel-title">🔑 Accès distants et VPN</div>
+            <button type="button" class="btn-add" (click)="add(acces, newAcces())" [disabled]="!canEdit()">+ Ajouter</button>
+          </div>
+          <div *ngIf="acces.length === 0" class="empty-section">Aucun accès distant déclaré</div>
+          <div formArrayName="actifs_acces">
+            <div *ngFor="let a of acces.controls; let i = index" [formGroupName]="i" class="actif-card">
+              <div class="actif-card-header"><span class="actif-num">{{ i + 1 }}</span><button type="button" class="btn-remove" (click)="remove(acces, i)" [disabled]="!canEdit()">✕</button></div>
+              <div class="grid-3">
+                <div class="field required"><label>Nom</label><input formControlName="nom" placeholder="Ex: VPN Cisco AnyConnect"/></div>
+                <div class="field"><label>Type</label>
+                  <select formControlName="type">
+                    <option value="VPN">VPN</option>
+                    <option value="RDP">RDP / Bureau à distance</option>
+                    <option value="SSH">SSH</option>
+                    <option value="Citrix">Citrix / VDI</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </div>
+                <div class="field"><label>Utilisateurs autorisés</label><input formControlName="utilisateurs" placeholder="Ex: Équipe IT, Direction"/></div>
+              </div>
+              <div class="cia-row">
+                <div class="cia-item"><label>Confidentialité</label><select formControlName="confidentialite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Intégrité</label><select formControlName="integrite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+                <div class="cia-item"><label>Disponibilité</label><select formControlName="disponibilite"><option *ngFor="let n of niveaux" [value]="n.value">{{ n.value }} — {{ n.label }}</option></select></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Certificats -->
+        <div class="sub-section">
+          <div class="panel-header">
+            <div class="panel-title">🏅 Certificats et clés cryptographiques</div>
+            <button type="button" class="btn-add" (click)="add(certificats, newCertificat())" [disabled]="!canEdit()">+ Ajouter</button>
+          </div>
+          <div *ngIf="certificats.length === 0" class="empty-section">Aucun certificat déclaré</div>
+          <div formArrayName="actifs_certificats">
+            <div *ngFor="let c of certificats.controls; let i = index" [formGroupName]="i" class="actif-card">
+              <div class="actif-card-header"><span class="actif-num">{{ i + 1 }}</span><button type="button" class="btn-remove" (click)="remove(certificats, i)" [disabled]="!canEdit()">✕</button></div>
+              <div class="grid-3">
+                <div class="field required"><label>Nom / Domaine</label><input formControlName="nom" placeholder="Ex: *.mondomaine.fr"/></div>
+                <div class="field"><label>Autorité de certification</label><input formControlName="autorite" placeholder="Ex: Let's Encrypt, DigiCert"/></div>
+                <div class="field"><label>Date d'expiration</label><input type="date" formControlName="expiration"/></div>
+              </div>
+              <div class="field"><label>Usage</label><input formControlName="usage" placeholder="Ex: HTTPS site web, VPN, Signature emails"/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SECTION 6 : SÉCURITÉ ══ -->
+      <div *ngIf="activeSection === 6" class="section-panel" formGroupName="mesures_securite">
+        <div class="panel-title">🔒 Mesures de sécurité en place</div>
+        <p class="panel-desc">Cocher les mesures de sécurité actuellement déployées.</p>
+
+        <div class="mesures-grid">
+          <label class="mesure-item">
+            <input type="checkbox" formControlName="antivirus"/>
+            <div class="mesure-info">
+              <span class="mesure-icon">🛡️</span>
+              <div><span class="mesure-label">Antivirus / EDR</span><span class="mesure-desc">Solution antivirus ou de détection sur les endpoints</span></div>
+            </div>
+          </label>
+          <label class="mesure-item">
+            <input type="checkbox" formControlName="firewall"/>
+            <div class="mesure-info">
+              <span class="mesure-icon">🔥</span>
+              <div><span class="mesure-label">Firewall réseau</span><span class="mesure-desc">Pare-feu réseau en place et configuré</span></div>
+            </div>
+          </label>
+          <label class="mesure-item">
+            <input type="checkbox" formControlName="chiffrement"/>
+            <div class="mesure-info">
+              <span class="mesure-icon">🔐</span>
+              <div><span class="mesure-label">Chiffrement des données</span><span class="mesure-desc">Données chiffrées au repos et/ou en transit</span></div>
+            </div>
+          </label>
+          <label class="mesure-item">
+            <input type="checkbox" formControlName="mfa"/>
+            <div class="mesure-info">
+              <span class="mesure-icon">📱</span>
+              <div><span class="mesure-label">MFA / Double authentification</span><span class="mesure-desc">Authentification multi-facteurs déployée</span></div>
+            </div>
+          </label>
+          <label class="mesure-item">
+            <input type="checkbox" formControlName="patch_management"/>
+            <div class="mesure-info">
+              <span class="mesure-icon">🔧</span>
+              <div><span class="mesure-label">Gestion des patchs</span><span class="mesure-desc">Mises à jour de sécurité appliquées régulièrement</span></div>
+            </div>
+          </label>
+          <label class="mesure-item">
+            <input type="checkbox" formControlName="backup_chiffre"/>
+            <div class="mesure-info">
+              <span class="mesure-icon">💾</span>
+              <div><span class="mesure-label">Sauvegardes chiffrées</span><span class="mesure-desc">Sauvegardes protégées par chiffrement</span></div>
+            </div>
+          </label>
+          <label class="mesure-item">
+            <input type="checkbox" formControlName="ids_ips"/>
+            <div class="mesure-info">
+              <span class="mesure-icon">👁️</span>
+              <div><span class="mesure-label">IDS / IPS</span><span class="mesure-desc">Système de détection / prévention d'intrusion</span></div>
+            </div>
+          </label>
+          <label class="mesure-item">
+            <input type="checkbox" formControlName="siem"/>
+            <div class="mesure-info">
+              <span class="mesure-icon">📊</span>
+              <div><span class="mesure-label">SIEM</span><span class="mesure-desc">Gestion centralisée des journaux et alertes</span></div>
+            </div>
+          </label>
+          <label class="mesure-item">
+            <input type="checkbox" formControlName="dlp"/>
+            <div class="mesure-info">
+              <span class="mesure-icon">🚫</span>
+              <div><span class="mesure-label">DLP</span><span class="mesure-desc">Prévention des fuites de données</span></div>
+            </div>
+          </label>
+        </div>
+
+        <div class="field" style="margin-top: 1rem;">
+          <label>Autres mesures de sécurité</label>
+          <textarea formControlName="autres" rows="3"
+            placeholder="Décrire toute autre mesure de sécurité en place (segmentation réseau, VLAN, SOC, pentest annuel...)"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer actions -->
+    <div class="footer-actions">
+      <div class="rejet-note" *ngIf="fiche?.statut === 'rejete'">
+        ⚠️ Fiche rejetée — modifiez et soumettez à nouveau
+      </div>
+      <div class="footer-right">
+        <button class="btn-draft" (click)="save()" [disabled]="saving || !canEdit()">
+          <span *ngIf="!saving">Sauvegarder</span>
+          <span *ngIf="saving">...</span>
+        </button>
+        <button class="btn-submit"
+          (click)="submit()"
+          [disabled]="submitting || !canEdit()">
+          <span *ngIf="!submitting">
+            {{ fiche?.statut === 'soumis_rssi' ? '✓ Soumis au RSSI' : 'Soumettre au RSSI' }}
+          </span>
+          <span *ngIf="submitting">Envoi...</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

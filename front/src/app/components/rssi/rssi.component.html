@@ -1,0 +1,882 @@
+<div class="rssi-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="rssi-badge">RSSI</div>
+      <div>
+        <h1 class="page-title">Interface RSSI</h1>
+        <p class="page-sub">{{ currentUser?.prenom }} {{ currentUser?.nom }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error"   *ngIf="error">{{ error }}</div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab" [class.active]="activeTab === 'inventaire'" (click)="activeTab = 'inventaire'">
+      🗂️ Inventaire des actifs
+      <span class="tab-count" *ngIf="consolidation?.nouveaux > 0">{{ consolidation?.nouveaux }}</span>
+    </button>
+    <button class="tab" [class.active]="activeTab === 'clause4'" (click)="activeTab = 'clause4'">
+      📋 Clause 4
+    </button>
+    <button class="tab" [class.active]="activeTab === 'fiches'" (click)="activeTab = 'fiches'">
+      ✅ Validation fiches
+      <span class="tab-count" *ngIf="fichesEnAttente.length + fichesTechEnAttente.length > 0">
+        {{ fichesEnAttente.length + fichesTechEnAttente.length }}
+      </span>
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       ONGLET 1 : INVENTAIRE ACTIFS
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'inventaire'" class="tab-content">
+
+    <div class="inventaire-layout">
+
+      <!-- Actifs consolidés (à valider) -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Actifs détectés dans les fiches</h2>
+            <p class="panel-desc" *ngIf="consolidation">
+              {{ consolidation.total }} détectés · {{ consolidation.nouveaux }} nouveaux · {{ actifsValides.length }} déjà validés
+            </p>
+          </div>
+          <div class="panel-actions" *ngIf="consolidation?.actifs?.length > 0">
+            <button class="btn-sm" (click)="selectAllActifs()">Tout sélectionner</button>
+            <button class="btn-sm" (click)="deselectAllActifs()">Tout désélectionner</button>
+            <button class="btn-validate-lot"
+              [disabled]="selectedActifsCount === 0 || extracting"
+              (click)="validerActifs()">
+              <span *ngIf="!extracting">✓ Valider ({{ selectedActifsCount }})</span>
+              <span *ngIf="extracting">Validation...</span>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="loadingConsolide" class="loading-mini">Analyse des fiches...</div>
+
+        <div *ngIf="!loadingConsolide && (!consolidation?.actifs || consolidation.actifs.length === 0)"
+          class="empty-panel">
+          Aucun nouvel actif détecté dans les fiches soumises
+        </div>
+
+        <div *ngIf="consolidation?.actifs?.length > 0" class="actifs-grid">
+          <div *ngFor="let actif of consolidation.actifs; let i = index"
+            class="actif-item" [class.selected]="actif.selected"
+            (click)="toggleActif(i)">
+            <div class="actif-item-header">
+              <input type="checkbox" [checked]="actif.selected" (click)="$event.stopPropagation()"/>
+              <span class="cat-icon">{{ getCatIcon(actif.categorie) }}</span>
+              <span class="actif-nom">{{ actif.nom }}</span>
+            </div>
+            <div class="actif-item-meta">
+              <span class="cat-badge-sm">{{ getCatLabel(actif.categorie) }}</span>
+              <span class="source-tag">{{ actif.source_type === 'fiche_technique' ? '🔧 Tech' : '📋 Processus' }}</span>
+            </div>
+            <div class="cia-mini">
+              <span title="Confidentialité">C:{{ actif.confidentialite }}</span>
+              <span title="Intégrité">I:{{ actif.integrite }}</span>
+              <span title="Disponibilité">D:{{ actif.disponibilite }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actifs déjà validés -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Inventaire validé ({{ actifsValides.length }})</h2>
+          <div class="filter-row">
+            <select [(ngModel)]="filterCategorie">
+              <option value="">Toutes catégories</option>
+              <option *ngFor="let c of categories" [value]="c.value">{{ c.icon }} {{ c.label }}</option>
+            </select>
+          </div>
+        </div>
+
+        <table class="actifs-table" *ngIf="actifsValides.length > 0">
+          <thead>
+            <tr>
+              <th>Actif</th><th>Catégorie</th><th>C</th><th>I</th><th>D</th><th>Criticité</th><th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of actifsValides"
+              [hidden]="filterCategorie && a.categorie !== filterCategorie">
+              <td>
+                <div class="actif-nom">{{ a.nom }}</div>
+                <div class="actif-desc">{{ a.description | slice:0:50 }}</div>
+              </td>
+              <td><span class="cat-badge-sm">{{ getCatIcon(a.categorie) }} {{ getCatLabel(a.categorie) }}</span></td>
+              <td><span class="cia-badge c{{ a.confidentialite }}">{{ a.confidentialite }}</span></td>
+              <td><span class="cia-badge i{{ a.integrite }}">{{ a.integrite }}</span></td>
+              <td><span class="cia-badge d{{ a.disponibilite }}">{{ a.disponibilite }}</span></td>
+              <td><span class="{{ getNiveauClass(a.note_globale) }}">{{ getNiveauLabel(a.note_globale) }}</span></td>
+              <td><span class="source-tag">{{ a.source === 'extrait_fiche' ? '⚡ Auto' : '✏️ Manuel' }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="actifsValides.length === 0" class="empty-panel">
+          Aucun actif validé pour le moment
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       ONGLET 2 : CLAUSE 4
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'clause4'" class="tab-content">
+    <div class="clause4-layout">
+
+      <!-- Navigation sous-sections -->
+      <div class="clause4-nav">
+        <button *ngFor="let sec of clause4Sections; let i = index"
+          class="c4-btn" [class.active]="activeClause4Section === i"
+          (click)="activeClause4Section = i">
+          <span>{{ sec.icon }}</span> {{ sec.label }}
+        </button>
+      </div>
+
+      <!-- Formulaire -->
+      <div class="clause4-content" [formGroup]="clause4Form">
+
+        <!-- ─── 4.1 ENJEUX ─────────────────────────────────────────────────── -->
+        <div *ngIf="activeClause4Section === 0">
+
+          <!-- Enjeux externes -->
+          <div class="form-section">
+            <div class="section-header">
+              <div>
+                <div class="section-title">Enjeux externes</div>
+                <p class="section-desc">Facteurs politiques, économiques, sociaux, technologiques, légaux, environnementaux.</p>
+              </div>
+              <button type="button" class="btn-add" (click)="addTo(enjeuxExternes, newEnjeuExterne())">+ Ajouter</button>
+            </div>
+            <div *ngIf="enjeuxExternes.length === 0" class="empty-array">Aucun enjeu externe</div>
+            <div formArrayName="enjeux_externes">
+              <div *ngFor="let e of enjeuxExternes.controls; let i = index" [formGroupName]="i" class="array-item">
+                <div class="item-header">
+                  <span class="item-num">{{ i + 1 }}</span>
+                  <button type="button" class="btn-remove" (click)="removeFrom(enjeuxExternes, i)">✕</button>
+                </div>
+                <div class="grid-3">
+                  <div class="field">
+                    <label>Catégorie</label>
+                    <select formControlName="categorie">
+                      <option value="reglementaire">Réglementaire</option>
+                      <option value="politique">Politique</option>
+                      <option value="economique">Économique</option>
+                      <option value="social">Social</option>
+                      <option value="technologique">Technologique</option>
+                      <option value="environnemental">Environnemental</option>
+                      <option value="concurrentiel">Concurrentiel</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Impact sur le SI</label>
+                    <select formControlName="impact">
+                      <option value="faible">Faible</option>
+                      <option value="moyen">Moyen</option>
+                      <option value="fort">Fort</option>
+                      <option value="critique">Critique</option>
+                    </select>
+                  </div>
+                  <div class="field-checkbox" style="margin-top: 22px;">
+                    <input type="checkbox" [id]="'opp_ext_'+i" formControlName="opportunite"/>
+                    <label [for]="'opp_ext_'+i">Opportunité SMSI</label>
+                  </div>
+                </div>
+                <div class="field full">
+                  <label>Description et impact sur le SI</label>
+                  <textarea formControlName="description" rows="2"
+                    placeholder="Décrire l'enjeu et son impact sur la sécurité du SI..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enjeux internes -->
+          <div class="form-section">
+            <div class="section-header">
+              <div>
+                <div class="section-title">Enjeux internes</div>
+                <p class="section-desc">Valeurs, gouvernance, ressources, processus, culture organisationnelle.</p>
+              </div>
+              <button type="button" class="btn-add" (click)="addTo(enjeuxInternes, newEnjeuInterne())">+ Ajouter</button>
+            </div>
+            <div *ngIf="enjeuxInternes.length === 0" class="empty-array">Aucun enjeu interne</div>
+            <div formArrayName="enjeux_internes">
+              <div *ngFor="let e of enjeuxInternes.controls; let i = index" [formGroupName]="i" class="array-item">
+                <div class="item-header">
+                  <span class="item-num">{{ i + 1 }}</span>
+                  <button type="button" class="btn-remove" (click)="removeFrom(enjeuxInternes, i)">✕</button>
+                </div>
+                <div class="grid-3">
+                  <div class="field">
+                    <label>Catégorie</label>
+                    <select formControlName="categorie">
+                      <option value="organisationnel">Organisationnel</option>
+                      <option value="ressources_humaines">Ressources humaines</option>
+                      <option value="technologique">Technologique</option>
+                      <option value="financier">Financier</option>
+                      <option value="culture">Culture / Valeurs</option>
+                      <option value="gouvernance">Gouvernance</option>
+                      <option value="processus">Processus métier</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Impact</label>
+                    <select formControlName="impact">
+                      <option value="faible">Faible</option>
+                      <option value="moyen">Moyen</option>
+                      <option value="fort">Fort</option>
+                      <option value="critique">Critique</option>
+                    </select>
+                  </div>
+                  <div class="field-checkbox" style="margin-top: 22px;">
+                    <input type="checkbox" [id]="'opp_int_'+i" formControlName="opportunite"/>
+                    <label [for]="'opp_int_'+i">Opportunité SMSI</label>
+                  </div>
+                </div>
+                <div class="field full">
+                  <label>Description et impact sur le SI</label>
+                  <textarea formControlName="description" rows="2"
+                    placeholder="Décrire l'enjeu interne et son impact..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── 4.2 PARTIES INTÉRESSÉES ────────────────────────────────────── -->
+        <div *ngIf="activeClause4Section === 1">
+          <div class="form-section">
+            <div class="section-header">
+              <div>
+                <div class="section-title">Parties intéressées</div>
+                <p class="section-desc">
+                  Identifier et catégoriser les parties intéressées (internes/externes).
+                  Pour ISO 27701 : inclure les parties ayant des responsabilités liées aux DCP.
+                </p>
+              </div>
+              <button type="button" class="btn-add" (click)="addTo(partiesInteressees, newPartie())">+ Ajouter</button>
+            </div>
+            <div *ngIf="partiesInteressees.length === 0" class="empty-array">Aucune partie intéressée</div>
+            <div formArrayName="parties_interessees">
+              <div *ngFor="let p of partiesInteressees.controls; let i = index" [formGroupName]="i" class="array-item">
+                <div class="item-header">
+                  <span class="item-num">{{ i + 1 }}</span>
+                  <button type="button" class="btn-remove" (click)="removeFrom(partiesInteressees, i)">✕</button>
+                </div>
+                <div class="grid-2">
+                  <div class="field">
+                    <label>Nom / Entité</label>
+                    <input formControlName="nom" placeholder="Ex: CNIL, Clients, Direction, Fournisseurs..."/>
+                  </div>
+                  <div class="field">
+                    <label>Type</label>
+                    <select formControlName="type">
+                      <option value="interne">Interne</option>
+                      <option value="externe">Externe</option>
+                      <option value="regulateur">Régulateur / Autorité</option>
+                      <option value="partenaire">Partenaire</option>
+                      <option value="fournisseur">Fournisseur / Prestataire</option>
+                      <option value="personne_concernee">Personne concernée (DCP)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field full">
+                  <label>Exigences pertinentes pour le SMSI/PIMS</label>
+                  <textarea formControlName="exigences" rows="2"
+                    placeholder="Décrire les exigences de cette partie intéressée..."></textarea>
+                </div>
+                <div class="checkboxes-row">
+                  <label class="checkbox-item">
+                    <input type="checkbox" formControlName="traitee_smsi"/>
+                    Exigence traitée par le SMSI
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" formControlName="responsable_dcp"/>
+                    Responsable de traitement DCP (ISO 27701)
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" formControlName="sous_traitant_dcp"/>
+                    Sous-traitant DCP (ISO 27701)
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── 4.3 PÉRIMÈTRE SMSI ────────────────────────────────────────── -->
+        <div *ngIf="activeClause4Section === 2">
+          <div class="form-section">
+            <div class="section-title">Périmètre SMSI / PIMS</div>
+            <p class="section-desc">
+              Définir les limites et l'applicabilité du SMSI en tenant compte des enjeux 4.1 et 4.2.
+              Déterminer si l'organisation agit comme responsable de traitement, sous-traitant ou responsable conjoint.
+            </p>
+
+            <!-- Rôle DCP (ISO 27701) -->
+            <div class="form-section inner">
+              <div class="section-title sm">Rôle vis-à-vis des DCP (ISO 27701)</div>
+              <div class="radio-group">
+                <label class="radio-item"
+                  [class.selected]="clause4Form.get('responsable_traitement')?.value === 'responsable'">
+                  <input type="radio" formControlName="responsable_traitement" value="responsable"/>
+                  <div>
+                    <strong>Responsable de traitement</strong>
+                    <span>Détermine les finalités et moyens du traitement des DCP</span>
+                  </div>
+                </label>
+                <label class="radio-item"
+                  [class.selected]="clause4Form.get('responsable_traitement')?.value === 'sous_traitant'">
+                  <input type="radio" formControlName="responsable_traitement" value="sous_traitant"/>
+                  <div>
+                    <strong>Sous-traitant de DCP</strong>
+                    <span>Traite les DCP pour le compte d'un responsable de traitement</span>
+                  </div>
+                </label>
+                <label class="radio-item"
+                  [class.selected]="clause4Form.get('responsable_traitement')?.value === 'responsable_conjoint'">
+                  <input type="radio" formControlName="responsable_traitement" value="responsable_conjoint"/>
+                  <div>
+                    <strong>Responsable conjoint de traitement</strong>
+                    <span>Détermine conjointement avec un autre responsable les finalités</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="field required">
+              <label>Périmètre du SMSI (ISO 27001)</label>
+              <textarea formControlName="perimetre_smsi" rows="4"
+                placeholder="Décrire précisément le périmètre : activités, systèmes, sites, départements couverts par le SMSI..."></textarea>
+            </div>
+
+            <div class="field">
+              <label>Périmètre du PIMS (ISO 27701 — si applicable)</label>
+              <textarea formControlName="perimetre_pims" rows="3"
+                placeholder="Décrire le périmètre de protection des DCP : traitements, catégories de données, systèmes concernés..."></textarea>
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label>Sites / Entités concernés</label>
+                <input formControlName="sites_concernes"
+                  placeholder="Ex: Siège social Paris, Site production Lyon..."/>
+              </div>
+              <div class="field">
+                <label>Activités exclues du périmètre</label>
+                <input formControlName="activites_exclues"
+                  placeholder="Ex: Filiale X non incluse, activité Y externalisée..."/>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Justification des exclusions</label>
+              <textarea formControlName="justification_exclusions" rows="2"
+                placeholder="Justifier pourquoi ces activités/entités sont exclues du périmètre..."></textarea>
+            </div>
+
+            <div class="field">
+              <label>Interfaces et dépendances avec d'autres organismes</label>
+              <textarea formControlName="interfaces_dependances" rows="2"
+                placeholder="Décrire les interfaces avec prestataires, partenaires, systèmes externes..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── 4.4 RESSOURCES ET POLITIQUES ──────────────────────────────── -->
+        <div *ngIf="activeClause4Section === 3">
+
+          <!-- Engagements et politiques -->
+          <div class="form-section">
+            <div class="section-title">Engagements de la direction</div>
+            <div class="field required">
+              <label>Engagement de la direction envers le SMSI</label>
+              <textarea formControlName="engagement_direction" rows="4"
+                placeholder="Décrire l'engagement de la direction : soutien, ressources allouées, leadership..."></textarea>
+            </div>
+            <div class="field required">
+              <label>Politique de sécurité de l'information</label>
+              <textarea formControlName="politique_securite" rows="4"
+                placeholder="Rédiger ou résumer la politique de sécurité de l'information..."></textarea>
+            </div>
+            <div class="field">
+              <label>Politique de confidentialité des DCP (ISO 27701)</label>
+              <textarea formControlName="politique_confidentialite" rows="3"
+                placeholder="Politique de protection des données à caractère personnel..."></textarea>
+            </div>
+          </div>
+
+          <!-- Ressources humaines -->
+          <div class="form-section">
+            <div class="section-header">
+              <div class="section-title">Ressources humaines</div>
+              <button type="button" class="btn-add" (click)="addTo(ressourcesHumaines, newRessourceHumaine())">+ Ajouter</button>
+            </div>
+            <div *ngIf="ressourcesHumaines.length === 0" class="empty-array">Aucune ressource humaine définie</div>
+            <div formArrayName="ressources_humaines">
+              <div *ngFor="let r of ressourcesHumaines.controls; let i = index" [formGroupName]="i" class="array-item-sm">
+                <div class="grid-3">
+                  <div class="field"><label>Nom / Fonction</label><input formControlName="nom" placeholder="Ex: RSSI, DPO, Équipe IT..."/></div>
+                  <div class="field"><label>Rôle SMSI</label><input formControlName="role" placeholder="Ex: Responsable sécurité..."/></div>
+                  <div class="field"><label>Compétences requises</label><input formControlName="competences" placeholder="Ex: ISO 27001, pentest..."/></div>
+                </div>
+                <button type="button" class="btn-remove-inline" (click)="removeFrom(ressourcesHumaines, i)">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ressources logicielles -->
+          <div class="form-section">
+            <div class="section-header">
+              <div class="section-title">Outils et logiciels de sécurité</div>
+              <button type="button" class="btn-add" (click)="addTo(ressourcesLogicielles, newRessourceLogicielle())">+ Ajouter</button>
+            </div>
+            <div *ngIf="ressourcesLogicielles.length === 0" class="empty-array">Aucun outil défini</div>
+            <div formArrayName="ressources_logicielles">
+              <div *ngFor="let r of ressourcesLogicielles.controls; let i = index" [formGroupName]="i" class="array-item-sm">
+                <div class="grid-3">
+                  <div class="field"><label>Nom</label><input formControlName="nom" placeholder="Ex: Antivirus, SIEM, Firewall..."/></div>
+                  <div class="field"><label>Version</label><input formControlName="version" placeholder="Ex: v2024.1"/></div>
+                  <div class="field"><label>Usage</label><input formControlName="usage" placeholder="Ex: Détection intrusions..."/></div>
+                </div>
+                <button type="button" class="btn-remove-inline" (click)="removeFrom(ressourcesLogicielles, i)">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ressources matérielles -->
+          <div class="form-section">
+            <div class="section-header">
+              <div class="section-title">Ressources matérielles</div>
+              <button type="button" class="btn-add" (click)="addTo(ressourcesMaterielles, newRessourceMaterielle())">+ Ajouter</button>
+            </div>
+            <div *ngIf="ressourcesMaterielles.length === 0" class="empty-array">Aucune ressource matérielle définie</div>
+            <div formArrayName="ressources_materielles">
+              <div *ngFor="let r of ressourcesMaterielles.controls; let i = index" [formGroupName]="i" class="array-item-sm">
+                <div class="grid-3">
+                  <div class="field"><label>Nom</label><input formControlName="nom" placeholder="Ex: Serveur HSM, Badge NFC..."/></div>
+                  <div class="field"><label>Type</label><input formControlName="type" placeholder="Ex: Cryptographique, Contrôle accès..."/></div>
+                  <div class="field"><label>Localisation</label><input formControlName="localisation" placeholder="Ex: Salle serveurs..."/></div>
+                </div>
+                <button type="button" class="btn-remove-inline" (click)="removeFrom(ressourcesMaterielles, i)">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Procédures -->
+          <div class="form-section">
+            <div class="section-header">
+              <div class="section-title">Politiques et procédures</div>
+              <button type="button" class="btn-add" (click)="addTo(procedures, newProcedure())">+ Ajouter</button>
+            </div>
+            <div *ngIf="procedures.length === 0" class="empty-array">Aucune procédure définie</div>
+            <div formArrayName="procedures">
+              <div *ngFor="let p of procedures.controls; let i = index" [formGroupName]="i" class="array-item-sm">
+                <div class="grid-3">
+                  <div class="field"><label>Titre</label><input formControlName="titre" placeholder="Ex: PSI, PCA, Charte SI..."/></div>
+                  <div class="field"><label>Référence</label><input formControlName="reference" placeholder="Ex: POL-SEC-001"/></div>
+                  <div class="field"><label>Description</label><input formControlName="description" placeholder="Objet de la procédure..."/></div>
+                </div>
+                <button type="button" class="btn-remove-inline" (click)="removeFrom(procedures, i)">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Objectifs SMSI -->
+          <div class="form-section">
+            <div class="section-header">
+              <div class="section-title">Objectifs de sécurité</div>
+              <button type="button" class="btn-add" (click)="addTo(objectifsSmsi, newObjectif())">+ Ajouter</button>
+            </div>
+            <div *ngIf="objectifsSmsi.length === 0" class="empty-array">Aucun objectif défini</div>
+            <div formArrayName="objectifs_smsi">
+              <div *ngFor="let o of objectifsSmsi.controls; let i = index" [formGroupName]="i" class="array-item-sm">
+                <div class="grid-4">
+                  <div class="field"><label>Objectif</label><input formControlName="objectif" placeholder="Ex: Réduire les incidents..."/></div>
+                  <div class="field"><label>Indicateur</label><input formControlName="indicateur" placeholder="Ex: Nb incidents/mois"/></div>
+                  <div class="field"><label>Cible</label><input formControlName="cible" placeholder="Ex: < 5 / mois"/></div>
+                  <div class="field"><label>Responsable</label><input formControlName="responsable" placeholder="Ex: RSSI"/></div>
+                </div>
+                <button type="button" class="btn-remove-inline" (click)="removeFrom(objectifsSmsi, i)">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date et version -->
+          <div class="form-section">
+            <div class="grid-2">
+              <div class="field">
+                <label>Date de révision prévue</label>
+                <input type="date" formControlName="date_revue"/>
+              </div>
+              <div class="field">
+                <label>Version du SMSI</label>
+                <input formControlName="version" placeholder="v1.0"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer clause 4 -->
+        <div class="form-footer">
+          <button type="button" class="btn-save" (click)="saveClause4()" [disabled]="savingClause4">
+            <span *ngIf="!savingClause4">Sauvegarder la Clause 4</span>
+            <span *ngIf="savingClause4">Sauvegarde...</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       ONGLET 3 : VALIDATION FICHES
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'fiches'" class="tab-content">
+    <div class="fiches-layout">
+
+      <!-- Liste fiches -->
+      <div class="fiches-sidebar">
+
+        <!-- Fiches processus -->
+        <div class="sidebar-group">
+          <div class="sidebar-title">
+            📋 Fiches processus
+            <span class="count-badge">{{ fichesEnAttente.length }}</span>
+          </div>
+          <div *ngIf="fichesEnAttente.length === 0" class="empty-list-sm">Aucune fiche en attente</div>
+          <div *ngFor="let f of fichesEnAttente"
+            class="fiche-item" [class.selected]="selectedFiche?.id === f.id && ficheType === 'processus'"
+            (click)="selectFicheProcessus(f)">
+            <div class="fiche-item-top">
+              <span class="fiche-type" [class.iso27701]="f.audit_type === 'iso27701'">
+                {{ f.audit_type === 'iso27701' ? 'ISO 27701' : 'ISO 27001' }}
+              </span>
+              <span class="{{ getStatutClass(f.statut) }}">{{ getStatutLabel(f.statut) }}</span>
+            </div>
+            <div class="fiche-item-title">{{ f.intitule }}</div>
+            <div class="fiche-item-meta">{{ f.pilote_nom || '—' }}</div>
+          </div>
+        </div>
+
+        <!-- Fiches techniques -->
+        <div class="sidebar-group">
+          <div class="sidebar-title">
+            🔧 Fiches techniques
+            <span class="count-badge">{{ fichesTechEnAttente.length }}</span>
+          </div>
+          <div *ngIf="fichesTechEnAttente.length === 0" class="empty-list-sm">Aucune fiche en attente</div>
+          <div *ngFor="let f of fichesTechEnAttente"
+            class="fiche-item" [class.selected]="selectedFiche?.id === f.id && ficheType === 'technique'"
+            (click)="selectFicheTechnique(f)">
+            <div class="fiche-item-top">
+              <span class="fiche-type tech">🔧 Technique</span>
+              <span class="{{ getStatutClass(f.statut) }}">{{ getStatutLabel(f.statut) }}</span>
+            </div>
+            <div class="fiche-item-title">{{ f.intitule }}</div>
+            <div class="fiche-item-meta">{{ f.acteur_nom || '—' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Détail fiche -->
+      <div class="fiche-detail" *ngIf="selectedFiche; else noSelection">
+
+        <!-- Header -->
+        <div class="detail-header">
+          <div class="detail-title-row">
+            <div>
+              <h2>{{ selectedFiche.intitule }}</h2>
+              <p *ngIf="ficheType === 'processus'">
+                Pilote : {{ selectedFiche.pilote_nom }} · {{ selectedFiche.audit_type }} · {{ selectedFiche.version }}
+              </p>
+              <p *ngIf="ficheType === 'technique'">
+                Acteur : {{ selectedFiche.acteur_nom }} · {{ selectedFiche.acteur_role }}
+              </p>
+            </div>
+            <span class="{{ getStatutClass(selectedFiche.statut) }}">{{ getStatutLabel(selectedFiche.statut) }}</span>
+          </div>
+
+          <!-- Navigation sections fiche processus -->
+          <div class="sections-nav" *ngIf="ficheType === 'processus'">
+            <button *ngFor="let sec of fichesSections; let i = index"
+              class="sec-btn" [class.active]="activeSection === i"
+              [hidden]="sec === 'DPO' && selectedFiche.audit_type !== 'iso27701'"
+              (click)="activeSection = i">
+              {{ sec }}
+            </button>
+          </div>
+
+          <!-- Navigation sections fiche technique -->
+          <div class="sections-nav" *ngIf="ficheType === 'technique'">
+            <button class="sec-btn" [class.active]="activeSection === 0" (click)="activeSection = 0">Identification</button>
+            <button class="sec-btn" [class.active]="activeSection === 1" (click)="activeSection = 1">Serveurs</button>
+            <button class="sec-btn" [class.active]="activeSection === 2" (click)="activeSection = 2">Postes & Réseau</button>
+            <button class="sec-btn" [class.active]="activeSection === 3" (click)="activeSection = 3">Applications & BDD</button>
+            <button class="sec-btn" [class.active]="activeSection === 4" (click)="activeSection = 4">Données & Services</button>
+            <button class="sec-btn" [class.active]="activeSection === 5" (click)="activeSection = 5">Sécurité</button>
+          </div>
+        </div>
+
+        <!-- Contenu fiche processus -->
+        <div class="section-content" *ngIf="ficheType === 'processus'">
+
+          <div *ngIf="activeSection === 0" class="info-grid">
+            <div class="info-item"><label>Code</label><span>{{ selectedFiche.code || '—' }}</span></div>
+            <div class="info-item"><label>Type</label><span>{{ selectedFiche.type_processus || '—' }}</span></div>
+            <div class="info-item"><label>Domaine</label><span>{{ selectedFiche.domaine || '—' }}</span></div>
+            <div class="info-item"><label>Version</label><span>{{ selectedFiche.version }}</span></div>
+            <div class="info-item"><label>Pilote</label><span>{{ selectedFiche.pilote_nom || '—' }}</span></div>
+            <div class="info-item"><label>Audit</label><span>{{ selectedFiche.audit_type }}</span></div>
+            <div class="info-full"><label>Activités</label><p>{{ selectedFiche.activites || '—' }}</p></div>
+          </div>
+
+          <div *ngIf="activeSection === 1">
+            <div class="info-full"><label>Finalité</label><p>{{ selectedFiche.finalite || '—' }}</p></div>
+            <div class="info-full"><label>Bénéficiaires</label>
+              <div *ngFor="let b of parseJson(selectedFiche.beneficiaires)" class="list-item">
+                <span class="tag">{{ b.type }}</span> {{ b.nom }} — {{ b.attentes }}
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 2">
+            <div *ngFor="let d of parseJson(selectedFiche.declencheurs)" class="list-item">
+              <span class="tag">{{ d.type }}</span> {{ d.description }}
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 3">
+            <div class="sub-group"><label>Éléments d'entrée</label>
+              <div *ngFor="let e of parseJson(selectedFiche.elements_entree)" class="list-item">{{ e.description }} <span class="tag">{{ e.format }}</span></div>
+            </div>
+            <div class="sub-group"><label>Sorties intentionnelles</label>
+              <div *ngFor="let e of parseJson(selectedFiche.elements_sortie_intentionnels)" class="list-item">{{ e.description }}</div>
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 4">
+            <div *ngFor="let d of parseJson(selectedFiche.informations_documentees)" class="list-item">
+              <span class="tag">{{ d.type }}</span> <strong>{{ d.titre }}</strong> — {{ d.reference }}
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 5">
+            <div class="info-full"><label>Contraintes réglementaires</label>
+              <div *ngFor="let c of parseJson(selectedFiche.contraintes_reglementaires)" class="list-item">
+                <span class="tag">{{ c.impact }}</span> {{ c.description }}
+              </div>
+            </div>
+            <div class="info-full"><label>Contraintes internes</label><p>{{ selectedFiche.contraintes_internes || '—' }}</p></div>
+          </div>
+
+          <div *ngIf="activeSection === 6">
+            <div class="sub-group"><label>Acteurs</label>
+              <div *ngFor="let a of parseJson(selectedFiche.acteurs)" class="list-item">
+                <span class="tag">{{ a.role }}</span> {{ a.responsabilite }}
+              </div>
+            </div>
+            <div class="sub-group"><label>Ressources</label>
+              <div *ngFor="let r of parseJson(selectedFiche.ressources)" class="list-item">
+                <span class="tag">{{ r.type }}</span> {{ r.nom }}
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 7">
+            <div *ngFor="let k of parseJson(selectedFiche.objectifs_kpi)" class="kpi-item">
+              <div class="kpi-title">{{ k.intitule }}</div>
+              <div class="kpi-meta">Mesure : {{ k.mesure }} · Cible : {{ k.cible }} · {{ k.frequence }}</div>
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 8">
+            <div class="sub-group"><label>Surveillance</label>
+              <div *ngFor="let m of parseJson(selectedFiche.moyens_surveillance)" class="list-item">{{ m.moyen }} — {{ m.frequence }}</div>
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 9">
+            <div *ngFor="let i of parseJson(selectedFiche.interactions)" class="list-item">
+              <span class="tag">{{ i.type }}</span> {{ i.processus }} — {{ i.description }}
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 10">
+            <div class="risque-summary">
+              <div class="risque-stat"><label>Note max</label><span>{{ selectedFiche.note_max || '—' }}</span></div>
+              <div class="risque-stat"><label>Risque dominant</label><span>{{ selectedFiche.risque_dominant || '—' }}</span></div>
+            </div>
+            <div *ngFor="let r of parseJson(selectedFiche.risques)" class="risque-item">
+              <div class="risque-header">{{ r.description }} <span class="risque-note">Note : {{ r.note }}</span></div>
+              <div class="risque-meta">P={{ r.probabilite }} × I={{ r.impact }} · {{ r.traitement }}</div>
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 11">
+            <div *ngFor="let o of parseJson(selectedFiche.opportunites)" class="list-item">
+              {{ o.description }} — {{ o.benefice }}
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 12 && selectedFiche.audit_type === 'iso27701'">
+            <div class="info-grid" *ngIf="selectedFiche.data_dpo">
+              <div class="info-item"><label>Base légale</label><span>{{ selectedFiche.data_dpo?.base_legale || '—' }}</span></div>
+              <div class="info-item"><label>Nombre personnes</label><span>{{ selectedFiche.data_dpo?.nombre_personnes || '—' }}</span></div>
+              <div class="info-item"><label>PIA réalisé</label><span>{{ selectedFiche.data_dpo?.pia_realise ? 'Oui' : 'Non' }}</span></div>
+              <div class="info-item"><label>Transfert hors EU</label><span>{{ selectedFiche.data_dpo?.transfert_hors_eu ? 'Oui' : 'Non' }}</span></div>
+              <div class="info-full"><label>Responsable traitement</label><p>{{ selectedFiche.data_dpo?.responsable_nom || '—' }}</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenu fiche technique -->
+        <div class="section-content" *ngIf="ficheType === 'technique'">
+
+          <div *ngIf="activeSection === 0">
+            <div class="info-full"><label>Périmètre</label><p>{{ selectedFiche.perimetre || '—' }}</p></div>
+            <div class="info-full"><label>Acteur</label><p>{{ selectedFiche.acteur_nom }} ({{ selectedFiche.acteur_role }})</p></div>
+          </div>
+
+          <div *ngIf="activeSection === 1">
+            <div *ngFor="let s of parseJson(selectedFiche.actifs_serveurs)" class="actif-detail-item">
+              <div class="actif-detail-header"><strong>{{ s.nom }}</strong> <span class="tag">{{ s.type }}</span></div>
+              <div class="actif-detail-meta">OS : {{ s.os }} {{ s.version }} · Localisation : {{ s.localisation }}</div>
+              <div class="cia-mini">C:{{ s.confidentialite }} I:{{ s.integrite }} D:{{ s.disponibilite }}</div>
+            </div>
+            <div *ngIf="parseJson(selectedFiche.actifs_serveurs).length === 0" class="empty-section">Aucun serveur déclaré</div>
+          </div>
+
+          <div *ngIf="activeSection === 2">
+            <div class="sub-group"><label>Postes de travail</label>
+              <div *ngFor="let p of parseJson(selectedFiche.actifs_postes)" class="actif-detail-item">
+                <div class="actif-detail-header"><strong>{{ p.nom }}</strong> <span class="tag">{{ p.type }}</span></div>
+                <div class="actif-detail-meta">Nb : {{ p.nb }} · OS : {{ p.os }} · {{ p.localisation }}</div>
+              </div>
+            </div>
+            <div class="sub-group"><label>Équipements réseau</label>
+              <div *ngFor="let r of parseJson(selectedFiche.actifs_reseau)" class="actif-detail-item">
+                <div class="actif-detail-header"><strong>{{ r.nom }}</strong> <span class="tag">{{ r.type }}</span></div>
+                <div class="actif-detail-meta">{{ r.marque }} {{ r.modele }} · {{ r.localisation }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 3">
+            <div class="sub-group"><label>Applications</label>
+              <div *ngFor="let a of parseJson(selectedFiche.actifs_applications)" class="actif-detail-item">
+                <div class="actif-detail-header"><strong>{{ a.nom }}</strong> <span class="tag">{{ a.editeur }}</span></div>
+                <div class="actif-detail-meta">v{{ a.version }} · {{ a.usage }}</div>
+              </div>
+            </div>
+            <div class="sub-group"><label>Bases de données</label>
+              <div *ngFor="let b of parseJson(selectedFiche.actifs_bdd)" class="actif-detail-item">
+                <div class="actif-detail-header"><strong>{{ b.nom }}</strong> <span class="tag">{{ b.type }}</span></div>
+                <div class="actif-detail-meta">{{ b.version }} · Serveur : {{ b.serveur }}</div>
+              </div>
+            </div>
+            <div class="sub-group"><label>Licences</label>
+              <div *ngFor="let l of parseJson(selectedFiche.actifs_licences)" class="actif-detail-item">
+                <div class="actif-detail-header"><strong>{{ l.nom }}</strong> <span class="tag">{{ l.editeur }}</span></div>
+                <div class="actif-detail-meta">{{ l.nb_licences }} licences · Exp : {{ l.expiration || 'N/A' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 4">
+            <div class="sub-group"><label>Cloud et SaaS</label>
+              <div *ngFor="let c of parseJson(selectedFiche.actifs_cloud)" class="actif-detail-item">
+                <div class="actif-detail-header"><strong>{{ c.nom }}</strong> <span class="tag">{{ c.type }}</span></div>
+                <div class="actif-detail-meta">{{ c.fournisseur }} · {{ c.region }}</div>
+              </div>
+            </div>
+            <div class="sub-group"><label>Sauvegardes</label>
+              <div *ngFor="let s of parseJson(selectedFiche.actifs_sauvegardes)" class="actif-detail-item">
+                <div class="actif-detail-header"><strong>{{ s.nom }}</strong> <span class="tag">{{ s.type }}</span></div>
+                <div class="actif-detail-meta">{{ s.frequence }} · Rétention : {{ s.retention }}</div>
+              </div>
+            </div>
+            <div class="sub-group"><label>Accès distants</label>
+              <div *ngFor="let a of parseJson(selectedFiche.actifs_acces)" class="actif-detail-item">
+                <div class="actif-detail-header"><strong>{{ a.nom }}</strong> <span class="tag">{{ a.type }}</span></div>
+                <div class="actif-detail-meta">Utilisateurs : {{ a.utilisateurs }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="activeSection === 5">
+            <div class="mesures-view" *ngIf="selectedFiche.mesures_securite">
+              <div class="mesure-chip" *ngIf="selectedFiche.mesures_securite?.antivirus">🛡️ Antivirus / EDR</div>
+              <div class="mesure-chip" *ngIf="selectedFiche.mesures_securite?.firewall">🔥 Firewall</div>
+              <div class="mesure-chip" *ngIf="selectedFiche.mesures_securite?.chiffrement">🔐 Chiffrement</div>
+              <div class="mesure-chip" *ngIf="selectedFiche.mesures_securite?.mfa">📱 MFA</div>
+              <div class="mesure-chip" *ngIf="selectedFiche.mesures_securite?.patch_management">🔧 Patch Management</div>
+              <div class="mesure-chip" *ngIf="selectedFiche.mesures_securite?.backup_chiffre">💾 Backup chiffré</div>
+              <div class="mesure-chip" *ngIf="selectedFiche.mesures_securite?.ids_ips">👁️ IDS/IPS</div>
+              <div class="mesure-chip" *ngIf="selectedFiche.mesures_securite?.siem">📊 SIEM</div>
+              <div class="mesure-chip" *ngIf="selectedFiche.mesures_securite?.dlp">🚫 DLP</div>
+            </div>
+            <div class="info-full" *ngIf="selectedFiche.mesures_securite?.autres">
+              <label>Autres mesures</label>
+              <p>{{ selectedFiche.mesures_securite.autres }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rejet form -->
+        <div class="reject-form" *ngIf="showRejectForm">
+          <label>Motif du rejet <span class="required">*</span></label>
+          <textarea [(ngModel)]="commentaireRejet" rows="3"
+            placeholder="Expliquer les raisons du rejet et les corrections attendues..."></textarea>
+          <div class="reject-actions">
+            <button class="btn-cancel" (click)="showRejectForm = false">Annuler</button>
+            <button class="btn-confirm-reject"
+              [disabled]="!commentaireRejet.trim() || submittingDecision"
+              (click)="rejeterFiche()">
+              Confirmer le rejet
+            </button>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="validation-footer" *ngIf="canValidate()">
+          <button class="btn-reject" (click)="showRejectForm = !showRejectForm" [disabled]="submittingDecision">
+            Rejeter
+          </button>
+          <button class="btn-validate" (click)="validerFiche()" [disabled]="submittingDecision">
+            <span *ngIf="!submittingDecision">✓ Valider la fiche</span>
+            <span *ngIf="submittingDecision">Traitement...</span>
+          </button>
+        </div>
+
+        <div class="validated-footer" *ngIf="selectedFiche.statut === 'valide'">
+          <span>✓ Fiche validée</span>
+        </div>
+
+        <div class="rejet-existant" *ngIf="selectedFiche.statut === 'rejete' && selectedFiche.commentaire_rejet">
+          <strong>Motif du rejet :</strong> {{ selectedFiche.commentaire_rejet }}
+        </div>
+      </div>
+
+      <ng-template #noSelection>
+        <div class="no-selection">
+          <p>Sélectionner une fiche pour la consulter et la valider</p>
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+</div>
