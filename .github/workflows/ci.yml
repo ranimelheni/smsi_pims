@@ -53,4 +53,4 @@ jobs:
 
     # ───────── SECURITY CHECK (BONUS 🔥) ─────────
     - name: Security audit
-    run: npm audit || true
+      run: npm audit || true
