@@ -305,3 +305,4 @@ java.lang.NullPointerException
 2026-04-04T16:38:15.755+01:00  INFO 4140 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 7.152 seconds (process running for 7.7)
 2026-04-04T17:09:59.899+01:00  WARN 4140 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=10m47s577ms627µs100ns).
 2026-04-04T21:13:24.212+01:00  WARN 4140 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=2h52m23s184ms781µs300ns).
+2026-04-04T21:38:34.255+01:00  WARN 4140 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=2m39s665ms162µs800ns).
