@@ -54,6 +54,12 @@ export const routes: Routes = [
   path: 'rssi',
   loadComponent: () =>
     import('./components/rssi/rssi.component').then(m => m.RssiComponent)
+},
+{
+  path: 'direction',
+  loadComponent: () =>
+    import('./components/direction/direction.component')
+      .then(m => m.DirectionComponent)
 }
     ]
   },

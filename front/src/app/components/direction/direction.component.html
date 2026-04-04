@@ -1,0 +1,549 @@
+<div class="direction-page">
+
+  <div class="page-header">
+    <div class="header-left">
+      <div class="dir-badge">Direction</div>
+      <div>
+        <h1 class="page-title">Interface Direction — Clause 5</h1>
+        <p class="page-sub">{{ currentUser?.prenom }} {{ currentUser?.nom }}</p>
+      </div>
+    </div>
+    <div class="statut-global" *ngIf="clause5">
+      <span [class]="toutValide ? 'badge-green' : 'badge-amber'">
+        {{ toutValide ? '✓ Clause 4 validée' : '⏳ Validation en cours' }}
+      </span>
+    </div>
+  </div>
+
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error"   *ngIf="error">{{ error }}</div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab" [class.active]="activeTab === 'validation'"      (click)="activeTab = 'validation'">      📋 Validation Clause 4</button>
+    <button class="tab" [class.active]="activeTab === 'organigramme'"    (click)="activeTab = 'organigramme'">    🏢 Organigramme</button>
+    <button class="tab" [class.active]="activeTab === 'politique'"       (click)="activeTab = 'politique'">       🔐 Politique de sécurité</button>
+    <button class="tab" [class.active]="activeTab === 'roles'"           (click)="activeTab = 'roles'">           👥 Rôles & Ressources</button>
+    <button class="tab" [class.active]="activeTab === 'sensibilisation'" (click)="activeTab = 'sensibilisation'"> 📚 Sensibilisation</button>
+    <button class="tab" [class.active]="activeTab === 'indicateurs'"     (click)="activeTab = 'indicateurs'">     📊 Indicateurs SMSI</button>
+  </div>
+
+  <!-- ══ VALIDATION CLAUSE 4 ══ -->
+  <div *ngIf="activeTab === 'validation'" class="tab-content">
+    <div class="validation-intro">
+      <p>Examinez les travaux réalisés par le RSSI dans la Clause 4 et validez chaque section.</p>
+    </div>
+
+    <div *ngFor="let sec of sections41" class="validation-card">
+      <div class="val-card-header">
+        <div>
+          <div class="val-section-title">{{ sec.label }}</div>
+          <div class="val-section-desc">{{ sec.desc }}</div>
+        </div>
+        <span [class]="getValidationClass(clause5?.['validation_' + sec.key] || 'en_attente')">
+          {{ getValidationLabel(clause5?.['validation_' + sec.key] || 'en_attente') }}
+        </span>
+      </div>
+
+      <!-- Contenu clause 4 (lecture seule) -->
+      <div class="clause4-preview" *ngIf="clause4">
+        <ng-container *ngIf="sec.key === 'enjeux_externes' && clause4.enjeux_externes?.length > 0">
+          <div *ngFor="let e of clause4.enjeux_externes" class="preview-item">
+            <span class="tag impact-{{ e.impact }}">{{ e.categorie }}</span>
+            {{ e.description }}
+            <span class="tag-sm" *ngIf="e.opportunite">Opportunité</span>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="sec.key === 'enjeux_internes' && clause4.enjeux_internes?.length > 0">
+          <div *ngFor="let e of clause4.enjeux_internes" class="preview-item">
+            <span class="tag impact-{{ e.impact }}">{{ e.categorie }}</span>
+            {{ e.description }}
+          </div>
+        </ng-container>
+        <ng-container *ngIf="sec.key === 'parties' && clause4.parties_interessees?.length > 0">
+          <div *ngFor="let p of clause4.parties_interessees" class="preview-item">
+            <span class="tag">{{ p.type }}</span>
+            <strong>{{ p.nom }}</strong> — {{ p.exigences }}
+          </div>
+        </ng-container>
+        <ng-container *ngIf="sec.key === 'perimetre'">
+          <div class="preview-text" *ngIf="clause4.perimetre_smsi">
+            <strong>SMSI :</strong> {{ clause4.perimetre_smsi | slice:0:200 }}...
+          </div>
+          <div class="preview-text" *ngIf="clause4.perimetre_pims">
+            <strong>PIMS :</strong> {{ clause4.perimetre_pims | slice:0:200 }}...
+          </div>
+        </ng-container>
+        <ng-container *ngIf="sec.key === 'ressources'">
+          <div class="preview-text" *ngIf="clause4.engagement_direction">
+            <strong>Engagement :</strong> {{ clause4.engagement_direction | slice:0:200 }}...
+          </div>
+          <div class="preview-text" *ngIf="clause4.politique_securite">
+            <strong>Politique :</strong> {{ clause4.politique_securite | slice:0:200 }}...
+          </div>
+        </ng-container>
+        <div class="preview-empty" *ngIf="!clause4[sec.key === 'enjeux_externes' ? 'enjeux_externes' : '']?.length && sec.key !== 'perimetre' && sec.key !== 'ressources'">
+          Section non encore remplie par le RSSI
+        </div>
+      </div>
+
+      <!-- Formulaire de validation -->
+      <div class="val-form">
+        <ng-container *ngIf="clause5 as c5">
+          <div class="val-decision-row">
+            <div class="field">
+              <label>Décision</label>
+              <div class="decision-btns">
+                <button type="button" class="dec-btn approve"
+                  [class.active]="c5['validation_' + sec.key] === 'approuve'"
+                  (click)="submitValidation(sec.key, 'approuve', c5['commentaire_' + sec.key] || '')">
+                  ✓ Approuver
+                </button>
+                <button type="button" class="dec-btn reject"
+                  [class.active]="c5['validation_' + sec.key] === 'rejete'"
+                  (click)="submitValidation(sec.key, 'rejete', c5['commentaire_' + sec.key] || '')">
+                  ✗ Rejeter
+                </button>
+              </div>
+            </div>
+            <div class="field" style="flex:1">
+              <label>Commentaire (optionnel)</label>
+              <input [(ngModel)]="c5['commentaire_' + sec.key]"
+                placeholder="Ajouter un commentaire ou des corrections demandées..."/>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ORGANIGRAMME ══ -->
+  <div *ngIf="activeTab === 'organigramme'" class="tab-content">
+    <div class="two-cols-layout">
+
+      <!-- Upload -->
+      <div class="panel">
+        <h2 class="panel-title">Déposer l'organigramme</h2>
+        <p class="panel-desc">Formats acceptés : PDF ou image (PNG, JPG). Taille max : 10 Mo.</p>
+
+        <div class="upload-zone"
+          [class.has-file]="selectedFile"
+          (click)="fileInput.click()"
+          (dragover)="$event.preventDefault()"
+          (drop)="$event.preventDefault(); onFileSelect($event)">
+          <input #fileInput type="file" accept=".pdf,image/*"
+            (change)="onFileSelect($event)" style="display:none"/>
+
+          <div *ngIf="!selectedFile" class="upload-placeholder">
+            <div class="upload-icon">📄</div>
+            <p>Cliquer ou glisser-déposer un fichier</p>
+            <span>PDF, PNG, JPG — max 10 Mo</span>
+          </div>
+
+          <div *ngIf="selectedFile" class="upload-preview">
+            <img *ngIf="previewUrl" [src]="previewUrl" alt="Preview" class="img-preview"/>
+            <div *ngIf="!previewUrl" class="pdf-preview">
+              <span>📄</span>
+              <span>{{ selectedFile.name }}</span>
+              <span>{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} Mo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="upload-progress-bar" *ngIf="uploading">
+          <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+        </div>
+
+        <div class="panel-footer">
+          <button class="btn-secondary" *ngIf="selectedFile" (click)="selectedFile = null; previewUrl = null">
+            Annuler
+          </button>
+          <button class="btn-primary" (click)="uploadOrganigramme()"
+            [disabled]="!selectedFile || uploading">
+            <span *ngIf="!uploading">⬆️ Uploader</span>
+            <span *ngIf="uploading">Upload {{ uploadProgress }}%...</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Organigramme actuel -->
+      <div class="panel">
+        <h2 class="panel-title">Organigramme actuel</h2>
+        <div *ngIf="!organigramme" class="empty-panel">
+          Aucun organigramme déposé
+        </div>
+        <div *ngIf="organigramme" class="orga-current">
+          <div class="orga-info">
+            <span class="orga-icon">{{ organigramme.type === 'pdf' ? '📄' : '🖼️' }}</span>
+            <div>
+              <div class="orga-nom">{{ organigramme.nom_fichier }}</div>
+              <div class="orga-meta">
+                Uploadé par {{ organigramme.uploaded_by }} ·
+                {{ organigramme.uploaded_at | slice:0:10 }} ·
+                {{ (organigramme.taille / 1024).toFixed(0) }} Ko
+              </div>
+            </div>
+          </div>
+          <button class="btn-download" (click)="downloadOrganigramme()">
+            ⬇️ Télécharger
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ POLITIQUE DE SÉCURITÉ ══ -->
+  <div *ngIf="activeTab === 'politique'" class="tab-content">
+    <form [formGroup]="politiqueForm">
+
+      <div class="panel">
+        <h2 class="panel-title">Politique de sécurité de l'information</h2>
+        <p class="panel-desc">Créer, stocker et diffuser la politique de sécurité. Lier les objectifs sécurité aux objectifs métier.</p>
+
+        <div class="field required">
+          <label>Contenu de la politique de sécurité</label>
+          <textarea formControlName="politique_securite_contenu" rows="8"
+            placeholder="Rédiger ici la politique de sécurité de l'information de l'organisme..."></textarea>
+          <span class="err" *ngIf="politiqueForm.get('politique_securite_contenu')?.invalid && politiqueForm.get('politique_securite_contenu')?.touched">
+            Requis
+          </span>
+        </div>
+      </div>
+
+      <!-- Diffusion -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Plan de diffusion</h2>
+            <p class="panel-desc">Définir comment la politique est communiquée.</p>
+          </div>
+          <button type="button" class="btn-add" (click)="addTo(politiqueDiffusion, newDiffusion())">+ Ajouter</button>
+        </div>
+        <div *ngIf="politiqueDiffusion.length === 0" class="empty-array">Aucun canal de diffusion défini</div>
+        <div formArrayName="politique_diffusion">
+          <div *ngFor="let d of politiqueDiffusion.controls; let i = index" [formGroupName]="i" class="array-item">
+            <div class="grid-3">
+              <div class="field required"><label>Canal</label><input formControlName="canal" placeholder="Ex: Email, Intranet, Réunion..."/></div>
+              <div class="field"><label>Date</label><input type="date" formControlName="date"/></div>
+              <div class="field"><label>Destinataires</label><input formControlName="destinataires" placeholder="Ex: Tous les employés..."/></div>
+            </div>
+            <button type="button" class="btn-remove-inline" (click)="removeFrom(politiqueDiffusion, i)">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Objectifs sécurité ↔ métier -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Lien objectifs sécurité ↔ objectifs métier</h2>
+            <p class="panel-desc">Rattacher les objectifs de sécurité aux objectifs stratégiques de l'organisme.</p>
+          </div>
+          <button type="button" class="btn-add" (click)="addTo(objectifsSecuriteMetier, newObjectifLien())">+ Ajouter</button>
+        </div>
+        <div *ngIf="objectifsSecuriteMetier.length === 0" class="empty-array">Aucun lien défini</div>
+        <div formArrayName="objectifs_securite_metier">
+          <div *ngFor="let o of objectifsSecuriteMetier.controls; let i = index" [formGroupName]="i" class="array-item">
+            <div class="grid-2">
+              <div class="field required"><label>Objectif de sécurité</label><input formControlName="objectif_securite" placeholder="Ex: Disponibilité 99.9% du SI..."/></div>
+              <div class="field required"><label>Objectif métier lié</label><input formControlName="objectif_metier" placeholder="Ex: Continuité des ventes en ligne..."/></div>
+            </div>
+            <div class="field full"><label>Description du lien</label><input formControlName="lien_description" placeholder="Expliquer comment ces objectifs sont liés..."/></div>
+            <button type="button" class="btn-remove-inline" (click)="removeFrom(objectifsSecuriteMetier, i)">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button type="button" class="btn-save" (click)="savePolitique()" [disabled]="savingPolitique">
+          <span *ngIf="!savingPolitique">Sauvegarder</span>
+          <span *ngIf="savingPolitique">...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ══ RÔLES & RESSOURCES ══ -->
+  <div *ngIf="activeTab === 'roles'" class="tab-content">
+    <form [formGroup]="rolesForm">
+
+      <!-- Exigences processus -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Exigences sécurité rattachées aux processus métier</h2>
+            <p class="panel-desc">Définir les exigences de sécurité pour chaque processus.</p>
+          </div>
+          <button type="button" class="btn-add" (click)="addTo(exigencesProcessus, newExigence())">+ Ajouter</button>
+        </div>
+        <div *ngIf="exigencesProcessus.length === 0" class="empty-array">Aucune exigence définie</div>
+        <div formArrayName="exigences_processus">
+          <div *ngFor="let e of exigencesProcessus.controls; let i = index" [formGroupName]="i" class="array-item">
+            <div class="grid-3">
+              <div class="field required"><label>Processus métier</label><input formControlName="processus" placeholder="Ex: Gestion des commandes..."/></div>
+              <div class="field required"><label>Exigence de sécurité</label><input formControlName="exigence_securite" placeholder="Ex: Chiffrement des données clients..."/></div>
+              <div class="field"><label>Responsable</label><input formControlName="responsable" placeholder="Ex: RSSI, DSI..."/></div>
+            </div>
+            <div class="field">
+              <label>Statut</label>
+              <select formControlName="statut">
+                <option value="a_traiter">À traiter</option>
+                <option value="en_cours">En cours</option>
+                <option value="traite">Traité</option>
+              </select>
+            </div>
+            <button type="button" class="btn-remove-inline" (click)="removeFrom(exigencesProcessus, i)">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ressources SMSI -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Ressources affectées au SMSI/PIMS</h2>
+            <p class="panel-desc">Suivre les ressources humaines, logicielles et matérielles allouées.</p>
+          </div>
+          <button type="button" class="btn-add" (click)="addTo(ressourcesSmsi, newRessource())">+ Ajouter</button>
+        </div>
+        <div *ngIf="ressourcesSmsi.length === 0" class="empty-array">Aucune ressource définie</div>
+        <div formArrayName="ressources_smsi">
+          <div *ngFor="let r of ressourcesSmsi.controls; let i = index" [formGroupName]="i" class="array-item">
+            <div class="grid-3">
+              <div class="field">
+                <label>Type</label>
+                <select formControlName="type">
+                  <option value="humaine">Humaine</option>
+                  <option value="logicielle">Logicielle</option>
+                  <option value="materielle">Matérielle</option>
+                  <option value="financiere">Financière</option>
+                </select>
+              </div>
+              <div class="field required"><label>Description</label><input formControlName="description" placeholder="Ex: 1 RSSI temps plein, budget sécurité..."/></div>
+              <div class="field"><label>Quantité / Montant</label><input formControlName="quantite" placeholder="Ex: 1, 50 000€/an..."/></div>
+            </div>
+            <div class="grid-2">
+              <div class="field"><label>Responsable</label><input formControlName="responsable" placeholder="Ex: DG, DSI..."/></div>
+              <div class="field-checkbox" style="margin-top: 22px;">
+                <input type="checkbox" formControlName="allouee"/>
+                <label>Ressource allouée / disponible</label>
+              </div>
+            </div>
+            <button type="button" class="btn-remove-inline" (click)="removeFrom(ressourcesSmsi, i)">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button type="button" class="btn-save" (click)="saveRoles()" [disabled]="savingRoles">
+          <span *ngIf="!savingRoles">Sauvegarder</span>
+          <span *ngIf="savingRoles">...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ══ SENSIBILISATION ══ -->
+  <div *ngIf="activeTab === 'sensibilisation'" class="tab-content">
+
+    <!-- Stats -->
+    <div class="stats-row" *ngIf="sensStats">
+      <div class="stat-card total">
+        <div class="stat-num">{{ sensStats.total }}</div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat-card realise">
+        <div class="stat-num">{{ sensStats.realise }}</div>
+        <div class="stat-label">Réalisés</div>
+      </div>
+      <div class="stat-card planifie">
+        <div class="stat-num">{{ sensStats.planifie }}</div>
+        <div class="stat-label">Planifiés</div>
+      </div>
+      <div class="stat-card non_realise">
+        <div class="stat-num">{{ sensStats.non_realise }}</div>
+        <div class="stat-label">Non réalisés</div>
+      </div>
+      <div class="stat-card taux">
+        <div class="stat-num">{{ sensStats.taux }}%</div>
+        <div class="stat-label">Taux réalisation</div>
+        <div class="progress-mini">
+          <div class="progress-fill-mini" [style.width.%]="sensStats.taux"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barre actions -->
+    <div class="actions-bar">
+      <button class="btn-primary" (click)="showAddSens = true; editingSens = null; sensForm.reset({ type: 'formation', statut: 'planifie' })">
+        + Ajouter une action
+      </button>
+    </div>
+
+    <!-- Formulaire ajout/édition -->
+    <div class="panel add-panel" *ngIf="showAddSens" [formGroup]="sensForm">
+      <h3 class="panel-title">{{ editingSens ? 'Modifier' : 'Nouvelle action de sensibilisation' }}</h3>
+      <div class="grid-2">
+        <div class="field required">
+          <label>Acteur concerné</label>
+          <select formControlName="acteur_id">
+            <option value="">-- Sélectionner --</option>
+            <option *ngFor="let a of acteurs" [value]="a.id">
+              {{ a.prenom }} {{ a.nom }} ({{ a.role }})
+            </option>
+          </select>
+          <span class="err" *ngIf="sensForm.get('acteur_id')?.invalid && sensForm.get('acteur_id')?.touched">Requis</span>
+        </div>
+        <div class="field required">
+          <label>Titre de l'action</label>
+          <input formControlName="titre" placeholder="Ex: Formation ISO 27001 initiale..."/>
+          <span class="err" *ngIf="sensForm.get('titre')?.invalid && sensForm.get('titre')?.touched">Requis</span>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="field required">
+          <label>Type</label>
+          <select formControlName="type">
+            <option *ngFor="let t of typesFormation" [value]="t.value">{{ t.label }}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Date d'échéance</label>
+          <input type="date" formControlName="date_echeance"/>
+        </div>
+        <div class="field">
+          <label>Date de réalisation</label>
+          <input type="date" formControlName="date_realisation"/>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="field">
+          <label>Statut</label>
+          <select formControlName="statut">
+            <option *ngFor="let s of statutsSens" [value]="s.value">{{ s.label }}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Score / Note (%)</label>
+          <input type="number" formControlName="score" min="0" max="100" placeholder="Ex: 85"/>
+        </div>
+        <div class="field">
+          <label>Commentaire</label>
+          <input formControlName="commentaire" placeholder="Notes additionnelles..."/>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button class="btn-secondary" (click)="showAddSens = false; editingSens = null">Annuler</button>
+        <button class="btn-save" (click)="submitSens()" [disabled]="addingSens">
+          <span *ngIf="!addingSens">{{ editingSens ? 'Mettre à jour' : 'Ajouter' }}</span>
+          <span *ngIf="addingSens">...</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Liste sensibilisation -->
+    <div class="panel">
+      <div *ngIf="loadingSens" class="loading-mini">Chargement...</div>
+      <div *ngIf="!loadingSens && sensibilisation.length === 0" class="empty-panel">
+        Aucune action de sensibilisation planifiée
+      </div>
+      <table class="sens-table" *ngIf="sensibilisation.length > 0">
+        <thead>
+          <tr>
+            <th>Acteur</th><th>Titre</th><th>Type</th>
+            <th>Échéance</th><th>Statut</th><th>Score</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of sensibilisation">
+            <td>
+              <div class="acteur-nom">{{ s.acteur_nom }}</div>
+              <div class="acteur-role">{{ s.acteur_role }}</div>
+            </td>
+            <td class="titre-col">{{ s.titre }}</td>
+            <td>{{ s.type }}</td>
+            <td>
+             <span [class.date-depassee]="isOverdue(s.date_echeance) && s.statut !== 'realise'">
+  {{ s.date_echeance || '—' }}
+</span>
+            </td>
+            <td><span class="{{ getSensStatutClass(s.statut) }}">{{ getSensStatutLabel(s.statut) }}</span></td>
+            <td>
+              <div class="score-display" *ngIf="s.score !== null">
+                <div class="score-bar">
+                  <div class="score-fill" [style.width.%]="s.score"
+                    [class.good]="s.score >= 70" [class.avg]="s.score >= 50 && s.score < 70"
+                    [class.bad]="s.score < 50"></div>
+                </div>
+                <span>{{ s.score }}%</span>
+              </div>
+              <span *ngIf="s.score === null">—</span>
+            </td>
+            <td class="actions">
+              <button class="btn-icon" (click)="editSens(s)" title="Modifier">✏️</button>
+              <button class="btn-icon danger" (click)="deleteSens(s.id)" title="Supprimer">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ INDICATEURS SMSI ══ -->
+  <div *ngIf="activeTab === 'indicateurs'" class="tab-content">
+    <form [formGroup]="indicateursForm">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Indicateurs SMSI/PIMS</h2>
+            <p class="panel-desc">Suivre les indicateurs clés de performance du système de management.</p>
+          </div>
+          <button type="button" class="btn-add" (click)="addTo(indicateursSmsi, newIndicateur())">+ Ajouter</button>
+        </div>
+
+        <div *ngIf="indicateursSmsi.length === 0" class="empty-array">Aucun indicateur défini</div>
+
+        <div formArrayName="indicateurs_smsi">
+          <div *ngFor="let ind of indicateursSmsi.controls; let i = index" [formGroupName]="i" class="indicateur-card">
+            <div class="grid-4">
+              <div class="field required"><label>Nom de l'indicateur</label><input formControlName="nom" placeholder="Ex: Taux d'incidents résolus..."/></div>
+              <div class="field"><label>Valeur actuelle</label><input formControlName="valeur" placeholder="Ex: 95%, 3 incidents..."/></div>
+              <div class="field"><label>Cible</label><input formControlName="cible" placeholder="Ex: > 90%, < 5..."/></div>
+              <div class="field">
+                <label>Périodicité</label>
+                <select formControlName="periode">
+                  <option value="quotidienne">Quotidienne</option>
+                  <option value="hebdomadaire">Hebdomadaire</option>
+                  <option value="mensuelle">Mensuelle</option>
+                  <option value="trimestrielle">Trimestrielle</option>
+                  <option value="annuelle">Annuelle</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label>Statut</label>
+              <div class="statut-btns">
+                <button *ngFor="let s of [{v:'nominal',l:'✓ Nominal',c:'green'},{v:'attention',l:'⚠️ Attention',c:'amber'},{v:'critique',l:'✗ Critique',c:'red'}]"
+                  type="button"
+                  class="statut-btn {{ s.c }}"
+                  [class.active]="ind.get('statut')?.value === s.v"
+                  (click)="ind.get('statut')?.setValue(s.v)">
+                  {{ s.l }}
+                </button>
+              </div>
+            </div>
+            <button type="button" class="btn-remove-inline" (click)="removeFrom(indicateursSmsi, i)">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button type="button" class="btn-save" (click)="saveIndicateurs()" [disabled]="savingIndicateurs">
+          <span *ngIf="!savingIndicateurs">Sauvegarder les indicateurs</span>
+          <span *ngIf="savingIndicateurs">...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>

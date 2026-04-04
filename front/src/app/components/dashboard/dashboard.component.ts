@@ -109,6 +109,12 @@ export class DashboardComponent implements OnInit {
   icon:  'shield',
   route: '/dashboard/rssi',
   roles: ['rssi', 'super_admin']
+},
+{
+  label: 'Direction — Clause 5',
+  icon:  'briefcase',
+  route: '/dashboard/direction',
+  roles: ['direction', 'comite_securite', 'super_admin']
 }
   ];
 

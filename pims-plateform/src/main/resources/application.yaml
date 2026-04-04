@@ -61,3 +61,9 @@ jwt:
   secret: pims-smsi-iso27001-iso27701-secret-key-2026
   expiration: 86400000
   refresh-expiration: 604800000
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB

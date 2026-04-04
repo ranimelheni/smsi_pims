@@ -57,6 +57,8 @@ export class AuthService {
       dpo:              '/dashboard/dpo',        // ← AJOUT
       pilote_processus: '/dashboard/processus',
       membre_equipe_technique: '/dashboard/fiche-technique', // ← AJOUT
+      direction:  '/dashboard/direction',
+      comite_securite: '/dashboard/direction',
     
 
     };
