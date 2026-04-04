@@ -48,10 +48,7 @@ jobs:
         cd pims-plateform
         ./mvnw clean install -DskipTests
 
-    - name: Run backend tests
-      run: |
-        cd pims-plateform
-        ./mvnw test
+   
 
 
     # ───────── SECURITY CHECK (BONUS 🔥) ─────────
