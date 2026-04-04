@@ -53,11 +53,6 @@ jobs:
     cd pims-plateform
     ./mvnw test
 
-    # ───────── TESTS BACKEND ─────────
-    - name: Run backend tests
-      run: |
-        cd pims-plateform
-        ./mvnw test
 
     # ───────── SECURITY CHECK (BONUS 🔥) ─────────
     - name: Audit frontend dependencies
