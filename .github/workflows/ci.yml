@@ -32,26 +32,26 @@ jobs:
         npm run build -- --configuration production
 
   # ───────── BACKEND (Spring Boot) ─────────
-- name: Setup Java 21
-  uses: actions/setup-java@v3
-  with:
-    distribution: 'temurin'
-    java-version: 21
+    - name: Setup Java 21
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: 21
 
-- name: Give execute permission to mvnw
-  run: |
-    cd pims-plateform
-    chmod +x mvnw
+    - name: Give execute permission to mvnw
+      run: |
+        cd pims-plateform
+        chmod +x mvnw
 
-- name: Build Spring Boot
-  run: |
-    cd pims-plateform
-    ./mvnw clean install -DskipTests
+    - name: Build Spring Boot
+      run: |
+        cd pims-plateform
+        ./mvnw clean install -DskipTests
 
-- name: Run backend tests
-  run: |
-    cd pims-plateform
-    ./mvnw test
+    - name: Run backend tests
+      run: |
+        cd pims-plateform
+        ./mvnw test
 
 
     # ───────── SECURITY CHECK (BONUS 🔥) ─────────
