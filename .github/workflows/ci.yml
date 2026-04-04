@@ -43,7 +43,7 @@ jobs:
         cd pims-plateform
         chmod +x mvnw
 
-    - name: Build Spring Boot
+    - name: Build Spring Boot  (skip tests)
       run: |
         cd pims-plateform
         ./mvnw clean install -DskipTests
