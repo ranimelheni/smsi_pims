@@ -1,0 +1,119 @@
+<div class="direction-page">
+
+  <div class="page-header">
+    <div class="header-left">
+      <div class="dir-badge">Direction</div>
+      <div>
+        <h1 class="page-title">Interface Direction — Clause 6</h1>
+        <p class="page-sub">{{ currentUser?.prenom }} {{ currentUser?.nom }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error" *ngIf="error">{{ error }}</div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab"
+      [class.active]="activeTab === 'soa'"
+      (click)="activeTab = 'soa'; loadSoa()">
+      📄 SoA validation
+    </button>
+
+    <button class="tab"
+      [class.active]="activeTab === 'methodologie'"
+      (click)="activeTab = 'methodologie'; loadMethodologie()">
+      ⚙️ Méthodologie de risque
+    </button>
+  </div>
+
+  <!-- SOA -->
+  <div *ngIf="activeTab === 'soa'" class="tab-content">
+
+   <div *ngIf="!soaData || soaData.controles?.length === 0" class="empty-panel">
+  Aucune SoA soumise par le RSSI
+</div>
+
+<div *ngIf="soaData?.statut === 'soumis_direction' || soaData?.statut === 'valide'">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Déclaration d'applicabilité — Version {{ soaData.version }}</h2>
+            <p class="panel-desc">
+              {{ soaData.stats?.applicable }} contrôles applicables ·
+              {{ soaData.stats?.taux_impl }}% implémentés
+            </p>
+          </div>
+          <span [class]="soaData.statut === 'valide' ? 'badge-green' : soaData.statut === 'soumis_direction' ? 'badge-amber' : 'badge-gray'">
+            {{ soaData.statut === 'valide' ? '✓ Validée' : soaData.statut === 'soumis_direction' ? 'En attente validation' : 'Brouillon' }}
+          </span>
+        </div>
+
+        <div class="validation-soa-form" *ngIf="soaData.statut === 'soumis_direction'">
+          <div class="field">
+            <label>Commentaire de validation</label>
+            <textarea [(ngModel)]="commentaireSoa" rows="2"></textarea>
+          </div>
+          <div class="validation-btns">
+            <button class="dec-btn reject" (click)="validerSoa('rejete')">
+              ✗ Rejeter
+            </button>
+            <button class="dec-btn approve" (click)="validerSoa('valide')">
+              ✓ Valider
+            </button>
+          </div>
+        </div>
+
+        <table class="soa-table" *ngIf="soaData.controles?.length > 0">
+          <thead>
+            <tr>
+              <th>ID</th><th>Contrôle</th><th>Applicabilité</th>
+              <th>Implémentation</th><th>Justification</th><th>✓ Direction</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of soaData.controles">
+              <td>{{ c.controle_id }}</td>
+              <td>{{ c.controle_label }}</td>
+              <td>{{ c.applicable }}</td>
+              <td>{{ c.statut_impl }}</td>
+              <td>{{ c.justification }}</td>
+              <td>
+                <button (click)="validerControleDir(c.id)">
+                  {{ c.valide_direction ? '✓' : '○' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MÉTHODOLOGIE -->
+  <div *ngIf="activeTab === 'methodologie'" class="tab-content">
+
+    <div *ngIf="!methodo" class="empty-panel">
+      Aucune méthodologie soumise
+    </div>
+
+    <div *ngIf="methodo" class="panel">
+
+      <h2>Méthodologie proposée</h2>
+
+      <p>{{ methodo.methode }}</p>
+
+      <div *ngIf="methodo.statut === 'soumis_direction'">
+        <textarea [(ngModel)]="commentaireMeth"></textarea>
+
+        <button (click)="validerMethodologie('rejete')">Rejeter</button>
+        <button (click)="validerMethodologie('valide')">Valider</button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

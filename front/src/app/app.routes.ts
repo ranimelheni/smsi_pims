@@ -60,8 +60,21 @@ export const routes: Routes = [
   loadComponent: () =>
     import('./components/direction/direction.component')
       .then(m => m.DirectionComponent)
+},
+{
+path: 'direction/clause6',
+loadComponent: () =>
+  import('./components/direction-clause6/direction-clause6.component')
+    .then(m => m.DirectionClause6Component)
+},
+ {
+  path: 'clause6',
+  loadComponent: () =>
+    import('./components/clause6-rssi/clause6-rssi.component')
+      .then(m => m.Clause6RssiComponent)
 }
     ]
   },
+ 
   { path: '**', redirectTo: '/login' }
 ];

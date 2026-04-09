@@ -43,54 +43,7 @@ export class DashboardComponent implements OnInit {
       clause: 'Clause 4',
       roles:  ['super_admin', 'rssi']
     },
-    {
-      label:    'Leadership',
-      icon:     'leader',
-      route:    '',
-      clause:   'Clause 5',
-      disabled: true,
-      roles:    ['super_admin', 'rssi']
-    },
-    {
-      label:    'Planification',
-      icon:     'plan',
-      route:    '',
-      clause:   'Clause 6',
-      disabled: true,
-      roles:    ['super_admin', 'rssi']
-    },
-    {
-      label:    'Support',
-      icon:     'support',
-      route:    '',
-      clause:   'Clause 7',
-      disabled: true,
-      roles:    ['super_admin', 'rssi']
-    },
-    {
-      label:    'Réalisation',
-      icon:     'realise',
-      route:    '',
-      clause:   'Clause 8',
-      disabled: true,
-      roles:    ['super_admin', 'rssi']
-    },
-    {
-      label:    'Évaluation',
-      icon:     'eval',
-      route:    '',
-      clause:   'Clause 9',
-      disabled: true,
-      roles:    ['super_admin', 'rssi']
-    },
-    {
-      label:    'Amélioration',
-      icon:     'improve',
-      route:    '',
-      clause:   'Clause 10',
-      disabled: true,
-      roles:    ['super_admin', 'rssi']
-    },
+ 
     {
   label:  'Protection des données',
   icon:   'shield',
@@ -114,6 +67,18 @@ export class DashboardComponent implements OnInit {
   label: 'Direction — Clause 5',
   icon:  'briefcase',
   route: '/dashboard/direction',
+  roles: ['direction', 'comite_securite', 'super_admin']
+},
+{
+  label: 'Clause 6 — Planification',
+  icon:  'target',
+  route: '/dashboard/clause6',
+  roles: ['rssi', 'super_admin']
+},
+{
+  label: 'Clause 6 — Planification',
+  icon: 'target',
+  route: '/dashboard/direction/clause6',
   roles: ['direction', 'comite_securite', 'super_admin']
 }
   ];

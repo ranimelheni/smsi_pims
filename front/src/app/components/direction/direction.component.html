@@ -26,6 +26,13 @@
     <button class="tab" [class.active]="activeTab === 'roles'"           (click)="activeTab = 'roles'">           👥 Rôles & Ressources</button>
     <button class="tab" [class.active]="activeTab === 'sensibilisation'" (click)="activeTab = 'sensibilisation'"> 📚 Sensibilisation</button>
     <button class="tab" [class.active]="activeTab === 'indicateurs'"     (click)="activeTab = 'indicateurs'">     📊 Indicateurs SMSI</button>
+    <button class="tab" [class.active]="activeTab === 'soa'"             (click)="activeTab = 'soa'">             📄 SoA-validation <span class="tab-count" *ngIf="soaData?.statut === 'soumis_direction'">!</span></button>
+ <button class="tab" [class.active]="activeTab === 'methodologie'"
+  (click)="activeTab = 'methodologie'; loadMethodologie()">
+  ⚙️ Méthodologie de risque
+  <span class="tab-count badge-amber"
+    *ngIf="methodo?.statut === 'soumis_direction'">!</span>
+</button>
   </div>
 
   <!-- ══ VALIDATION CLAUSE 4 ══ -->
@@ -115,8 +122,115 @@
         </ng-container>
       </div>
     </div>
+
+<!-- Contenu onglet -->
+
+  </div>
+<div *ngIf="activeTab === 'methodologie'" class="tab-content">
+  <div *ngIf="!methodo" class="empty-panel">
+    Aucune méthodologie soumise par le RSSI
   </div>
 
+  <div *ngIf="methodo" class="panel">
+    <div class="panel-header">
+      <div>
+        <h2 class="panel-title">Méthodologie proposée par le RSSI</h2>
+        <p class="panel-desc">Proposée par {{ methodo.propose_by }}</p>
+      </div>
+      <span [class]="methodo.statut === 'valide' ? 'badge-green'
+        : methodo.statut === 'soumis_direction' ? 'badge-amber'
+        : methodo.statut === 'rejete' ? 'badge-red' : 'badge-gray'">
+        {{ methodo.statut }}
+      </span>
+    </div>
+
+    <div class="info-grid">
+     <div class="info-item"><label>Méthode</label>
+  <span>
+    {{ methodo.methode === 'pia' ? '🔒 PIA / DPIA (ISO 27701)'
+     : methodo.methode === 'ebios_rm'  ? 'EBIOS Risk Manager'
+     : methodo.methode === 'iso_27005' ? 'ISO 27005'
+     : methodo.methode === 'mehari'    ? 'MEHARI'
+     : methodo.methode === 'octave'    ? 'OCTAVE'
+     : methodo.methode_custom || methodo.methode }}
+  </span>
+</div>
+
+<!-- Masquer la matrice si PIA -->
+<div class="matrice-preview-dir"
+  *ngIf="methodo.matrice?.length > 0 && methodo.methode !== 'pia'">
+  <!-- matrice existante -->
+</div>
+
+<!-- Message spécifique PIA -->
+<div class="pia-dir-info" *ngIf="methodo.methode === 'pia'">
+  <span>🔒</span>
+  <p>
+    Cette organisation suit la méthodologie PIA/DPIA (Privacy Impact Assessment) 
+    conformément à l'ISO 27701 et au RGPD (Article 35). 
+    Le module PIA complet sera développé prochainement.
+  </p>
+</div>
+      <div class="info-item"><label>Échelle P × I</label>
+        <span>{{ methodo.echelle_probabilite }} × {{ methodo.echelle_impact }}</span>
+      </div>
+      <div class="info-item"><label>Seuil acceptable</label>
+        <span>≤ {{ methodo.seuil_acceptable }}</span>
+      </div>
+      <div class="info-item"><label>Seuil élevé</label>
+        <span>> {{ methodo.seuil_eleve }}</span>
+      </div>
+    </div>
+
+    <div class="info-full" *ngIf="methodo.justification">
+      <label>Justification</label><p>{{ methodo.justification }}</p>
+    </div>
+    <div class="info-full" *ngIf="methodo.perimetre_risque">
+      <label>Périmètre</label><p>{{ methodo.perimetre_risque }}</p>
+    </div>
+    <div class="info-full" *ngIf="methodo.criteres_acceptation">
+      <label>Critères d'acceptation</label><p>{{ methodo.criteres_acceptation }}</p>
+    </div>
+
+    <!-- Aperçu matrice -->
+    <div class="matrice-preview-dir" *ngIf="methodo.matrice?.length > 0">
+      <label class="field-label-sm">Matrice de risque</label>
+      <table class="matrice-table-sm">
+        <tbody>
+          <tr *ngFor="let row of methodo.matrice">
+            <td *ngFor="let cell of row"
+              [class]="'cell-sm ' + cell.split(':')[0]">
+              {{ cell.split(':')[1] }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Décision direction (si soumis) -->
+    <div class="validation-soa-form" *ngIf="methodo.statut === 'soumis_direction'">
+      <div class="field">
+        <label>Commentaire</label>
+        <textarea [(ngModel)]="commentaireMeth" rows="2"
+          placeholder="Observations sur le choix de méthodologie..."></textarea>
+      </div>
+      <div class="validation-btns">
+        <button class="dec-btn reject"
+          (click)="validerMethodologie('rejete')" [disabled]="validantMethodo">
+          ✗ Rejeter
+        </button>
+        <button class="dec-btn approve"
+          (click)="validerMethodologie('valide')" [disabled]="validantMethodo">
+          ✓ Valider la méthodologie
+        </button>
+      </div>
+    </div>
+
+    <div class="validated-footer" *ngIf="methodo.statut === 'valide'">
+      <span>✓ Méthodologie validée — EBIOS RM sera développée prochainement</span>
+    </div>
+  </div>
+</div>
   <!-- ══ ORGANIGRAMME ══ -->
   <div *ngIf="activeTab === 'organigramme'" class="tab-content">
     <div class="two-cols-layout">
@@ -545,5 +659,69 @@
       </div>
     </form>
   </div>
+<div *ngIf="activeTab === 'soa'" class="tab-content">
+  <div *ngIf="!soaData || !soaData.id" class="empty-panel">
+    Aucune SoA soumise par le RSSI
+  </div>
+  <div *ngIf="soaData?.id">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Déclaration d'applicabilité — Version {{ soaData.version }}</h2>
+          <p class="panel-desc">
+            {{ soaData.stats?.applicable }} contrôles applicables ·
+            {{ soaData.stats?.taux_impl }}% implémentés
+          </p>
+        </div>
+        <span [class]="soaData.statut === 'valide' ? 'badge-green' : soaData.statut === 'soumis_direction' ? 'badge-amber' : 'badge-gray'">
+          {{ soaData.statut === 'valide' ? '✓ Validée' : soaData.statut === 'soumis_direction' ? 'En attente validation' : 'Brouillon' }}
+        </span>
+      </div>
 
+      <!-- Validation globale (si soumis) -->
+      <div class="validation-soa-form" *ngIf="soaData.statut === 'soumis_direction'">
+        <div class="field">
+          <label>Commentaire de validation</label>
+          <textarea [(ngModel)]="commentaireSoa" rows="2"
+            placeholder="Observations sur la SoA..."></textarea>
+        </div>
+        <div class="validation-btns">
+          <button class="dec-btn reject" (click)="validerSoa('rejete')" [disabled]="validantSoa">
+            ✗ Rejeter et renvoyer au RSSI
+          </button>
+          <button class="dec-btn approve" (click)="validerSoa('valide')" [disabled]="validantSoa">
+            ✓ Valider la SoA
+          </button>
+        </div>
+      </div>
+
+      <!-- Tableau contrôles (lecture seule + validation par contrôle) -->
+      <table class="soa-table" *ngIf="soaData.controles?.length > 0">
+        <thead>
+          <tr>
+            <th>ID</th><th>Contrôle</th><th>Applicabilité</th>
+            <th>Implémentation</th><th>Justification</th><th>✓ Direction</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of soaData.controles"
+            [class.ctrl-row]="true" [class.non-appl]="c.applicable === 'non_applicable'">
+            <td class="ctrl-id">{{ c.controle_id }}</td>
+            <td><div class="ctrl-label">{{ c.controle_label }}</div></td>
+            <td><span class="{{ c.applicable === 'applicable' ? 'badge-green' : c.applicable === 'partiel' ? 'badge-amber' : 'badge-gray' }}">{{ c.applicable }}</span></td>
+            <td><span class="{{ c.statut_impl === 'implemente' ? 'badge-green' : c.statut_impl === 'en_cours' ? 'badge-amber' : 'badge-gray' }}">{{ c.statut_impl }}</span></td>
+            <td class="ctrl-just">{{ c.justification || '—' }}</td>
+            <td>
+              <button class="val-dir-btn"
+                [class.validated]="c.valide_direction"
+                (click)="validerControleDir(c.id)">
+                {{ c.valide_direction ? '✓' : '○' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 </div>

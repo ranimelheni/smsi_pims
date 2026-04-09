@@ -16,7 +16,7 @@ export class DirectionComponent implements OnInit {
 
   today: Date = new Date();
   currentUser: any = null;
-  activeTab = 'validation'; // validation | politique | roles | sensibilisation | indicateurs
+activeTab: 'validation' | 'organigramme' | 'politique' | 'roles' | 'sensibilisation' | 'indicateurs' | 'soa' | 'methodologie' = 'validation';
 
   // Clause 4 RSSI (lecture seule pour validation)
   clause4:    any = null;
@@ -423,5 +423,76 @@ private api = 'http://localhost:8080/api';
   t.setHours(0,0,0,0);
 
   return d < t;
+}
+// Ajouter dans DirectionComponent
+
+soaData: any = null;
+validantSoa = false;
+commentaireSoa = '';
+
+loadSoa(): void {
+  this.http.get<any>(`${this.api}/soa`).subscribe({
+    next: (d) => { this.soaData = d; }
+  });
+}
+
+validerSoa(decision: string): void {
+  this.validantSoa = true;
+  this.http.put(`${this.api}/soa/valider`, {
+    decision,
+    commentaire: this.commentaireSoa
+  }).subscribe({
+    next: () => {
+      this.validantSoa = false;
+      this.soaData.statut = decision === 'valide' ? 'valide' : 'brouillon';
+      this.success = 'SoA ' + (decision === 'valide' ? 'validée' : 'rejetée');
+      setTimeout(() => this.success = '', 4000);
+    },
+    error: (err: any) => {
+      this.validantSoa = false;
+      this.error = err.error?.error || 'Erreur';
+    }
+  });
+}
+
+validerControleDir(id: number): void {
+  this.http.put(`${this.api}/soa/controles/${id}/valider-direction`, {}).subscribe({
+    next: (updated: any) => {
+      if (this.soaData?.controles) {
+        const idx = this.soaData.controles.findIndex((c: any) => c.id === id);
+        if (idx >= 0) this.soaData.controles[idx] = updated;
+      }
+    }
+  });
+}
+// Ajouter dans DirectionComponent
+
+methodo:          any    = null;
+validantMethodo   = false;
+commentaireMeth   = '';
+
+loadMethodologie(): void {
+  this.http.get<any>(`${this.api}/methodologie-risque`).subscribe({
+    next: (d) => { this.methodo = d && Object.keys(d).length > 0 ? d : null; }
+  });
+}
+
+validerMethodologie(decision: string): void {
+  this.validantMethodo = true;
+  this.http.put(`${this.api}/methodologie-risque/valider`, {
+    decision,
+    commentaire: this.commentaireMeth
+  }).subscribe({
+    next: (res: any) => {
+      this.validantMethodo = false;
+      if (this.methodo) this.methodo.statut = res.statut;
+      this.success = 'Méthodologie ' + (decision === 'valide' ? 'validée' : 'rejetée');
+      setTimeout(() => this.success = '', 4000);
+    },
+    error: (err: any) => {
+      this.validantMethodo = false;
+      this.error = err.error?.error || 'Erreur';
+    }
+  });
 }
 }
