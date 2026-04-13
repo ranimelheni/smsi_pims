@@ -2,3 +2,4 @@
 2026-04-13T09:46:11.290+01:00  INFO 12120 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
 2026-04-13T09:46:14.964+01:00  WARN 12120 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
 2026-04-13T09:46:21.436+01:00  INFO 12120 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 11.346 seconds (process running for 11.827)
+2026-04-13T10:08:42.938+01:00  WARN 12120 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=5m57s726ms545µs900ns).
