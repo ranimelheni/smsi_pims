@@ -1,0 +1,226 @@
+<!-- ebios.component.html -->
+<div class="ebios-wrapper">
+
+  <!-- Header -->
+  <div class="ebios-header">
+    <div class="header-content">
+      <div class="ebios-logo">🔬</div>
+      <div>
+        <h1 class="ebios-title">EBIOS Risk Manager</h1>
+        <p class="ebios-sub">Analyse de risque ISO 27001 — {{ currentUser?.prenom }} {{ currentUser?.nom }}</p>
+      </div>
+    </div>
+    <div class="header-right" *ngIf="analyse">
+      <div class="analyse-info">
+        <span class="analyse-titre">{{ analyse.titre }}</span>
+        <span class="badge-blue">v{{ analyse.version }}</span>
+        <span class="badge-amber" *ngIf="analyse.statut === 'en_cours'">En cours</span>
+        <span class="badge-green" *ngIf="analyse.statut === 'termine'">Terminé</span>
+      </div>
+      <div class="completion-bar">
+        <div class="completion-fill" [style.width.%]="completionPercent"></div>
+      </div>
+      <span class="completion-label">{{ completionPercent }}% complété</span>
+    </div>
+  </div>
+
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error"   *ngIf="error">{{ error }}</div>
+
+  <!-- Méthode non validée -->
+  <div *ngIf="!canInit && !analyse" class="prereq-panel">
+    <div class="prereq-icon">⚠️</div>
+    <h2>Prérequis non rempli</h2>
+    <p>La méthodologie <strong>EBIOS Risk Manager</strong> doit être sélectionnée et validée par la direction avant de lancer l'analyse.</p>
+    <div class="prereq-status">
+      <div class="prereq-item" [class.ok]="methodo?.methode === 'ebios_rm'">
+        {{ methodo?.methode === 'ebios_rm' ? '✓' : '✗' }} EBIOS RM sélectionné
+      </div>
+      <div class="prereq-item" [class.ok]="methodo?.statut === 'valide'">
+        {{ methodo?.statut === 'valide' ? '✓' : '✗' }} Validé par la direction
+      </div>
+    </div>
+  </div>
+
+  <!-- Initialisation -->
+  <div *ngIf="canInit && !analyse && !loading" class="init-panel">
+    <div class="init-icon">🔬</div>
+    <h2>Démarrer l'analyse EBIOS RM</h2>
+    <p>
+      Les paramètres de la matrice de risque seront repris depuis la méthodologie validée :
+      échelle {{ methodo?.echelle_probabilite }}×{{ methodo?.echelle_impact }},
+      seuil acceptable ≤ {{ methodo?.seuil_acceptable }}.
+    </p>
+    <div class="init-titre-field">
+      <label>Titre de l'analyse</label>
+      <input [(ngModel)]="titreAnalyse" placeholder="Ex: Analyse EBIOS RM 2026"/>
+    </div>
+    <button class="btn-init" (click)="initAnalyse()" [disabled]="initialising">
+      <span *ngIf="!initialising">⚡ Démarrer l'analyse</span>
+      <span *ngIf="initialising">Initialisation...</span>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-full">
+    <div class="spinner-lg"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <!-- Corps principal -->
+  <div *ngIf="analyse" class="ebios-body">
+
+    <!-- Navigation ateliers -->
+    <div class="ateliers-sidebar">
+      <button *ngFor="let a of ateliers"
+  class="atelier-nav-btn"
+  [class.active]="activeAtelier === a.n"
+  (click)="selectAtelier(a.n)">
+        <span class="atelier-nav-icon">{{ a.icon }}</span>
+        <div class="atelier-nav-text">
+          <span class="atelier-nav-label">{{ a.label }}</span>
+          <span class="atelier-nav-desc">{{ a.desc }}</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- Contenu atelier -->
+    <div class="atelier-content">
+
+      <!-- Tableau de bord -->
+      <div *ngIf="activeAtelier === 0" class="dashboard-content">
+        <h2 class="dash-title">Tableau de bord — {{ analyse.titre }}</h2>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-tile">
+            <div class="stat-val">{{ analyse.stats?.valeurs_metier || 0 }}</div>
+            <div class="stat-lbl">Valeurs métier</div>
+            <div class="stat-ico">🎯</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-val">{{ analyse.stats?.biens_support || 0 }}</div>
+            <div class="stat-lbl">Biens supports</div>
+            <div class="stat-ico">🔧</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-val">{{ analyse.stats?.evenements_redoutes || 0 }}</div>
+            <div class="stat-lbl">Événements redoutés</div>
+            <div class="stat-ico">⚠️</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-val">{{ analyse.stats?.sources_risque || 0 }}</div>
+            <div class="stat-lbl">Sources de risque</div>
+            <div class="stat-ico">⚡</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-val">{{ analyse.stats?.scenarios_strategiques || 0 }}</div>
+            <div class="stat-lbl">Scénarios stratégiques</div>
+            <div class="stat-ico">🗺️</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-val">{{ analyse.stats?.scenarios_operationnels || 0 }}</div>
+            <div class="stat-lbl">Scénarios opérationnels</div>
+            <div class="stat-ico">🔬</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-val">{{ analyse.stats?.mesures_securite || 0 }}</div>
+            <div class="stat-lbl">Mesures de sécurité</div>
+            <div class="stat-ico">🛡️</div>
+          </div>
+          <div class="stat-tile completion">
+            <div class="stat-val">{{ completionPercent }}%</div>
+            <div class="stat-lbl">Complété</div>
+            <div class="progress-mini">
+              <div class="progress-mini-fill" [style.width.%]="completionPercent"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Matrice de risque -->
+        <div class="matrice-panel">
+          <h3 class="matrice-title">Matrice de risque</h3>
+          <p class="matrice-params">
+            Seuil acceptable : <strong>≤ {{ analyse.seuil_acceptable }}</strong> ·
+            Seuil élevé : <strong>> {{ analyse.seuil_eleve }}</strong> ·
+            Formule : <strong>G × V</strong>
+          </p>
+          <div class="matrice-scroll">
+            <table class="matrice-table">
+              <thead>
+                <tr>
+                  <th class="corner">G \ V</th>
+                  <th *ngFor="let ii of getRangeI(); let j = index" class="header-impact">
+                    <div class="h-num">{{ ii }}</div>
+                    <div class="h-label">{{ getLabelsImpact()[ii-1] || 'N'+ii }}</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of getMatricePreview(); let pi = index">
+                  <td class="header-proba">
+                    <div class="h-num">{{ getRangeP()[pi] }}</div>
+                    <div class="h-label">{{ getLabelsProba()[getRangeP()[pi]-1] || 'P'+(getRangeP()[pi]) }}</div>
+                  </td>
+                  <td *ngFor="let cell of row"
+                    class="matrice-cell {{ getCellClass(cell) }}">
+                    {{ getCellScore(cell) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="matrice-legend">
+            <span class="leg-item faible">■ Faible (≤ {{ analyse.seuil_acceptable }})</span>
+            <span class="leg-item moyen">■ Moyen</span>
+            <span class="leg-item eleve">■ Élevé (> {{ analyse.seuil_eleve }})</span>
+          </div>
+        </div>
+
+        <!-- Guide ateliers -->
+        <div class="ateliers-guide">
+        <div *ngFor="let a of ateliersSansDashboard"
+     class="guide-item"
+     (click)="selectAtelier(a.n)">
+            <span class="guide-icon">{{ a.icon }}</span>
+            <div>
+              <div class="guide-label">{{ a.label }}</div>
+              <div class="guide-desc">{{ a.desc }}</div>
+            </div>
+            <span class="guide-arrow">→</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Atelier 1 -->
+      <app-ebios-atelier1
+        *ngIf="activeAtelier === 1"
+        [analyse]="analyse"
+        (refreshAnalyse)="loadAnalyse()">
+      </app-ebios-atelier1>
+
+      <!-- Ateliers 2-5 : placeholders -->
+    <app-ebios-atelier2
+  *ngIf="activeAtelier === 2"
+  [analyse]="analyse"
+  (refreshAnalyse)="loadAnalyse()">
+</app-ebios-atelier2>
+
+<app-ebios-atelier3
+  *ngIf="activeAtelier === 3"
+  [analyse]="analyse"
+  (refreshAnalyse)="loadAnalyse()">
+</app-ebios-atelier3>
+  <app-ebios-atelier4
+  *ngIf="activeAtelier === 4"
+  [analyse]="analyse"
+  (refreshAnalyse)="loadAnalyse()">
+</app-ebios-atelier4>
+
+<app-ebios-atelier5
+  *ngIf="activeAtelier === 5"
+  [analyse]="analyse"
+  (refreshAnalyse)="loadAnalyse()">
+</app-ebios-atelier5>
+    </div>
+  </div>
+</div>

@@ -15,7 +15,9 @@ import { AuthService } from '../../services/auth.service';
 export class Clause6RssiComponent implements OnInit {
 
   currentUser: any = null;
-activeTab: 'soa' | 'objectifs' | 'modifications' | 'methodologie' = 'soa';
+activeTab: 'soa' | 'objectifs' | 'modifications' | 'methodologie' | 'implementation' = 'soa';
+
+
   // ── SoA ───────────────────────────────────────────────────────────────────
   soa: any = null;
   domaines: any[] = [];
@@ -79,7 +81,20 @@ get methodes() {
           desc: 'Méthode personnalisée ou hybride.' }
       ];
 }
+implData:          any   = null;
+selectedControle:  any   = null;
+selectedImpl:      any   = null;
+loadingImpl        = false;
+savingImpl         = false;
+showImplPanel      = false;
 
+
+// Formulaire implémentation
+implForm!: FormGroup;
+
+// Filtres
+filtreImplStatut = '';
+filtreImplAnnexe = '';
 // Ajouter ces getters :
 get isPiaMode(): boolean {
   return this.isIso27701 || this.methodo?.type_audit === 'iso27701';
@@ -131,8 +146,131 @@ get methodoDescription(): string {
     this.loadObjectifs();
     this.loadModifications();
     this.loadMethodologie();
+    this.loadImplementations();
+
     
   }
+  loadImplementations(): void {
+  this.loadingImpl = true;
+  this.http.get<any>(`${this.api}/soa/implementations`).subscribe({
+    
+   next: (d) => {
+  if (d.error) {
+    this.error = d.error;
+    this.implData = null;
+  } else {
+    this.implData = d;
+  }
+  this.loadingImpl = false;
+},
+    error: () => { this.loadingImpl = false; },
+    
+  });
+}
+
+selectControleImpl(controle: any): void {
+  this.selectedControle = controle;
+  this.selectedImpl     = controle.implementation;
+  this.showImplPanel    = true;
+  this.resetImplForm();
+  if (this.selectedImpl) this.patchImplForm(this.selectedImpl);
+}
+
+resetImplForm(): void {
+  this.outilsArr.clear();
+  this.reglesArr.clear();
+  this.procedArr.clear();
+  this.configArr.clear();
+  this.preuvesArr.clear();
+  this.implForm.reset({ statut_detail:'non_commence', niveau_maturite:1 });
+}
+
+patchImplForm(impl: any): void {
+  this.implForm.patchValue({
+    statut_detail:  impl.statut_detail,
+    niveau_maturite:impl.niveau_maturite,
+    responsable:    impl.responsable,
+    date_revue:     impl.date_revue,
+    notes:          impl.notes
+  });
+  this.patchArray(this.outilsArr,  impl.outils,         () => this.newOutil());
+  this.patchArray(this.reglesArr,  impl.regles_gestion, () => this.newRegle());
+  this.patchArray(this.procedArr,  impl.procedures,     () => this.newProcedure());
+  this.patchArray(this.configArr,  impl.configurations, () => this.newConfig());
+  this.patchArray(this.preuvesArr, impl.preuves,        () => this.newPreuve());
+}
+
+patchArray(arr: FormArray, items: any[], factory: () => any): void {
+  arr.clear();
+  if (!Array.isArray(items)) return;
+  items.forEach(item => { const g = factory(); g.patchValue(item); arr.push(g); });
+}
+
+saveImpl(): void {
+  this.savingImpl = true;
+  const controleId = this.selectedControle.controle_id;
+  this.http.post(`${this.api}/soa/implementations/controle/${controleId}`,
+    this.implForm.value).subscribe({
+    next: (d: any) => {
+      this.savingImpl      = false;
+      this.selectedImpl    = d;
+      this.selectedControle.implementation = d;
+      this.success = 'Implémentation sauvegardée';
+      this.loadImplementations();
+      setTimeout(() => this.success = '', 3000);
+    },
+    error: (err: any) => { this.savingImpl = false; this.error = err.error?.error || 'Erreur'; }
+  });
+}
+
+get annexeKeys(): string[] {
+  if (!this.implData?.par_annexe) return [];
+  return Object.keys(this.implData.par_annexe);
+}
+
+getControlesForAnnexeImpl(annexe: string): any[] {
+  const all = this.implData?.par_annexe?.[annexe] || [];
+  return all.filter((c: any) => {
+    const matchS = !this.filtreImplStatut ||
+      c.implementation?.statut_detail === this.filtreImplStatut ||
+      (!c.implementation && this.filtreImplStatut === 'non_commence');
+    return matchS;
+  });
+}
+
+getImplStatutClass(v: string | null): string {
+  const m: Record<string,string> = {
+    complet:     'impl-complet',
+    partiel:     'impl-partiel',
+    en_cours:    'impl-en-cours',
+    non_commence:'impl-non-commence'
+  };
+  return m[v || 'non_commence'] || 'impl-non-commence';
+}
+
+getImplStatutLabel(v: string | null): string {
+  const m: Record<string,string> = {
+    complet:     '✓ Complet',
+    partiel:     '◑ Partiel',
+    en_cours:    '⏳ En cours',
+    non_commence:'○ Non commencé'
+  };
+  return m[v || 'non_commence'] || '○ Non commencé';
+}
+
+getMaturiteLabel(n: number): string {
+  const m: Record<number,string> = {
+    1:'Initial',2:'Répétable',3:'Défini',4:'Géré',5:'Optimisé'
+  };
+  return m[n] || '—';
+}
+statutsImpl = [
+  { value: 'non_commence', label: 'Non commencé', icon: '○' },
+  { value: 'en_cours',     label: 'En cours',     icon: '⏳' },
+  { value: 'partiel',      label: 'Partiel',      icon: '◑' },
+  { value: 'complet',      label: 'Complet',      icon: '✓' }
+];
+typesPreuve = ['document','rapport','capture_ecran','log','certificat','entretien','autre'];
 loadMethodologie(): void {
   this.http.get<any>(`${this.api}/methodologie-risque`).subscribe({
     next: (d) => {
@@ -351,7 +489,30 @@ get matriceFormPreview(): string[][] {
   labels_probabilite:   [['Rare', 'Peu probable', 'Probable', 'Quasi-certain']],
   labels_impact:        [['Négligeable', 'Limité', 'Important', 'Critique']]
 });
+this.implForm = this.fb.group({
+  statut_detail:  ['non_commence'],
+  niveau_maturite:[1],
+  responsable:    [''],
+  date_revue:     [''],
+  notes:          [''],
+  outils:         this.fb.array([]),
+  regles_gestion: this.fb.array([]),
+  procedures:     this.fb.array([]),
+  configurations: this.fb.array([]),
+  preuves:        this.fb.array([])
+});
   }
+get outilsArr():  FormArray { return this.implForm.get('outils')         as FormArray; }
+get reglesArr():  FormArray { return this.implForm.get('regles_gestion') as FormArray; }
+get procedArr():  FormArray { return this.implForm.get('procedures')     as FormArray; }
+get configArr():  FormArray { return this.implForm.get('configurations') as FormArray; }
+get preuvesArr(): FormArray { return this.implForm.get('preuves')        as FormArray; }
+
+newOutil()   { return this.fb.group({ nom:['',Validators.required], editeur:[''], version:[''], usage:[''], url:[''] }); }
+newRegle()   { return this.fb.group({ titre:['',Validators.required], description:[''], reference:[''], date_maj:[''] }); }
+newProcedure(){ return this.fb.group({ titre:['',Validators.required], reference:[''], description:[''], responsable:[''], frequence:[''] }); }
+newConfig()  { return this.fb.group({ composant:['',Validators.required], parametre:['',Validators.required], valeur:[''], justification:[''] }); }
+newPreuve()  { return this.fb.group({ type_preuve:['document'], description:['',Validators.required], reference:[''], date:[''], responsable:[''] }); }
 
   // ── SoA ───────────────────────────────────────────────────────────────────
   loadSoa(): void {

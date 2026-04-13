@@ -26,7 +26,7 @@ export class DashboardComponent implements OnInit {
   sidebarCollapsed = false;
   activeRoute      = '';
   showUserMenu     = false;
-
+isRiskAnalysisEnabled = false;
   // Toutes les entrées de nav avec les rôles autorisés
   allNavItems: NavItem[] = [
     {
@@ -80,6 +80,19 @@ export class DashboardComponent implements OnInit {
   icon: 'target',
   route: '/dashboard/direction/clause6',
   roles: ['direction', 'comite_securite', 'super_admin']
+},
+{
+  label: 'Analyse de risque',
+  icon: 'risk',
+  route: '/dashboard/ebios',
+  roles: ['rssi', 'super_admin'],
+  disabled: true // sera dynamique
+},
+{
+  label: 'Registre des traitements',
+  icon: 'database',
+  route: '/dashboard/dpo/registre',  // ✅ CORRECT
+  roles: ['dpo', 'super_admin']
 }
   ];
 
@@ -87,17 +100,33 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.auth.getCurrentUser();
+    this.checkRiskAccess(); 
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: any) => { this.activeRoute = e.url; });
     this.activeRoute = this.router.url;
   }
+checkRiskAccess() {
 
+
+  this.isRiskAnalysisEnabled = true; // ⚠️ test temporaire
+}
   // Items visibles selon le rôle
   get navItems(): NavItem[] {
-    const role = this.currentUser?.role || '';
-    return this.allNavItems.filter(item => item.roles.includes(role));
-  }
+  const role = this.currentUser?.role || '';
+
+  return this.allNavItems
+    .map(item => {
+      if (item.label === 'Analyse de risque') {
+        return {
+          ...item,
+          disabled: !this.isRiskAnalysisEnabled
+        };
+      }
+      return item;
+    })
+    .filter(item => item.roles.includes(role));
+}
 
   get userInitials(): string {
     if (!this.currentUser) return 'AD';

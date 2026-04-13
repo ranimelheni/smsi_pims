@@ -1,0 +1,498 @@
+<div class="atelier1-page">
+
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error"   *ngIf="error">{{ error }}</div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div> Chargement de l'atelier 1...
+  </div>
+
+  <div *ngIf="!loading && data">
+
+    <!-- ══ SECTION A — SOCIÉTÉ / MISSION ══ -->
+    <div class="panel section-panel">
+      <div class="section-title-row">
+        <div class="section-badge a1">A</div>
+        <div>
+          <h2 class="section-title">Société et mission</h2>
+          <p class="section-desc">Décrire l'organisme et sa mission principale dans le périmètre de l'analyse.</p>
+        </div>
+        <button *ngIf="!showSocieteForm" class="btn-edit"
+          (click)="showSocieteForm = true">✏️ Renseigner</button>
+      </div>
+
+      <div *ngIf="showSocieteForm" [formGroup]="societeForm" class="form-block">
+        <div class="grid-2">
+          <div class="field">
+            <label>Nom de l'organisme</label>
+            <input formControlName="nom_societe" placeholder="Ex: Ministère de la santé, Société ABC..."/>
+          </div>
+          <div class="field">
+            <label>Adresse</label>
+            <input formControlName="adresse" placeholder="Adresse du siège..."/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Contact</label>
+          <input formControlName="contact" placeholder="Nom et coordonnées du contact RSSI..."/>
+        </div>
+        <div class="field">
+          <label>Mission de l'organisme</label>
+          <textarea formControlName="mission" rows="3"
+            placeholder="Décrire la mission principale et les activités couvertes par l'analyse EBIOS RM..."></textarea>
+        </div>
+        <div class="form-footer">
+          <button class="btn-save" (click)="saveSociete()">💾 Sauvegarder</button>
+        </div>
+      </div>
+
+      <div *ngIf="!showSocieteForm && data.societe_mission" class="info-summary">
+        <div class="info-row"><label>Organisme</label><span>{{ data.societe_mission.nom_societe }}</span></div>
+        <div class="info-row"><label>Mission</label><span>{{ data.societe_mission.mission }}</span></div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION B — ENTITÉS ══ -->
+    <div class="panel section-panel">
+      <div class="section-title-row">
+        <div class="section-badge b1">B</div>
+        <div>
+          <h2 class="section-title">Entités et personnes responsables</h2>
+          <p class="section-desc">Identifier les entités internes et externes impliquées dans le périmètre.</p>
+        </div>
+        <button class="btn-add"
+          (click)="showEntiteForm = true; editingEntite = null; entiteForm.reset({ type_entite:'interne' })">
+          + Ajouter
+        </button>
+      </div>
+
+      <!-- Formulaire -->
+      <div *ngIf="showEntiteForm" class="form-block" [formGroup]="entiteForm">
+        <div class="grid-3">
+          <div class="field required">
+            <label>Nom de l'entité</label>
+            <input formControlName="nom_entite" placeholder="Ex: DSI, Direction Générale, Fournisseur X..."/>
+            <span class="err" *ngIf="entiteForm.get('nom_entite')?.invalid && entiteForm.get('nom_entite')?.touched">Requis</span>
+          </div>
+          <div class="field">
+            <label>Type</label>
+            <select formControlName="type_entite">
+              <option *ngFor="let t of typesEntite" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Responsable</label>
+            <input formControlName="responsable" placeholder="Nom du responsable..."/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <input formControlName="description" placeholder="Rôle dans le périmètre..."/>
+        </div>
+        <div class="form-footer">
+          <button class="btn-cancel" (click)="showEntiteForm = false; editingEntite = null">Annuler</button>
+          <button class="btn-save" (click)="submitEntite()">
+            {{ editingEntite ? 'Modifier' : 'Ajouter' }}
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="!listeEntites.length" class="empty-state">Aucune entité définie</div>
+      <div class="items-grid" *ngIf="listeEntites.length > 0">
+        <div *ngFor="let e of listeEntites" class="entite-card">
+          <div class="entite-icon">🏢</div>
+          <div class="entite-body">
+            <div class="entite-nom">{{ e.nom_entite }}</div>
+            <div class="entite-meta">
+              <span class="type-badge {{ e.type_entite }}">{{ e.type_entite }}</span>
+              <span *ngIf="e.responsable">{{ e.responsable }}</span>
+            </div>
+            <div class="entite-desc" *ngIf="e.description">{{ e.description }}</div>
+          </div>
+          <div class="entite-actions">
+            <button class="btn-icon" (click)="editEntite(e)" title="Modifier">✏️</button>
+            <button class="btn-icon danger" (click)="deleteEntite(e.id)" title="Supprimer">🗑️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION C — VALEURS MÉTIER + BIENS SUPPORTS + ÉVÉNEMENTS ══ -->
+    <div class="panel section-panel">
+      <div class="section-title-row">
+        <div class="section-badge c1">C</div>
+        <div>
+          <h2 class="section-title">Valeurs métier, biens supports & événements redoutés</h2>
+          <p class="section-desc">
+            Identifier ce qui a de la valeur pour l'organisme, les biens qui les supportent, 
+            et les événements redoutés associés.
+          </p>
+        </div>
+        <button class="btn-add"
+          (click)="showVmForm = true; editingVm = null; vmForm.reset({ nature:'processus' })">
+          + Valeur métier
+        </button>
+      </div>
+
+      <!-- Formulaire valeur métier -->
+      <div *ngIf="showVmForm" class="form-block" [formGroup]="vmForm">
+        <h3 class="form-subtitle">{{ editingVm ? 'Modifier' : 'Nouvelle' }} valeur métier</h3>
+        <div class="grid-3">
+          <div class="field required">
+            <label>Dénomination</label>
+            <input formControlName="denomination" placeholder="Ex: Gestion des dossiers patients..."/>
+            <span class="err" *ngIf="vmForm.get('denomination')?.invalid && vmForm.get('denomination')?.touched">Requis</span>
+          </div>
+          <div class="field">
+            <label>Mission</label>
+            <input formControlName="mission" placeholder="Ex: Assurer le suivi médical..."/>
+          </div>
+          <div class="field">
+            <label>Nature</label>
+            <select formControlName="nature">
+              <option *ngFor="let n of natures" [value]="n">{{ n }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Entité responsable</label>
+            <select formControlName="entite_id">
+              <option value="">— Aucune —</option>
+              <option *ngFor="let e of listeEntites" [value]="e.id">{{ e.nom_entite }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <input formControlName="description"/>
+          </div>
+        </div>
+
+        <!-- Besoins de sécurité -->
+        <div class="besoins-section" formGroupName="besoins_securite">
+          <label class="field-label">Besoins de sécurité (CIA)</label>
+          <div class="cia-checkboxes">
+            <label class="cia-item confidentialite"
+              [class.checked]="vmForm.get('besoins_securite.confidentialite')?.value">
+              <input type="checkbox" formControlName="confidentialite"/>
+              <span class="cia-icon">🔒</span>
+              <span>Confidentialité</span>
+            </label>
+            <label class="cia-item integrite"
+              [class.checked]="vmForm.get('besoins_securite.integrite')?.value">
+              <input type="checkbox" formControlName="integrite"/>
+              <span class="cia-icon">✅</span>
+              <span>Intégrité</span>
+            </label>
+            <label class="cia-item disponibilite"
+              [class.checked]="vmForm.get('besoins_securite.disponibilite')?.value">
+              <input type="checkbox" formControlName="disponibilite"/>
+              <span class="cia-icon">⚡</span>
+              <span>Disponibilité</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <button class="btn-cancel" (click)="showVmForm = false; editingVm = null">Annuler</button>
+          <button class="btn-save" (click)="submitVM()">{{ editingVm ? 'Modifier' : 'Ajouter' }}</button>
+        </div>
+      </div>
+
+      <!-- Liste valeurs métier avec biens supports et événements -->
+      <div *ngIf="!listeVM.length" class="empty-state">Aucune valeur métier définie</div>
+
+      <div *ngFor="let vm of listeVM" class="vm-bloc">
+
+        <!-- Header valeur métier -->
+        <div class="vm-header">
+          <div class="vm-left">
+            <span class="nature-badge {{ vm.nature }}">{{ vm.nature }}</span>
+            <div>
+              <div class="vm-nom">{{ vm.denomination }}</div>
+              <div class="vm-meta">{{ vm.mission }} <span *ngIf="vm.entite_nom">· {{ vm.entite_nom }}</span></div>
+            </div>
+          </div>
+          <div class="vm-right">
+            <!-- CIA badges -->
+            <div class="cia-tags">
+              <span *ngIf="vm.besoins_securite?.confidentialite" class="cia-tag c">C</span>
+              <span *ngIf="vm.besoins_securite?.integrite"       class="cia-tag i">I</span>
+              <span *ngIf="vm.besoins_securite?.disponibilite"   class="cia-tag a">A</span>
+            </div>
+            <button class="btn-add-sm"
+              (click)="showBsForm = true; editingBs = null; bsForm.reset({ type_bien:'materiel', valeur_metier_id: vm.id })">
+              + Bien support
+            </button>
+            <button class="btn-add-sm er"
+              (click)="showErForm = true; editingEr = null; erForm.reset({ gravite:2, valeur_metier_id: vm.id }); impactsArr.clear()">
+              + Événement redouté
+            </button>
+            <button class="btn-icon" (click)="editVM(vm)">✏️</button>
+            <button class="btn-icon danger" (click)="deleteVM(vm.id)">🗑️</button>
+          </div>
+        </div>
+
+        <!-- Biens supports de cette VM -->
+        <div class="bs-section" *ngIf="getBsForVM(vm.id).length > 0">
+          <div class="sub-title">🔧 Biens supports</div>
+          <div class="bs-list">
+            <div *ngFor="let b of getBsForVM(vm.id)" class="bs-item">
+              <span class="bs-icon">{{ getTypeBienIcon(b.type_bien) }}</span>
+              <div class="bs-body">
+                <span class="bs-nom">{{ b.denomination }}</span>
+                <span class="bs-type">{{ b.type_bien }}</span>
+                <span class="bs-resp" *ngIf="b.responsable">{{ b.responsable }}</span>
+              </div>
+              <div class="bs-actions">
+                <button class="btn-icon sm" (click)="editBS(b)">✏️</button>
+                <button class="btn-icon sm danger" (click)="deleteBS(b.id)">🗑️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Événements redoutés de cette VM -->
+        <div class="er-section" *ngIf="getErForVM(vm.id).length > 0">
+          <div class="sub-title">⚠️ Événements redoutés</div>
+          <div class="er-list">
+            <div *ngFor="let er of getErForVM(vm.id)" class="er-item">
+              <div class="er-gravite {{ getGraviteClass(er.gravite) }}">
+                G{{ er.gravite }}<br/><span>{{ getGraviteLabel(er.gravite) }}</span>
+              </div>
+              <div class="er-body">
+                <div class="er-libelle">{{ er.libelle }}</div>
+                <div class="er-besoins">
+                  <span *ngFor="let b of er.besoins_securite" class="cia-tag {{ b[0] }}">{{ b[0].toUpperCase() }}</span>
+                </div>
+                <div class="er-impacts" *ngIf="er.impacts?.length > 0">
+                  <span *ngFor="let imp of er.impacts" class="impact-chip">
+                    {{ imp.type }} — {{ imp.description }}
+                  </span>
+                </div>
+              </div>
+              <div class="er-actions">
+                <button class="btn-icon sm" (click)="editER(er)">✏️</button>
+                <button class="btn-icon sm danger" (click)="deleteER(er.id)">🗑️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulaire bien support (si ouvert) -->
+      <div *ngIf="showBsForm" class="form-block nested" [formGroup]="bsForm">
+        <h3 class="form-subtitle">{{ editingBs ? 'Modifier' : 'Nouveau' }} bien support</h3>
+        <div class="grid-3">
+          <div class="field required">
+            <label>Dénomination</label>
+            <input formControlName="denomination" placeholder="Ex: Serveur de base de données, Réseau local..."/>
+            <span class="err" *ngIf="bsForm.get('denomination')?.invalid && bsForm.get('denomination')?.touched">Requis</span>
+          </div>
+          <div class="field required">
+            <label>Valeur métier supportée</label>
+            <select formControlName="valeur_metier_id">
+              <option value="">— Sélectionner —</option>
+              <option *ngFor="let v of listeVM" [value]="v.id">{{ v.denomination }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Type</label>
+            <select formControlName="type_bien">
+              <option *ngFor="let t of typesBien" [value]="t">{{ getTypeBienIcon(t) }} {{ t }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Responsable</label>
+            <input formControlName="responsable" placeholder="Propriétaire ou gestionnaire..."/>
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <input formControlName="description"/>
+          </div>
+        </div>
+        <div class="form-footer">
+          <button class="btn-cancel" (click)="showBsForm = false; editingBs = null">Annuler</button>
+          <button class="btn-save" (click)="submitBS()">{{ editingBs ? 'Modifier' : 'Ajouter' }}</button>
+        </div>
+      </div>
+
+      <!-- Formulaire événement redouté (si ouvert) -->
+      <div *ngIf="showErForm" class="form-block nested er-form" [formGroup]="erForm">
+        <h3 class="form-subtitle">{{ editingEr ? 'Modifier' : 'Nouvel' }} événement redouté</h3>
+        <div class="grid-3">
+          <div class="field required">
+            <label>Libellé</label>
+            <input formControlName="libelle" placeholder="Ex: Fuite de données patients, Indisponibilité du SI..."/>
+            <span class="err" *ngIf="erForm.get('libelle')?.invalid && erForm.get('libelle')?.touched">Requis</span>
+          </div>
+          <div class="field required">
+            <label>Valeur métier concernée</label>
+            <select formControlName="valeur_metier_id">
+              <option value="">— Sélectionner —</option>
+              <option *ngFor="let v of listeVM" [value]="v.id">{{ v.denomination }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Gravité</label>
+            <div class="gravite-selector">
+              <button *ngFor="let g of [1,2,3,4]" type="button"
+                class="gravite-btn g{{ g }}"
+                [class.selected]="erForm.get('gravite')?.value === g"
+                (click)="erForm.get('gravite')?.setValue(g)">
+                {{ g }} — {{ getGraviteLabel(g) }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Besoins de sécurité -->
+        <div class="besoins-section" formGroupName="besoins_securite">
+          <label class="field-label">Besoins de sécurité impactés</label>
+          <div class="cia-checkboxes">
+            <label class="cia-item confidentialite"
+              [class.checked]="erForm.get('besoins_securite.confidentialite')?.value">
+              <input type="checkbox" formControlName="confidentialite"/>
+              <span class="cia-icon">🔒</span><span>Confidentialité</span>
+            </label>
+            <label class="cia-item integrite"
+              [class.checked]="erForm.get('besoins_securite.integrite')?.value">
+              <input type="checkbox" formControlName="integrite"/>
+              <span class="cia-icon">✅</span><span>Intégrité</span>
+            </label>
+            <label class="cia-item disponibilite"
+              [class.checked]="erForm.get('besoins_securite.disponibilite')?.value">
+              <input type="checkbox" formControlName="disponibilite"/>
+              <span class="cia-icon">⚡</span><span>Disponibilité</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Impacts -->
+        <div class="impacts-section">
+          <div class="impacts-header">
+            <label class="field-label">Impacts redoutés</label>
+            <button type="button" class="btn-add-sm" (click)="addImpact()">+ Ajouter un impact</button>
+          </div>
+          <div *ngIf="impactsArr.length === 0" class="empty-mini">Aucun impact décrit</div>
+          <div formArrayName="impacts">
+            <div *ngFor="let imp of impactsArr.controls; let i = index"
+              [formGroupName]="i" class="impact-row">
+              <div class="field" style="width:140px;flex-shrink:0">
+                <select formControlName="type">
+                  <option *ngFor="let t of typesImpact" [value]="t">{{ t }}</option>
+                </select>
+              </div>
+              <div class="field flex-1">
+                <input formControlName="description" placeholder="Décrire l'impact..."/>
+              </div>
+              <button type="button" class="btn-remove-sm" (click)="removeImpact(i)">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <button class="btn-cancel" (click)="showErForm = false; editingEr = null">Annuler</button>
+          <button class="btn-save" (click)="submitER()">{{ editingEr ? 'Modifier' : 'Ajouter' }}</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION D — SOCLE DE SÉCURITÉ ══ -->
+    <div class="panel section-panel">
+      <div class="section-title-row">
+        <div class="section-badge d1">D</div>
+        <div>
+          <h2 class="section-title">Socle de sécurité</h2>
+          <p class="section-desc">Référentiels de sécurité appliqués et identification des écarts.</p>
+        </div>
+        <button class="btn-add"
+          (click)="showSocleForm = true; editingSocle = null; socleForm.reset({ etat_application:'partiel' }); ecartsArr.clear()">
+          + Référentiel
+        </button>
+      </div>
+
+      <!-- Formulaire socle -->
+      <div *ngIf="showSocleForm" class="form-block" [formGroup]="socleForm">
+        <div class="grid-3">
+          <div class="field required">
+            <label>Nom du référentiel</label>
+            <input formControlName="nom_referentiel" placeholder="Ex: ISO 27001:2022, ANSSI RGS, RGPD..."/>
+            <span class="err" *ngIf="socleForm.get('nom_referentiel')?.invalid && socleForm.get('nom_referentiel')?.touched">Requis</span>
+          </div>
+          <div class="field">
+            <label>Type de référentiel</label>
+            <select formControlName="type_referentiel">
+              <option value="">— Sélectionner —</option>
+              <option *ngFor="let t of typesRef" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>État d'application</label>
+            <select formControlName="etat_application">
+              <option *ngFor="let e of etatsApp" [value]="e.value">{{ e.label }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Écarts -->
+        <div class="ecarts-section">
+          <div class="ecarts-header">
+            <label class="field-label">Écarts identifiés</label>
+            <button type="button" class="btn-add-sm" (click)="addEcart()">+ Écart</button>
+          </div>
+          <div *ngIf="ecartsArr.length === 0" class="empty-mini">Aucun écart</div>
+          <div formArrayName="ecarts">
+            <div *ngFor="let ec of ecartsArr.controls; let i = index"
+              [formGroupName]="i" class="ecart-row">
+              <div class="field flex-1">
+                <input formControlName="ecart" placeholder="Description de l'écart..."/>
+              </div>
+              <div class="field flex-1">
+                <input formControlName="justification" placeholder="Justification ou plan d'action..."/>
+              </div>
+              <button type="button" class="btn-remove-sm" (click)="removeEcart(i)">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <button class="btn-cancel" (click)="showSocleForm = false; editingSocle = null">Annuler</button>
+          <button class="btn-save" (click)="submitSocle()">{{ editingSocle ? 'Modifier' : 'Ajouter' }}</button>
+        </div>
+      </div>
+
+      <div *ngIf="!listeSocle.length" class="empty-state">Aucun référentiel défini</div>
+
+      <div class="socle-list">
+        <div *ngFor="let s of listeSocle" class="socle-card">
+          <div class="socle-header">
+            <div class="socle-left">
+              <span class="{{ getEtatClass(s.etat_application) }}">{{ getEtatLabel(s.etat_application) }}</span>
+              <div>
+                <div class="socle-nom">{{ s.nom_referentiel }}</div>
+                <div class="socle-type" *ngIf="s.type_referentiel">{{ s.type_referentiel }}</div>
+              </div>
+            </div>
+            <div class="socle-actions">
+              <span class="ecarts-count" *ngIf="s.ecarts?.length > 0">
+                {{ s.ecarts.length }} écart(s)
+              </span>
+              <button class="btn-icon" (click)="editSocle(s)">✏️</button>
+              <button class="btn-icon danger" (click)="deleteSocle(s.id)">🗑️</button>
+            </div>
+          </div>
+          <div class="ecarts-preview" *ngIf="s.ecarts?.length > 0">
+            <div *ngFor="let ec of s.ecarts" class="ecart-preview-item">
+              <span class="ecart-bullet">⚠️</span>
+              <div><strong>{{ ec.ecart }}</strong><span *ngIf="ec.justification"> — {{ ec.justification }}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

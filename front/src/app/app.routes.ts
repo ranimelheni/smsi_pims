@@ -72,6 +72,17 @@ loadComponent: () =>
   loadComponent: () =>
     import('./components/clause6-rssi/clause6-rssi.component')
       .then(m => m.Clause6RssiComponent)
+},
+{
+  path: 'ebios',
+  loadComponent: () =>
+    import('./components/ebios/ebios.component').then(m => m.EbiosComponent)
+},
+ {
+  path: 'dpo/registre',
+  loadComponent: () =>
+    import('./components/registre/registre.component')
+      .then(m => m.RegistreComponent),
 }
     ]
   },

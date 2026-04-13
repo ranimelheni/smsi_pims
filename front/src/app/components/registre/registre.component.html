@@ -1,0 +1,380 @@
+<div class="registre-page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="retourDashboard()">← Dashboard</button>
+      <div>
+        <h1>Registre des traitements</h1>
+        <p class="subtitle">Article 30 RGPD · ISO 27701 · DPO</p>
+      </div>
+    </div>
+    <div class="header-stats" *ngIf="stats.total >= 0">
+      <div class="stat-chip">
+        <span class="stat-n">{{ stats.total }}</span>
+        <span class="stat-l">Traitements</span>
+      </div>
+      <div class="stat-chip valide">
+        <span class="stat-n">{{ stats.valides }}</span>
+        <span class="stat-l">Validés</span>
+      </div>
+      <div class="stat-chip warn" *ngIf="stats.pia_manquant > 0">
+        <span class="stat-n">{{ stats.pia_manquant }}</span>
+        <span class="stat-l">PIA manquants ⚠️</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div class="toast success" *ngIf="success">{{ success }}</div>
+  <div class="toast error"   *ngIf="error">{{ error }}</div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Synchronisation et chargement du registre...</p>
+  </div>
+
+  <!-- CONTENU -->
+  <div *ngIf="!loading" class="page-body">
+
+    <!-- BARRE FILTRES -->
+    <div class="filters-bar">
+      <input class="filter-search" [(ngModel)]="filtreSearch"
+        placeholder="🔍 Rechercher un service, finalité, responsable..."/>
+      <select [(ngModel)]="filtreRisque" class="filter-select">
+        <option value="">Tous risques</option>
+        <option value="Élevé">Élevé</option>
+        <option value="Moyen">Moyen</option>
+        <option value="Faible">Faible</option>
+        <option value="Aucun">Aucun</option>
+      </select>
+      <select [(ngModel)]="filtrePia" class="filter-select">
+        <option value="">Tous PIA</option>
+        <option value="non_requis">Non requis</option>
+        <option value="a_realiser">À réaliser</option>
+        <option value="en_cours">En cours</option>
+        <option value="realise">Réalisé</option>
+      </select>
+      <span class="filter-count">{{ listeFiltree.length }} traitement(s)</span>
+    </div>
+
+    <!-- ÉTAT VIDE -->
+    <div *ngIf="!listeFiltree.length && !loading" class="empty-state">
+      <span class="empty-icon">📂</span>
+      <h3>Aucun traitement dans le registre</h3>
+      <p>
+        Les fiches processus validées par le RSSI apparaîtront automatiquement ici.<br>
+        Assurez-vous que les fiches sont au statut <strong>« Validé »</strong>.
+      </p>
+    </div>
+
+    <!-- TABLEAU -->
+    <div *ngIf="listeFiltree.length" class="table-container">
+      <table class="registre-table">
+        <thead>
+          <tr>
+            <th>Service / Traitement</th>
+            <th>Finalité</th>
+            <th>Base légale</th>
+            <th>Responsable</th>
+            <th>Personnes</th>
+            <th>Données</th>
+            <th>Durée conservation</th>
+            <th>Partage tiers</th>
+            <th>Transfert hors UE</th>
+            <th>Risque</th>
+            <th>Statut</th>
+            <th class="col-pia">PIA</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let r of listeFiltree">
+
+            <!-- Ligne principale -->
+            <tr class="data-row"
+              [class.selected]="selectedRow?.id === r.id"
+              (click)="selectRow(r)">
+
+              <!-- Service -->
+              <td class="td-service">
+                <div class="service-name">{{ r.service }}</div>
+                <div class="service-cat" *ngIf="r.categorie_traitement">
+                  {{ r.categorie_traitement }}
+                </div>
+              </td>
+
+              <!-- Finalité -->
+              <td class="td-finalite">
+                <span class="text-clip" [title]="r.macro_finalite">
+                  {{ r.macro_finalite || '—' }}
+                </span>
+              </td>
+
+              <!-- Base légale -->
+              <td>
+                <span class="badge-legale" *ngIf="r.base_legale">
+                  {{ getBaseLegale(r.base_legale) }}
+                </span>
+                <span *ngIf="!r.base_legale">—</span>
+              </td>
+
+              <!-- Responsable -->
+              <td>{{ r.responsable_traitement || '—' }}</td>
+
+              <!-- Personnes -->
+              <td>
+                <div *ngIf="r.categories_personnes?.length" class="tags-mini">
+                  <span *ngFor="let p of r.categories_personnes | slice:0:2"
+                    class="tag-mini">{{ p }}</span>
+                  <span *ngIf="r.categories_personnes.length > 2" class="tag-more">
+                    +{{ r.categories_personnes.length - 2 }}
+                  </span>
+                </div>
+                <span *ngIf="!r.categories_personnes?.length">—</span>
+              </td>
+
+              <!-- Données -->
+              <td>
+                <div class="tags-mini" *ngIf="r.categories_donnees?.length">
+                  <span *ngFor="let d of r.categories_donnees | slice:0:2"
+                    class="tag-mini gray">{{ d }}</span>
+                  <span *ngIf="r.categories_donnees.length > 2" class="tag-more">
+                    +{{ r.categories_donnees.length - 2 }}
+                  </span>
+                </div>
+                <span *ngIf="!r.categories_donnees?.length">—</span>
+              </td>
+
+              <!-- Durée conservation -->
+              <td>{{ r.duree_conservation || '—' }}</td>
+
+              <!-- Partage tiers -->
+              <td class="td-bool">
+                <span [class]="r.partage_donnees ? 'bool-yes' : 'bool-no'">
+                  {{ r.partage_donnees ? 'Oui' : 'Non' }}
+                </span>
+              </td>
+
+              <!-- Transfert hors UE -->
+              <td class="td-bool">
+                <span [class]="r.transfert_hors_ue ? 'bool-warn' : 'bool-no'">
+                  {{ r.transfert_hors_ue ? r.pays_destination || 'Oui' : 'Non' }}
+                </span>
+              </td>
+
+              <!-- Risque -->
+              <td>
+                <span *ngIf="r.risque_max" class="badge-risque {{ getRisqueClass(r.risque_max) }}">
+                  {{ r.risque_max }}
+                </span>
+                <button class="btn-edit-risque" (click)="openEditRisque(r, $event)"
+                  title="Modifier les risques">✏️</button>
+              </td>
+
+              <!-- Statut -->
+              <td>
+                <span class="badge-statut {{ getStatutClass(r.statut) }}">
+                  {{ r.statut === 'valide' ? 'Validé' : 'Brouillon' }}
+                </span>
+              </td>
+
+              <!-- PIA -->
+              <td class="col-pia">
+                <ng-container *ngIf="!r.pia_requis">
+                  <span class="pia-badge pia-nr">Non requis</span>
+                </ng-container>
+                <ng-container *ngIf="r.pia_requis && r.analyse_pia">
+                  <span class="pia-badge pia-ok">✅ Réalisé</span>
+                </ng-container>
+                <ng-container *ngIf="r.pia_requis && !r.analyse_pia">
+                  <div class="pia-action-cell">
+                    <span class="pia-badge pia-ar">⚠️ Requis</span>
+                    <button class="btn-pia-go" (click)="ouvrirPia(r, $event)">
+                      → Lancer PIA
+                    </button>
+                  </div>
+                </ng-container>
+              </td>
+
+              <!-- Actions -->
+              <td class="td-actions" (click)="$event.stopPropagation()">
+                <button class="btn-action"
+                  *ngIf="r.statut !== 'valide'"
+                  (click)="validerTraitement(r, $event)"
+                  title="Valider le traitement">✅</button>
+                <button class="btn-action expand"
+                  (click)="selectRow(r)"
+                  title="Voir le détail">
+                  {{ selectedRow?.id === r.id ? '▲' : '▼' }}
+                </button>
+              </td>
+            </tr>
+
+            <!-- Ligne détail dépliable -->
+            <tr *ngIf="selectedRow?.id === r.id" class="detail-row">
+              <td colspan="13">
+                <div class="detail-panel">
+                  <div class="detail-close" (click)="closeDetail()">✕ Fermer</div>
+
+                  <div class="detail-grid">
+
+                    <!-- Bloc Finalités -->
+                    <div class="detail-bloc">
+                      <div class="db-title">📋 Finalités</div>
+                      <div class="db-row"><label>Macro finalité</label><span>{{ r.macro_finalite || '—' }}</span></div>
+                      <div class="db-row"><label>Micro finalités</label><span>{{ r.micro_finalites || '—' }}</span></div>
+                      <div class="db-row"><label>Date création</label><span>{{ r.date_creation || '—' }}</span></div>
+                    </div>
+
+                    <!-- Bloc Données -->
+                    <div class="detail-bloc">
+                      <div class="db-title">🗄️ Données</div>
+                      <div class="db-row">
+                        <label>Catégories données</label>
+                        <span>{{ formatArr(r.categories_donnees) }}</span>
+                      </div>
+                      <div class="db-row">
+                        <label>Catégories personnes</label>
+                        <span>{{ formatArr(r.categories_personnes) }}</span>
+                      </div>
+                      <div class="db-row">
+                        <label>Données sensibles</label>
+                        <span>{{ formatArr(r.donnees_sensibles) }}</span>
+                      </div>
+                      <div class="db-row" *ngIf="r.donnees_hautement_personnelles">
+                        <label></label>
+                        <span class="warn-text">⚠️ Données hautement personnelles</span>
+                      </div>
+                      <div class="db-row"><label>Mode collecte</label><span>{{ r.mode_collecte || '—' }}</span></div>
+                    </div>
+
+                    <!-- Bloc Droits -->
+                    <div class="detail-bloc">
+                      <div class="db-title">⚖️ Droits</div>
+                      <div class="droits-grid">
+                        <span [class]="r.droit_acces ? 'droit-ok' : 'droit-no'">👁️ Accès {{ getBoolIcon(r.droit_acces) }}</span>
+                        <span [class]="r.droit_rectification ? 'droit-ok' : 'droit-no'">✏️ Rectification {{ getBoolIcon(r.droit_rectification) }}</span>
+                        <span [class]="r.droit_opposition ? 'droit-ok' : 'droit-no'">🚫 Opposition {{ getBoolIcon(r.droit_opposition) }}</span>
+                        <span [class]="r.droit_portabilite ? 'droit-ok' : 'droit-no'">📤 Portabilité {{ getBoolIcon(r.droit_portabilite) }}</span>
+                        <span [class]="r.droit_limitation ? 'droit-ok' : 'droit-no'">⏸️ Limitation {{ getBoolIcon(r.droit_limitation) }}</span>
+                        <span [class]="r.notification_violation ? 'droit-ok' : 'droit-no'">🔔 Notification {{ getBoolIcon(r.notification_violation) }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Bloc Sécurité -->
+                    <div class="detail-bloc">
+                      <div class="db-title">🔒 Sécurité</div>
+                      <div class="droits-grid">
+                        <span [class]="r.authentification ? 'droit-ok' : 'droit-no'">🔑 Auth {{ getBoolIcon(r.authentification) }}</span>
+                        <span [class]="r.journalisation ? 'droit-ok' : 'droit-no'">📋 Logs {{ getBoolIcon(r.journalisation) }}</span>
+                        <span [class]="r.chiffrement ? 'droit-ok' : 'droit-no'">🔒 Chiffrement {{ getBoolIcon(r.chiffrement) }}</span>
+                        <span [class]="r.reseau_interne ? 'droit-ok' : 'droit-no'">🌐 Réseau interne {{ getBoolIcon(r.reseau_interne) }}</span>
+                      </div>
+                      <div class="db-row"><label>Outil</label><span>{{ r.outil_utilise || '—' }}</span></div>
+                      <div class="db-row"><label>Stockage</label><span>{{ r.lieu_stockage || '—' }} {{ r.pays_stockage }}</span></div>
+                    </div>
+
+                    <!-- Bloc Risques + édition inline -->
+                    <div class="detail-bloc">
+                      <div class="db-title">⚠️ Risques</div>
+                      <ng-container *ngIf="editingRisque?.id !== r.id">
+                        <div class="risque-bars">
+                          <div class="rb-item">
+                            <span>Physique</span>
+                            <div class="rb-bar"><div class="rb-fill" [style.width.%]="(r.risque_physique/3)*100"></div></div>
+                            <span>{{ r.risque_physique }}/3</span>
+                          </div>
+                          <div class="rb-item">
+                            <span>Moral</span>
+                            <div class="rb-bar"><div class="rb-fill moral" [style.width.%]="(r.risque_moral/3)*100"></div></div>
+                            <span>{{ r.risque_moral }}/3</span>
+                          </div>
+                          <div class="rb-item">
+                            <span>Matériel</span>
+                            <div class="rb-bar"><div class="rb-fill materiel" [style.width.%]="(r.risque_materiel/3)*100"></div></div>
+                            <span>{{ r.risque_materiel }}/3</span>
+                          </div>
+                        </div>
+                        <div class="badge-risque {{ getRisqueClass(r.risque_max) }}" *ngIf="r.risque_max">
+                          {{ r.risque_max }} · {{ r.domaine_risque_max }}
+                        </div>
+                        <button class="btn-edit-risque-detail" (click)="openEditRisque(r, $event)">
+                          ✏️ Modifier les risques
+                        </button>
+                      </ng-container>
+
+                      <!-- Formulaire édition risques inline -->
+                      <ng-container *ngIf="editingRisque?.id === r.id">
+                        <div class="risque-edit-form">
+                          <label>Physique (0-3)
+                            <input type="range" min="0" max="3" step="1"
+                              [(ngModel)]="editingRisque.risque_physique"/>
+                            <span>{{ editingRisque.risque_physique }}</span>
+                          </label>
+                          <label>Moral (0-3)
+                            <input type="range" min="0" max="3" step="1"
+                              [(ngModel)]="editingRisque.risque_moral"/>
+                            <span>{{ editingRisque.risque_moral }}</span>
+                          </label>
+                          <label>Matériel (0-3)
+                            <input type="range" min="0" max="3" step="1"
+                              [(ngModel)]="editingRisque.risque_materiel"/>
+                            <span>{{ editingRisque.risque_materiel }}</span>
+                          </label>
+                          <textarea placeholder="Explication du risque..."
+                            [(ngModel)]="editingRisque.explication_risque" rows="2"></textarea>
+                          <div class="edit-actions">
+                            <button class="btn-cancel-sm" (click)="editingRisque = null">Annuler</button>
+                            <button class="btn-save-sm" [disabled]="savingRisque" (click)="saveRisque()">
+                              {{ savingRisque ? '...' : 'Enregistrer' }}
+                            </button>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </div>
+
+                    <!-- Bloc PIA -->
+                    <div class="detail-bloc pia-bloc">
+                      <div class="db-title">📊 PIA — Analyse d'impact</div>
+                      <ng-container *ngIf="!r.pia_requis">
+                        <p class="pia-info">Ce traitement ne nécessite pas d'analyse d'impact (risque faible).</p>
+                      </ng-container>
+                      <ng-container *ngIf="r.pia_requis && !r.analyse_pia">
+                        <div class="pia-required-box">
+                          <strong>⚠️ PIA obligatoire — Article 35 RGPD</strong>
+                          <p>Le niveau de risque impose une Analyse d'Impact sur la Protection des Données.</p>
+                          <div class="pia-btns">
+                            <button class="btn-pia-launch" (click)="ouvrirPia(r, $event)">
+                              🔗 Lancer l'analyse PIA
+                            </button>
+                            <button class="btn-pia-done" (click)="marquerPiaRealise(r, $event)">
+                              ✅ Marquer comme réalisé
+                            </button>
+                          </div>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="r.analyse_pia">
+                        <div class="pia-done-box">
+                          ✅ PIA réalisé · Statut : {{ getPiaLabel(r.pia_statut) }}
+                        </div>
+                      </ng-container>
+                      <div class="db-row" *ngIf="r.mesures_a_implementer">
+                        <label>Mesures à implémenter</label>
+                        <span>{{ r.mesures_a_implementer }}</span>
+                      </div>
+                    </div>
+
+                  </div><!-- /detail-grid -->
+                </div><!-- /detail-panel -->
+              </td>
+            </tr>
+
+          </ng-container>
+        </tbody>
+      </table>
+    </div><!-- /table-container -->
+
+  </div><!-- /page-body -->
+</div>

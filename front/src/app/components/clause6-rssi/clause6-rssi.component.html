@@ -40,9 +40,337 @@
   ⚙️ Méthodologie de risque
   <span class="tab-count badge-amber" *ngIf="methodo?.statut === 'rejete'">!</span>
 </button>
+
   </div>
   
+<!-- Ajouter dans .tabs -->
+<button class="tab" [class.active]="activeTab === 'implementation'"
+  (click)="activeTab = 'implementation'; loadImplementations()">
+  🔐 Implémentation contrôles
+  <span class="tab-count" *ngIf="implData?.stats?.complet > 0" style="background:#EAF3DE;color:#3B6D11">
+    {{ implData?.stats?.complet }}/{{ implData?.total_applicables }}
+  </span>
+</button>
 
+<!-- ══ ONGLET IMPLÉMENTATION ══ -->
+<div *ngIf="activeTab === 'implementation'" class="tab-content">
+
+  <div *ngIf="loadingImpl" class="loading-state">
+    <div class="spinner"></div> Chargement...
+  </div>
+
+  <!-- Alerte si SoA non validée -->
+  <div *ngIf="!loadingImpl && implData?.soa_statut !== 'valide'" class="prereq-banner">
+    ⚠️ La SoA doit être <strong>validée par la direction</strong> avant de documenter les implémentations.
+    Statut actuel : <strong>{{ implData?.soa_statut || 'non initialisée' }}</strong>
+  </div>
+
+  <div *ngIf="!loadingImpl && implData?.soa_statut === 'valide'">
+
+    <!-- Stats globales -->
+    <div class="impl-stats">
+      <div class="impl-stat complet">
+        <div class="istat-num">{{ implData?.stats?.complet || 0 }}</div>
+        <div class="istat-lbl">Complets</div>
+      </div>
+      <div class="impl-stat partiel">
+        <div class="istat-num">{{ implData?.stats?.partiel || 0 }}</div>
+        <div class="istat-lbl">Partiels</div>
+      </div>
+      <div class="impl-stat en_cours">
+        <div class="istat-num">{{ implData?.stats?.en_cours || 0 }}</div>
+        <div class="istat-lbl">En cours</div>
+      </div>
+      <div class="impl-stat non_commence">
+        <div class="istat-num">{{ implData?.stats?.non_commence || 0 }}</div>
+        <div class="istat-lbl">Non commencés</div>
+      </div>
+      <div class="impl-stat taux">
+        <div class="istat-num">{{ implData?.stats?.taux || 0 }}%</div>
+        <div class="istat-lbl">Taux complétion</div>
+        <div class="taux-bar">
+          <div class="taux-fill" [style.width.%]="implData?.stats?.taux || 0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout 2 colonnes -->
+    <div class="impl-layout">
+
+      <!-- Colonne gauche : liste contrôles -->
+      <div class="impl-list-col">
+
+        <!-- Filtre -->
+        <div class="impl-filter">
+          <select [(ngModel)]="filtreImplStatut" class="filter-select-sm">
+            <option value="">Tous statuts</option>
+            <option value="non_commence">Non commencé</option>
+            <option value="en_cours">En cours</option>
+            <option value="partiel">Partiel</option>
+            <option value="complet">Complet</option>
+          </select>
+        </div>
+
+        <!-- Par annexe -->
+        <div *ngFor="let annexe of annexeKeys" class="impl-annexe-group">
+          <div class="impl-annexe-header">
+            <span class="annexe-badge-sm">{{ annexe }}</span>
+            <span class="annexe-count">
+              {{ getControlesForAnnexeImpl(annexe).length }} applicable(s)
+            </span>
+          </div>
+
+          <div *ngFor="let c of getControlesForAnnexeImpl(annexe)"
+            class="impl-controle-item"
+            [class.selected]="selectedControle?.controle_id === c.controle_id"
+            (click)="selectControleImpl(c)">
+
+            <div class="impl-status-dot {{ getImplStatutClass(c.implementation?.statut_detail) }}"></div>
+            <div class="impl-controle-body">
+              <div class="impl-controle-ref">{{ c.controle_ref }}</div>
+              <div class="impl-controle-label">{{ c.controle_label }}</div>
+              <div class="impl-controle-statut {{ getImplStatutClass(c.implementation?.statut_detail) }}">
+                {{ getImplStatutLabel(c.implementation?.statut_detail) }}
+              </div>
+            </div>
+            <div class="impl-maturite" *ngIf="c.implementation?.niveau_maturite">
+              M{{ c.implementation.niveau_maturite }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Colonne droite : formulaire détail -->
+      <div class="impl-detail-col" *ngIf="!selectedControle">
+        <div class="impl-no-selection">
+          <span>🔐</span>
+          <p>Sélectionner un contrôle pour documenter son implémentation</p>
+        </div>
+      </div>
+
+      <div class="impl-detail-col" *ngIf="selectedControle" [formGroup]="implForm">
+
+        <!-- Header contrôle -->
+        <div class="impl-detail-header">
+          <div class="impl-ctrl-ref">{{ selectedControle.controle_ref }}</div>
+          <h3 class="impl-ctrl-title">{{ selectedControle.controle_label }}</h3>
+          <p class="impl-ctrl-desc">{{ selectedControle.description }}</p>
+          <div class="impl-ctrl-meta" *ngIf="selectedControle.statut_impl">
+            Statut SoA : <span class="badge-blue">{{ selectedControle.statut_impl }}</span>
+            <span *ngIf="selectedControle.responsable_soa">
+              · Responsable SoA : {{ selectedControle.responsable_soa }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Statut + Maturité -->
+        <div class="impl-section">
+          <div class="grid-2-impl">
+            <div class="field">
+              <label>Statut d'implémentation</label>
+              <div class="statut-impl-btns">
+                <button *ngFor="let s of statutsImpl" type="button"
+                  class="statut-impl-btn {{ s.value }}"
+                  [class.selected]="implForm.get('statut_detail')?.value === s.value"
+                  (click)="implForm.get('statut_detail')?.setValue(s.value)">
+                  {{ s.icon }} {{ s.label }}
+                </button>
+              </div>
+            </div>
+            <div class="field">
+              <label>Niveau de maturité</label>
+              <div class="maturite-btns">
+                <button *ngFor="let n of [1,2,3,4,5]" type="button"
+                  class="maturite-btn"
+                  [class.selected]="implForm.get('niveau_maturite')?.value === n"
+                  [title]="getMaturiteLabel(n)"
+                  (click)="implForm.get('niveau_maturite')?.setValue(n)">
+                  {{ n }}
+                </button>
+              </div>
+              <div class="maturite-label">
+                {{ getMaturiteLabel(implForm.get('niveau_maturite')?.value) }}
+              </div>
+            </div>
+          </div>
+          <div class="grid-2-impl">
+            <div class="field">
+              <label>Responsable</label>
+              <input formControlName="responsable" placeholder="Ex: RSSI, DSI, Équipe IT..."/>
+            </div>
+            <div class="field">
+              <label>Date de prochaine révision</label>
+              <input type="date" formControlName="date_revue"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Outils ── -->
+        <div class="impl-section">
+          <div class="impl-section-header">
+            <div class="impl-section-title">🛠️ Outils utilisés</div>
+            <button type="button" class="btn-add-impl" (click)="outilsArr.push(newOutil())">+ Outil</button>
+          </div>
+          <div *ngIf="!outilsArr.length" class="empty-impl">Aucun outil renseigné</div>
+          <div formArrayName="outils">
+            <div *ngFor="let o of outilsArr.controls; let i = index"
+              [formGroupName]="i" class="impl-item">
+              <div class="impl-item-num">{{ i+1 }}</div>
+              <div class="impl-item-fields">
+                <div class="grid-3-impl">
+                  <div class="field"><label>Nom *</label><input formControlName="nom" placeholder="Ex: Antivirus, SIEM..."/></div>
+                  <div class="field"><label>Éditeur</label><input formControlName="editeur" placeholder="Ex: Microsoft, Splunk..."/></div>
+                  <div class="field"><label>Version</label><input formControlName="version" placeholder="Ex: 2024.1"/></div>
+                </div>
+                <div class="grid-2-impl">
+                  <div class="field"><label>Usage / Rôle</label><input formControlName="usage" placeholder="Ex: Détection malwares..."/></div>
+                  <div class="field"><label>URL / Documentation</label><input formControlName="url" placeholder="https://..."/></div>
+                </div>
+              </div>
+              <button type="button" class="btn-remove-impl" (click)="outilsArr.removeAt(i)">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Règles de gestion ── -->
+        <div class="impl-section">
+          <div class="impl-section-header">
+            <div class="impl-section-title">📋 Règles de gestion</div>
+            <button type="button" class="btn-add-impl" (click)="reglesArr.push(newRegle())">+ Règle</button>
+          </div>
+          <div *ngIf="!reglesArr.length" class="empty-impl">Aucune règle de gestion</div>
+          <div formArrayName="regles_gestion">
+            <div *ngFor="let r of reglesArr.controls; let i = index"
+              [formGroupName]="i" class="impl-item">
+              <div class="impl-item-num">{{ i+1 }}</div>
+              <div class="impl-item-fields">
+                <div class="grid-2-impl">
+                  <div class="field"><label>Titre *</label><input formControlName="titre" placeholder="Ex: Politique de mots de passe..."/></div>
+                  <div class="field"><label>Référence</label><input formControlName="reference" placeholder="Ex: POL-SEC-001"/></div>
+                </div>
+                <div class="field">
+                  <label>Description</label>
+                  <textarea formControlName="description" rows="2"
+                    placeholder="Décrire la règle et son application..."></textarea>
+                </div>
+                <div class="field"><label>Date de mise à jour</label><input type="date" formControlName="date_maj"/></div>
+              </div>
+              <button type="button" class="btn-remove-impl" (click)="reglesArr.removeAt(i)">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Procédures ── -->
+        <div class="impl-section">
+          <div class="impl-section-header">
+            <div class="impl-section-title">📝 Procédures mises en place</div>
+            <button type="button" class="btn-add-impl" (click)="procedArr.push(newProcedure())">+ Procédure</button>
+          </div>
+          <div *ngIf="!procedArr.length" class="empty-impl">Aucune procédure</div>
+          <div formArrayName="procedures">
+            <div *ngFor="let p of procedArr.controls; let i = index"
+              [formGroupName]="i" class="impl-item">
+              <div class="impl-item-num">{{ i+1 }}</div>
+              <div class="impl-item-fields">
+                <div class="grid-3-impl">
+                  <div class="field"><label>Titre *</label><input formControlName="titre" placeholder="Ex: Proc. sauvegarde..."/></div>
+                  <div class="field"><label>Référence</label><input formControlName="reference" placeholder="Ex: PROC-IT-002"/></div>
+                  <div class="field"><label>Responsable</label><input formControlName="responsable" placeholder="Ex: Admin sys..."/></div>
+                </div>
+                <div class="grid-2-impl">
+                  <div class="field">
+                    <label>Description</label>
+                    <textarea formControlName="description" rows="2" placeholder="Décrire la procédure..."></textarea>
+                  </div>
+                  <div class="field"><label>Fréquence</label><input formControlName="frequence" placeholder="Ex: Quotidien, Mensuel..."/></div>
+                </div>
+              </div>
+              <button type="button" class="btn-remove-impl" (click)="procedArr.removeAt(i)">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Configuration technique ── -->
+        <div class="impl-section">
+          <div class="impl-section-header">
+            <div class="impl-section-title">⚙️ Configuration technique</div>
+            <button type="button" class="btn-add-impl" (click)="configArr.push(newConfig())">+ Config</button>
+          </div>
+          <div *ngIf="!configArr.length" class="empty-impl">Aucune configuration</div>
+          <div formArrayName="configurations">
+            <div *ngFor="let c of configArr.controls; let i = index"
+              [formGroupName]="i" class="impl-item">
+              <div class="impl-item-num">{{ i+1 }}</div>
+              <div class="impl-item-fields">
+                <div class="grid-2-impl">
+                  <div class="field"><label>Composant *</label><input formControlName="composant" placeholder="Ex: Firewall Palo Alto..."/></div>
+                  <div class="field"><label>Paramètre *</label><input formControlName="parametre" placeholder="Ex: Règle de filtrage..."/></div>
+                </div>
+                <div class="grid-2-impl">
+                  <div class="field"><label>Valeur</label><input formControlName="valeur" placeholder="Ex: DROP all INPUT from 0.0.0.0/0..."/></div>
+                  <div class="field"><label>Justification</label><input formControlName="justification" placeholder="Pourquoi cette configuration..."/></div>
+                </div>
+              </div>
+              <button type="button" class="btn-remove-impl" (click)="configArr.removeAt(i)">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Preuves / Évidences ── -->
+        <div class="impl-section">
+          <div class="impl-section-header">
+            <div class="impl-section-title">📎 Preuves et évidences</div>
+            <button type="button" class="btn-add-impl" (click)="preuvesArr.push(newPreuve())">+ Preuve</button>
+          </div>
+          <div *ngIf="!preuvesArr.length" class="empty-impl">Aucune preuve renseignée</div>
+          <div formArrayName="preuves">
+            <div *ngFor="let p of preuvesArr.controls; let i = index"
+              [formGroupName]="i" class="impl-item">
+              <div class="impl-item-num">{{ i+1 }}</div>
+              <div class="impl-item-fields">
+                <div class="grid-3-impl">
+                  <div class="field">
+                    <label>Type</label>
+                    <select formControlName="type_preuve">
+                      <option *ngFor="let t of typesPreuve" [value]="t">{{ t }}</option>
+                    </select>
+                  </div>
+                  <div class="field"><label>Référence</label><input formControlName="reference" placeholder="Ex: Rapport audit 2024..."/></div>
+                  <div class="field"><label>Date</label><input type="date" formControlName="date"/></div>
+                </div>
+                <div class="grid-2-impl">
+                  <div class="field"><label>Description *</label><input formControlName="description" placeholder="Décrire la preuve..."/></div>
+                  <div class="field"><label>Responsable</label><input formControlName="responsable"/></div>
+                </div>
+              </div>
+              <button type="button" class="btn-remove-impl" (click)="preuvesArr.removeAt(i)">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Notes ── -->
+        <div class="impl-section">
+          <div class="field">
+            <label>Notes complémentaires</label>
+            <textarea formControlName="notes" rows="3"
+              placeholder="Observations, difficultés rencontrées, améliorations prévues..."></textarea>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="impl-footer">
+          <button class="btn-secondary" (click)="selectedControle = null; showImplPanel = false">
+            ← Retour à la liste
+          </button>
+          <button class="btn-save-impl" (click)="saveImpl()" [disabled]="savingImpl">
+            <span *ngIf="!savingImpl">💾 Sauvegarder l'implémentation</span>
+            <span *ngIf="savingImpl">Sauvegarde...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
  <!-- ══ SOA ══ -->
 <div *ngIf="activeTab === 'soa'" class="tab-content">
 

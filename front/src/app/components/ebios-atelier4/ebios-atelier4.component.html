@@ -1,0 +1,310 @@
+<!-- ebios-atelier4.component.html -->
+<div class="atelier4-page">
+
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error"   *ngIf="error">{{ error }}</div>
+  <div *ngIf="loading" class="loading-state"><div class="spinner"></div> Chargement atelier 4...</div>
+
+  <div *ngIf="!loading && data">
+
+    <!-- Header stats -->
+    <div class="a4-header">
+      <div class="a4-desc">
+        <p>Décrire les <strong>scénarios opérationnels</strong> : comment une source de risque exploite techniquement les biens supports via des <strong>actions élémentaires</strong> séquentielles.</p>
+      </div>
+      <div class="a4-stats" *ngIf="data.stats">
+        <div class="a4-stat">        <span>{{ data.stats.so_total }}</span>Scénarios</div>
+        <div class="a4-stat eleve">  <span>{{ data.stats.so_eleve }}</span>Élevés</div>
+        <div class="a4-stat moyen">  <span>{{ data.stats.so_moyen }}</span>Moyens</div>
+        <div class="a4-stat faible"> <span>{{ data.stats.so_faible }}</span>Faibles</div>
+        <div class="a4-stat actions"><span>{{ data.stats.nb_actions }}</span>Actions</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="view-tabs">
+      <button class="vtab" [class.active]="activeView === 'scenarios'" (click)="activeView = 'scenarios'">
+        🔬 Scénarios opérationnels <span class="vtab-count">{{ listeSO.length }}</span>
+      </button>
+      <button class="vtab" [class.active]="activeView === 'graphe'" (click)="activeView = 'graphe'">
+        🌐 Vue par scénario stratégique
+      </button>
+    </div>
+
+    <!-- ══ SCÉNARIOS OPÉRATIONNELS ══ -->
+    <div *ngIf="activeView === 'scenarios'">
+
+      <!-- Formulaire SO -->
+      <div *ngIf="showSoForm" class="panel form-block" [formGroup]="soForm">
+        <h3 class="form-subtitle">{{ editingSo ? 'Modifier' : 'Nouveau' }} scénario opérationnel</h3>
+        <div class="field required">
+          <label>Libellé</label>
+          <input formControlName="libelle" placeholder="Ex: SO1 — Exploitation faille VPN fournisseur..."/>
+          <span class="err" *ngIf="soForm.get('libelle')?.invalid && soForm.get('libelle')?.touched">Requis</span>
+        </div>
+        <div class="grid-2">
+          <div class="field required">
+            <label>Scénario stratégique parent</label>
+            <select formControlName="scenario_strategique_id">
+              <option value="">— Sélectionner —</option>
+              <option *ngFor="let ss of listeSS" [value]="ss.id">
+                <span *ngIf="ss.niveau_risque === 3">🔴</span>
+                <span *ngIf="ss.niveau_risque === 2">🟡</span>
+                <span *ngIf="ss.niveau_risque === 1">🟢</span>
+                {{ ss.libelle }}
+              </option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Bien support ciblé</label>
+            <select formControlName="bien_support_id">
+              <option value="">— Aucun —</option>
+              <option *ngFor="let b of listeBS" [value]="b.id">
+                {{ getBSIcon(b.type_bien) }} {{ b.denomination }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Canal d'exfiltration</label>
+            <select formControlName="canal_exfiltration">
+              <option value="">— Aucun —</option>
+              <option *ngFor="let c of canaux" [value]="c">{{ c }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <input formControlName="description" placeholder="Décrire le chemin d'attaque..."/>
+          </div>
+        </div>
+
+        <!-- G/V -->
+        <div class="gv-row">
+          <div class="gv-item">
+            <span class="gv-label">⚠️ Gravité</span>
+            <div class="gv-btns">
+              <button *ngFor="let n of getRange(analyse?.echelle_impact || 4)" type="button"
+                class="gv-btn" [class.selected]="soForm.get('gravite')?.value === n"
+                [ngClass]="getGVClass(n, analyse?.echelle_impact || 4)"
+                (click)="soForm.get('gravite')?.setValue(n)">{{ n }}</button>
+            </div>
+          </div>
+          <div class="gv-item">
+            <span class="gv-label">📊 Vraisemblance</span>
+            <div class="gv-btns">
+              <button *ngFor="let n of getRange(analyse?.echelle_probabilite || 4)" type="button"
+                class="gv-btn" [class.selected]="soForm.get('vraisemblance')?.value === n"
+                [ngClass]="getGVClass(n, analyse?.echelle_probabilite || 4)"
+                (click)="soForm.get('vraisemblance')?.setValue(n)">{{ n }}</button>
+            </div>
+          </div>
+          <div class="score-preview" *ngIf="soForm.get('gravite')?.value && soForm.get('vraisemblance')?.value">
+            <span class="score-val {{ getNiveauClass(calcPreviewNiveau()) }}">
+              {{ soForm.get('gravite')?.value }} × {{ soForm.get('vraisemblance')?.value }}
+              = {{ soForm.get('gravite')?.value * soForm.get('vraisemblance')?.value }}
+              → {{ getNiveauLabel(calcPreviewNiveau()) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <button class="btn-cancel" (click)="showSoForm = false; editingSo = null">Annuler</button>
+          <button class="btn-save" (click)="submitSO()">{{ editingSo ? 'Modifier' : 'Créer' }}</button>
+        </div>
+      </div>
+
+      <!-- Filtres + bouton -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Scénarios opérationnels</h2>
+            <p class="panel-desc">Chaque SO décrit un chemin d'attaque sur un bien support, via des actions élémentaires séquentielles.</p>
+          </div>
+          <div class="panel-header-right">
+            <select [(ngModel)]="filtreNiveauSO" class="filtre-select">
+              <option value="">Tous niveaux</option>
+              <option value="3">Élevé</option>
+              <option value="2">Moyen</option>
+              <option value="1">Faible</option>
+            </select>
+            <select [(ngModel)]="filtreSSId" class="filtre-select">
+              <option value="">Tous SS</option>
+              <option *ngFor="let ss of listeSS" [value]="ss.id">{{ ss.libelle | slice:0:30 }}</option>
+            </select>
+            <button class="btn-add"
+              (click)="showSoForm = true; editingSo = null; soForm.reset({ gravite:2, vraisemblance:2 })">
+              + Nouveau scénario
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="!listeSoFiltre.length" class="empty-state">Aucun scénario opérationnel défini</div>
+
+        <div class="so-list">
+          <div *ngFor="let so of listeSoFiltre" class="so-card niveau-border-{{ so.niveau_risque }}">
+
+            <!-- SO Header -->
+            <div class="so-header">
+              <div class="so-score {{ getNiveauClass(so.niveau_risque) }}">
+                <span class="score-num">{{ so.score_risque }}</span>
+                <span class="score-lbl">{{ getNiveauLabel(so.niveau_risque) }}</span>
+              </div>
+              <div class="so-info">
+                <div class="so-libelle">{{ so.libelle }}</div>
+                <div class="so-meta">
+                  <span class="so-ss">🗺️ {{ so.scenario_strategique_libelle }}</span>
+                  <span *ngIf="so.bien_support_nom" class="so-bs">
+                    · {{ getBSIcon(so.bien_support_type) }} {{ so.bien_support_nom }}
+                  </span>
+                  <span *ngIf="so.canal_exfiltration" class="so-canal">
+                    · 📤 {{ so.canal_exfiltration }}
+                  </span>
+                </div>
+                <div class="so-desc" *ngIf="so.description">{{ so.description }}</div>
+              </div>
+              <div class="so-right">
+                <span class="gv-tag">G{{ so.gravite }}×V{{ so.vraisemblance }}</span>
+                <button class="btn-icon" (click)="editSO(so)">✏️</button>
+                <button class="btn-icon danger" (click)="deleteSO(so.id)">🗑️</button>
+              </div>
+            </div>
+
+            <!-- Actions élémentaires -->
+            <div class="ae-section">
+              <div class="ae-section-header">
+                <span class="ae-title">Actions élémentaires</span>
+                <button class="btn-add-sm"
+                  (click)="openAddAE(so.id, getNextNumero(so.id))">
+                  + Action
+                </button>
+              </div>
+
+              <!-- Formulaire AE -->
+              <div *ngIf="showAeForms[so.id]" class="ae-form" [formGroup]="aeForm">
+                <div class="ae-form-row">
+                  <div class="field" style="width:50px">
+                    <label>N°</label>
+                    <input type="number" formControlName="numero" min="1"/>
+                  </div>
+                  <div class="field flex-1 required">
+                    <label>Libellé de l'action</label>
+                    <input formControlName="libelle"
+                      placeholder="Ex: Envoyer email de phishing..."/>
+                  </div>
+                  <div class="field" style="width:120px">
+                    <label>Mode opératoire</label>
+                    <select formControlName="mode_operatoire">
+                      <option *ngFor="let m of modesOp" [value]="m">{{ getModeIcon(m) }} {{ m }}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="ae-form-row">
+                  <div class="ae-eval">
+                    <span class="ae-eval-label">⚡ Probabilité succès</span>
+                    <div class="ae-eval-btns">
+                      <button *ngFor="let n of [1,2,3,4]" type="button"
+                        class="ae-eval-btn n{{ n }}"
+                        [class.selected]="aeForm.get('probabilite_succes')?.value === n"
+                        (click)="aeForm.get('probabilite_succes')?.setValue(n)">{{ n }}</button>
+                    </div>
+                  </div>
+                  <div class="ae-eval">
+                    <span class="ae-eval-label">🔧 Difficulté technique</span>
+                    <div class="ae-eval-btns">
+                      <button *ngFor="let n of [1,2,3,4]" type="button"
+                        class="ae-eval-btn n{{ n }}"
+                        [class.selected]="aeForm.get('difficulte')?.value === n"
+                        (click)="aeForm.get('difficulte')?.setValue(n)">{{ n }}</button>
+                    </div>
+                  </div>
+                  <div class="ae-preview">
+                    <span>Vraisemblance → </span>
+                    <span class="ae-vrais-val niveau-{{ calcPreviewVraisemblance() }}">
+                      {{ calcPreviewVraisemblance() }} — {{ getVraisemblanceActionLabel(calcPreviewVraisemblance()) }}
+                    </span>
+                  </div>
+                </div>
+                <div class="ae-form-row">
+                  <div class="field flex-1">
+                    <label>Prérequis</label>
+                    <input formControlName="prerequis" placeholder="Conditions préalables..."/>
+                  </div>
+                </div>
+                <div class="ae-form-footer">
+                  <button class="btn-cancel-sm" (click)="showAeForms[so.id] = false; editingAe = null">Annuler</button>
+                  <button class="btn-save-sm"   (click)="submitAE()">{{ editingAe ? 'Modifier' : 'Ajouter' }}</button>
+                </div>
+              </div>
+
+              <!-- Liste actions -->
+              <div *ngIf="!getActionsForSO(so.id).length" class="ae-empty">
+                Aucune action élémentaire — décrivez le chemin d'attaque
+              </div>
+
+              <div class="ae-timeline">
+                <div *ngFor="let ae of getActionsForSO(so.id); let i = index" class="ae-step">
+                  <div class="ae-connector" *ngIf="i > 0"></div>
+                  <div class="ae-bubble">
+                    <div class="ae-num">{{ ae.numero }}</div>
+                    <div class="ae-content">
+                      <div class="ae-libelle">{{ ae.libelle }}</div>
+                      <div class="ae-details">
+                        <span class="ae-mode {{ ae.mode_operatoire }}">
+                          {{ getModeIcon(ae.mode_operatoire) }} {{ ae.mode_operatoire }}
+                        </span>
+                        <span class="ae-proba">P={{ ae.probabilite_succes }}</span>
+                        <span class="ae-diff">D={{ ae.difficulte }}</span>
+                        <span class="ae-vrais niveau-{{ ae.vraisemblance_action }}">
+                          V={{ ae.vraisemblance_action }}
+                        </span>
+                        <span class="ae-prerequis" *ngIf="ae.prerequis">📌 {{ ae.prerequis }}</span>
+                      </div>
+                    </div>
+                    <div class="ae-actions">
+                      <button class="btn-icon sm" (click)="editAE(ae, so.id)">✏️</button>
+                      <button class="btn-icon sm danger" (click)="deleteAE(ae.id)">🗑️</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VUE GRAPHE ══ -->
+    <div *ngIf="activeView === 'graphe'">
+      <div class="panel">
+        <h2 class="panel-title">Organisation par scénario stratégique</h2>
+        <p class="panel-desc">Vue hiérarchique : chaque SS parent peut avoir plusieurs SO enfants.</p>
+
+        <div *ngFor="let ssId of getSsKeys()" class="graphe-ss-bloc">
+          <div class="graphe-ss-header" *ngIf="getSsById(ssId) as ss">
+            <span class="ss-niveau-dot {{ getNiveauClass(ss.niveau_risque) }}"></span>
+            <span class="ss-label">{{ ss.libelle }}</span>
+            <span class="ss-count">{{ soParSS[ssId].length }} SO</span>
+          </div>
+          <div class="graphe-so-list">
+            <div *ngFor="let so of soParSS[ssId]" class="graphe-so-item {{ getNiveauClass(so.niveau_risque) }}">
+              <div class="gsoi-header">
+                <span class="gsoi-score">{{ so.score_risque }}</span>
+                <span class="gsoi-libelle">{{ so.libelle }}</span>
+                <span class="gsoi-actions-count">{{ getActionsForSO(so.id).length }} actions</span>
+              </div>
+              <div class="gsoi-actions" *ngIf="getActionsForSO(so.id).length > 0">
+                <span *ngFor="let ae of getActionsForSO(so.id)" class="ae-mini-chip">
+                  #{{ ae.numero }} {{ ae.libelle | slice:0:25 }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!getSsKeys().length" class="empty-state">Aucun scénario opérationnel</div>
+      </div>
+    </div>
+
+  </div>
+</div>

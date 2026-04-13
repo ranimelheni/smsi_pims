@@ -1,0 +1,419 @@
+<!-- ebios-atelier2.component.html -->
+<div class="atelier2-page">
+
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error"   *ngIf="error">{{ error }}</div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div> Chargement atelier 2...
+  </div>
+
+  <div *ngIf="!loading && data">
+
+    <!-- Header stats -->
+    <div class="a2-header">
+      <div class="a2-desc">
+        <p>
+          Identifier les <strong>sources de risque</strong> (SR) susceptibles de porter atteinte aux valeurs métier,
+          puis construire les <strong>couples SR/OV</strong> (Source de Risque / Objectif Visé) et évaluer leur pertinence.
+        </p>
+      </div>
+      <div class="a2-stats" *ngIf="data.stats">
+        <div class="a2-stat">
+          <span>{{ data.stats.sources_total }}</span> sources identifiées
+        </div>
+        <div class="a2-stat ok">
+          <span>{{ data.stats.sources_retenues }}</span> retenues
+        </div>
+        <div class="a2-stat">
+          <span>{{ data.stats.couples_total }}</span> couples SR/OV
+        </div>
+        <div class="a2-stat ok">
+          <span>{{ data.stats.couples_retenus }}</span> retenus
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglets vue -->
+    <div class="view-tabs">
+      <button class="vtab" [class.active]="activeView === 'sources'"
+        (click)="activeView = 'sources'">
+        ⚡ Sources de risque
+        <span class="vtab-count">{{ listeSR.length }}</span>
+      </button>
+      <button class="vtab" [class.active]="activeView === 'couples'"
+        (click)="activeView = 'couples'">
+        🔗 Couples SR/OV
+        <span class="vtab-count">{{ listeOV.length }}</span>
+      </button>
+      <button class="vtab" [class.active]="activeView === 'synthese'"
+        (click)="activeView = 'synthese'">
+        📊 Synthèse
+        <span class="vtab-count ok">{{ listeOVRetenu.length }}</span>
+      </button>
+    </div>
+
+    <!-- ══ VUE SOURCES DE RISQUE ══ -->
+    <div *ngIf="activeView === 'sources'">
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Sources de risque</h2>
+            <p class="panel-desc">
+              Les SR sont des acteurs (humains ou non) pouvant être à l'origine d'un scénario de menace.
+            </p>
+          </div>
+          <button class="btn-add"
+            (click)="showSrForm = true; editingSr = null; srForm.reset({ categorie:'externe', retenu:true })">
+            + Ajouter une source
+          </button>
+        </div>
+
+        <!-- Formulaire source -->
+        <div *ngIf="showSrForm" class="form-block" [formGroup]="srForm">
+          <h3 class="form-subtitle">{{ editingSr ? 'Modifier' : 'Nouvelle' }} source de risque</h3>
+          <div class="grid-2">
+            <div class="field required">
+              <label>Libellé de la source</label>
+              <input formControlName="libelle"
+                placeholder="Ex: Groupe cybercriminel, Employé malveillant, Concurrent..."/>
+              <span class="err" *ngIf="srForm.get('libelle')?.invalid && srForm.get('libelle')?.touched">Requis</span>
+            </div>
+            <div class="field">
+              <label>Catégorie</label>
+              <select formControlName="categorie">
+                <option *ngFor="let c of categoriesSR" [value]="c.value">{{ c.icon }} {{ c.label }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea formControlName="description" rows="2"
+              placeholder="Décrire la source de risque et son contexte..."></textarea>
+          </div>
+          <div class="field-checkbox">
+            <input type="checkbox" formControlName="retenu" id="sr-retenu"/>
+            <label for="sr-retenu">Source retenue pour la suite de l'analyse</label>
+          </div>
+          <div class="form-footer">
+            <button class="btn-cancel" (click)="showSrForm = false; editingSr = null">Annuler</button>
+            <button class="btn-save" (click)="submitSR()">{{ editingSr ? 'Modifier' : 'Ajouter' }}</button>
+          </div>
+        </div>
+
+        <!-- Catégories guide -->
+        <div class="cat-guide" *ngIf="!showSrForm">
+          <div *ngFor="let c of categoriesSR" class="cat-guide-item">
+            <span class="cat-icon-lg">{{ c.icon }}</span>
+            <div>
+              <div class="cat-label">{{ c.label }}</div>
+              <div class="cat-desc">{{ c.desc }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!listeSR.length" class="empty-state">Aucune source de risque définie</div>
+
+        <!-- Liste sources -->
+        <div class="sr-list">
+          <div *ngFor="let sr of listeSR"
+            class="sr-card" [class.non-retenu]="!sr.retenu">
+            <div class="sr-header">
+              <div class="sr-left">
+                <span class="sr-cat-icon">{{ getCatInfo(sr.categorie).icon }}</span>
+                <div>
+                  <div class="sr-libelle">{{ sr.libelle }}</div>
+                  <span class="sr-cat-badge {{ sr.categorie }}">{{ getCatInfo(sr.categorie).label }}</span>
+                </div>
+              </div>
+              <div class="sr-right">
+                <span class="ov-count" *ngIf="getOVForSR(sr.id).length > 0">
+                  {{ getOVForSR(sr.id).length }} OV
+                </span>
+                <button class="btn-toggle"
+                  [class.retenu]="sr.retenu" [class.exclu]="!sr.retenu"
+                  (click)="toggleRetenuSR(sr)">
+                  {{ sr.retenu ? '✓ Retenu' : '✗ Exclu' }}
+                </button>
+                <button class="btn-add-sm"
+                  [disabled]="!sr.retenu"
+                  (click)="openAddOV(sr)">
+                  + OV
+                </button>
+                <button class="btn-icon" (click)="editSR(sr)">✏️</button>
+                <button class="btn-icon danger" (click)="deleteSR(sr.id)">🗑️</button>
+              </div>
+            </div>
+            <div class="sr-desc" *ngIf="sr.description">{{ sr.description }}</div>
+
+            <!-- OV de cette source (preview) -->
+            <div class="sr-ov-preview" *ngIf="getOVForSR(sr.id).length > 0">
+              <div *ngFor="let ov of getOVForSR(sr.id)" class="ov-preview-chip"
+                [class.exclu]="!ov.retenu">
+                <span class="{{ getPertinenceClass(ov.pertinence_retenue) }}">P{{ ov.pertinence_retenue }}</span>
+                {{ ov.libelle }}
+                <span *ngIf="!ov.retenu" class="exclu-badge">exclu</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VUE COUPLES SR/OV ══ -->
+    <div *ngIf="activeView === 'couples'">
+
+      <!-- Formulaire OV (global) -->
+      <div *ngIf="showOvForm" class="panel form-block ov-form" [formGroup]="ovForm">
+        <h3 class="form-subtitle">
+          {{ editingOv ? 'Modifier' : 'Nouveau' }} objectif visé
+          <span *ngIf="selectedSr"> — Source : <strong>{{ selectedSr.libelle }}</strong></span>
+        </h3>
+
+        <div class="grid-2">
+          <div class="field required">
+            <label>Libellé de l'objectif visé</label>
+            <input formControlName="libelle"
+              placeholder="Ex: Voler les données clients, Perturber la production..."/>
+            <span class="err" *ngIf="ovForm.get('libelle')?.invalid && ovForm.get('libelle')?.touched">Requis</span>
+          </div>
+          <div class="field required">
+            <label>Source de risque</label>
+            <select formControlName="source_id">
+              <option value="">— Sélectionner —</option>
+              <option *ngFor="let s of listeSR" [value]="s.id"
+                [disabled]="!s.retenu">
+                {{ getCatInfo(s.categorie).icon }} {{ s.libelle }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Description</label>
+          <textarea formControlName="description" rows="2"
+            placeholder="Décrire ce que la source cherche à atteindre..."></textarea>
+        </div>
+
+        <!-- Évaluation des capacités -->
+        <div class="eval-section">
+          <div class="eval-title">Évaluation des capacités de la source</div>
+          <div class="eval-grid">
+            <div class="eval-item">
+              <div class="eval-label">
+                <span>💪 Motivation</span>
+                <span class="eval-hint">Désir d'atteindre l'objectif</span>
+              </div>
+              <div class="eval-btns">
+                <button *ngFor="let n of [1,2,3,4]" type="button"
+                  class="eval-btn niveau-{{ n }}"
+                  [class.selected]="ovForm.get('motivation')?.value === n"
+                  (click)="ovForm.get('motivation')?.setValue(n); onPertinenceChange()">
+                  {{ n }} — {{ getNiveauLabel(n) }}
+                </button>
+              </div>
+            </div>
+            <div class="eval-item">
+              <div class="eval-label">
+                <span>🔧 Ressources</span>
+                <span class="eval-hint">Capacité technique et financière</span>
+              </div>
+              <div class="eval-btns">
+                <button *ngFor="let n of [1,2,3,4]" type="button"
+                  class="eval-btn niveau-{{ n }}"
+                  [class.selected]="ovForm.get('ressource')?.value === n"
+                  (click)="ovForm.get('ressource')?.setValue(n); onPertinenceChange()">
+                  {{ n }} — {{ getNiveauLabel(n) }}
+                </button>
+              </div>
+            </div>
+            <div class="eval-item">
+              <div class="eval-label">
+                <span>⚡ Activité</span>
+                <span class="eval-hint">Niveau d'activité observé</span>
+              </div>
+              <div class="eval-btns">
+                <button *ngFor="let n of [1,2,3,4]" type="button"
+                  class="eval-btn niveau-{{ n }}"
+                  [class.selected]="ovForm.get('activite')?.value === n"
+                  (click)="ovForm.get('activite')?.setValue(n); onPertinenceChange()">
+                  {{ n }} — {{ getNiveauLabel(n) }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pertinence -->
+          <div class="pertinence-row">
+            <div class="pert-item">
+              <label>Pertinence proposée (calculée)</label>
+              <div class="pert-value {{ getPertinenceClass(ovForm.get('pertinence_proposee')?.value) }}">
+                {{ ovForm.get('pertinence_proposee')?.value }} — {{ getNiveauLabel(ovForm.get('pertinence_proposee')?.value) }}
+              </div>
+            </div>
+            <div class="pert-item">
+              <label>Pertinence retenue (ajustable)</label>
+              <select formControlName="pertinence_retenue">
+                <option *ngFor="let n of [1,2,3,4]" [value]="n">{{ n }} — {{ getNiveauLabel(n) }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Décision retenu -->
+        <div class="decision-row">
+          <div class="field-checkbox">
+            <input type="checkbox" formControlName="retenu" id="ov-retenu"/>
+            <label for="ov-retenu">Couple retenu pour la suite de l'analyse (scénarios stratégiques)</label>
+          </div>
+          <div class="field" *ngIf="!ovForm.get('retenu')?.value">
+            <label>Justification du rejet</label>
+            <input formControlName="justification_rejet"
+              placeholder="Pourquoi ce couple n'est pas retenu..."/>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <button class="btn-cancel" (click)="showOvForm = false; editingOv = null; selectedSr = null">Annuler</button>
+          <button class="btn-save" (click)="submitOV()">{{ editingOv ? 'Modifier' : 'Ajouter' }}</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Couples SR/OV</h2>
+            <p class="panel-desc">Associer des objectifs visés à chaque source de risque et évaluer leur pertinence.</p>
+          </div>
+          <button class="btn-add"
+            (click)="showOvForm = true; editingOv = null; selectedSr = null; ovForm.reset({ motivation:2, ressource:2, activite:2, pertinence_proposee:2, pertinence_retenue:2, retenu:true })">
+            + Nouveau couple
+          </button>
+        </div>
+
+        <div *ngIf="!listeOV.length" class="empty-state">
+          Aucun couple SR/OV défini. Commencez par ajouter des sources de risque.
+        </div>
+
+        <!-- Groupé par source -->
+        <div *ngFor="let sr of listeSR" class="couples-groupe">
+          <div class="groupe-header">
+            <span class="cat-icon-sm">{{ getCatInfo(sr.categorie).icon }}</span>
+            <span class="groupe-sr">{{ sr.libelle }}</span>
+            <span class="sr-cat-badge {{ sr.categorie }}">{{ getCatInfo(sr.categorie).label }}</span>
+            <span *ngIf="!sr.retenu" class="badge-gray ml">Exclu</span>
+            <button class="btn-add-sm ml-auto"
+              [disabled]="!sr.retenu"
+              (click)="openAddOV(sr)">
+              + OV
+            </button>
+          </div>
+
+          <div *ngIf="!getOVForSR(sr.id).length" class="empty-mini-groupe">
+            Aucun objectif visé — cliquer sur "+ OV" pour en ajouter
+          </div>
+
+          <div class="ov-table-wrapper" *ngIf="getOVForSR(sr.id).length > 0">
+            <table class="ov-table">
+              <thead>
+                <tr>
+                  <th>Objectif visé</th>
+                  <th class="num-col">💪 Mot.</th>
+                  <th class="num-col">🔧 Res.</th>
+                  <th class="num-col">⚡ Act.</th>
+                  <th class="num-col">P. prop.</th>
+                  <th class="num-col">P. ret.</th>
+                  <th>Décision</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ov of getOVForSR(sr.id)"
+                  [class.row-exclu]="!ov.retenu">
+                  <td>
+                    <div class="ov-libelle">{{ ov.libelle }}</div>
+                    <div class="ov-desc" *ngIf="ov.description">{{ ov.description }}</div>
+                    <div class="ov-justif" *ngIf="!ov.retenu && ov.justification_rejet">
+                      ✗ {{ ov.justification_rejet }}
+                    </div>
+                  </td>
+                  <td class="text-center"><span class="{{ getNiveauClass(ov.motivation) }}">{{ ov.motivation }}</span></td>
+                  <td class="text-center"><span class="{{ getNiveauClass(ov.ressource) }}">{{ ov.ressource }}</span></td>
+                  <td class="text-center"><span class="{{ getNiveauClass(ov.activite) }}">{{ ov.activite }}</span></td>
+                  <td class="text-center">
+                    <span class="pert-badge {{ getPertinenceClass(ov.pertinence_proposee) }}">
+                      {{ ov.pertinence_proposee }}
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <span class="pert-badge {{ getPertinenceClass(ov.pertinence_retenue) }}">
+                      {{ ov.pertinence_retenue }}
+                    </span>
+                  </td>
+                  <td>
+                    <button class="btn-toggle-sm"
+                      [class.retenu]="ov.retenu" [class.exclu]="!ov.retenu"
+                      (click)="toggleRetenuOV(ov)">
+                      {{ ov.retenu ? '✓ Retenu' : '✗ Exclu' }}
+                    </button>
+                  </td>
+                  <td class="actions-col">
+                    <button class="btn-icon" (click)="editOV(ov)">✏️</button>
+                    <button class="btn-icon danger" (click)="deleteOV(ov.id)">🗑️</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SYNTHÈSE ══ -->
+    <div *ngIf="activeView === 'synthese'">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Synthèse — Couples SR/OV retenus</h2>
+            <p class="panel-desc">Ces couples alimenteront les scénarios stratégiques de l'atelier 3.</p>
+          </div>
+          <div class="filtre-row">
+            <select [(ngModel)]="filtreRetenu">
+              <option value="">Tous</option>
+              <option value="retenu">Retenus</option>
+              <option value="exclu">Exclus</option>
+            </select>
+          </div>
+        </div>
+
+        <div *ngIf="!listeOVFiltre.length" class="empty-state">
+          Aucun couple SR/OV {{ filtreRetenu === 'retenu' ? 'retenu' : filtreRetenu === 'exclu' ? 'exclu' : '' }}
+        </div>
+
+        <div class="synthese-list">
+          <div *ngFor="let ov of listeOVFiltre"
+            class="synthese-item" [class.exclu]="!ov.retenu">
+            <div class="synthese-pert {{ getPertinenceClass(ov.pertinence_retenue) }}">
+              {{ ov.pertinence_retenue }}
+            </div>
+            <div class="synthese-body">
+              <div class="synthese-titre">{{ ov.libelle }}</div>
+              <div class="synthese-source">
+                {{ getCatInfo(ov.source_categorie).icon }} {{ ov.source_libelle }}
+              </div>
+              <div class="synthese-caps">
+                💪 {{ ov.motivation }} · 🔧 {{ ov.ressource }} · ⚡ {{ ov.activite }}
+              </div>
+            </div>
+            <div class="synthese-badge">
+              <span *ngIf="ov.retenu" class="badge-green">✓ Retenu</span>
+              <span *ngIf="!ov.retenu" class="badge-gray">✗ Exclu</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

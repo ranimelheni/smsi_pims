@@ -1,0 +1,392 @@
+<!-- ebios-atelier5.component.html -->
+<div class="atelier5-page">
+
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error"   *ngIf="error">{{ error }}</div>
+  <div *ngIf="loading" class="loading-state"><div class="spinner"></div> Chargement atelier 5...</div>
+
+  <div *ngIf="!loading && data">
+
+    <!-- Stats globales -->
+    <div class="a5-header">
+      <div class="a5-stats" *ngIf="data.stats">
+        <div class="a5-stat total">   <span>{{ data.stats.ms_total }}</span>Mesures totales</div>
+        <div class="a5-stat plan">    <span>{{ data.stats.planifiees }}</span>Planifiées</div>
+        <div class="a5-stat cours">   <span>{{ data.stats.en_cours }}</span>En cours</div>
+        <div class="a5-stat real">    <span>{{ data.stats.realisees }}</span>Réalisées</div>
+        <div class="a5-stat taux">
+          <span>{{ data.stats.taux_realisation }}%</span>Taux réalisation
+          <div class="prog-bar">
+            <div class="prog-fill" [style.width.%]="data.stats.taux_realisation"></div>
+          </div>
+        </div>
+        <div class="a5-stat couv">
+          <span>{{ data.stats.taux_couverture }}%</span>Couverture SS
+          <div class="prog-bar">
+            <div class="prog-fill couv" [style.width.%]="data.stats.taux_couverture"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="view-tabs">
+      <button class="vtab" [class.active]="activeView === 'plan'"
+        (click)="activeView = 'plan'">
+        🛡️ Plan de traitement <span class="vtab-count">{{ listeMS.length }}</span>
+      </button>
+      <button class="vtab" [class.active]="activeView === 'residuels'"
+        (click)="activeView = 'residuels'">
+        📉 Risques résiduels <span class="vtab-count">{{ listeRR.length }}</span>
+      </button>
+      <button class="vtab" [class.active]="activeView === 'synthese'"
+        (click)="activeView = 'synthese'">
+        📊 Synthèse finale
+      </button>
+    </div>
+
+    <!-- ══ PLAN DE TRAITEMENT ══ -->
+    <div *ngIf="activeView === 'plan'">
+
+      <!-- Formulaire MS -->
+      <div *ngIf="showMsForm" class="panel form-block" [formGroup]="msForm">
+        <h3 class="form-subtitle">{{ editingMs ? 'Modifier' : 'Nouvelle' }} mesure de sécurité</h3>
+
+        <div class="field required">
+          <label>Libellé de la mesure</label>
+          <input formControlName="libelle"
+            placeholder="Ex: Déploiement EDR sur tous les postes, Formation ISO 27001..."/>
+          <span class="err" *ngIf="msForm.get('libelle')?.invalid && msForm.get('libelle')?.touched">Requis</span>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea formControlName="description" rows="2"
+            placeholder="Décrire la mesure et son périmètre d'application..."></textarea>
+        </div>
+
+        <!-- Type mesure -->
+        <div class="type-mesure-section">
+          <div class="type-mesure-title">Type de mesure</div>
+          <div class="type-mesure-grid">
+            <label *ngFor="let t of typesMesure"
+              class="type-card" [class.selected]="msForm.get('type_mesure')?.value === t.value">
+              <input type="radio" formControlName="type_mesure" [value]="t.value"/>
+              <span class="type-icon">{{ t.icon }}</span>
+              <span class="type-label">{{ t.label }}</span>
+              <span class="type-desc">{{ t.desc }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="field">
+            <label>Coût/Complexité</label>
+            <div class="cout-btns">
+              <button *ngFor="let n of [1,2,3,4]" type="button"
+                class="cout-btn n{{ n }}"
+                [class.selected]="msForm.get('cout_complexite')?.value === n"
+                (click)="msForm.get('cout_complexite')?.setValue(n)">
+                {{ getCoutLabel(n) }}
+              </button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Échéance (mois)</label>
+            <input type="number" formControlName="echeance_mois" min="1"/>
+          </div>
+          <div class="field">
+            <label>Responsable</label>
+            <input formControlName="responsable" placeholder="Ex: RSSI, DSI..."/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Statut</label>
+          <div class="statut-btns">
+            <button *ngFor="let s of statutsMesure" type="button"
+              class="statut-btn {{ s.value }}"
+              [class.selected]="msForm.get('statut')?.value === s.value"
+              (click)="msForm.get('statut')?.setValue(s.value)">
+              {{ s.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Scénarios couverts -->
+        <div class="scenarios-couverts-section">
+          <div class="sc-title">Scénarios stratégiques couverts</div>
+          <div class="sc-grid">
+            <div *ngFor="let ss of listeSS"
+              class="sc-chip" [class.selected]="isScenarioCouvert(ss.id)"
+              [class]="'sc-chip ' + (isScenarioCouvert(ss.id) ? 'selected niveau-border-' + ss.niveau_risque : '')"
+              (click)="toggleScenario(ss.id)">
+              <span class="sc-check">{{ isScenarioCouvert(ss.id) ? '✓' : '○' }}</span>
+              <span class="sc-libelle">{{ ss.libelle }}</span>
+              <span class="sc-niveau {{ getNiveauClass(ss.niveau_risque) }}">
+                {{ getNiveauLabel(ss.niveau_risque) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Frein / Difficulté de mise en œuvre</label>
+          <input formControlName="frein_difficulte"
+            placeholder="Ex: Budget insuffisant, résistance utilisateurs..."/>
+        </div>
+
+        <div class="form-footer">
+          <button class="btn-cancel" (click)="showMsForm = false; editingMs = null">Annuler</button>
+          <button class="btn-save" (click)="submitMS()">{{ editingMs ? 'Modifier' : 'Ajouter' }}</button>
+        </div>
+      </div>
+
+      <!-- Table mesures -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Plan de traitement du risque</h2>
+            <p class="panel-desc">Mesures de sécurité permettant de réduire les risques identifiés.</p>
+          </div>
+          <div class="panel-header-right">
+            <select [(ngModel)]="filtreStatutMs" class="filtre-select">
+              <option value="">Tous statuts</option>
+              <option *ngFor="let s of statutsMesure" [value]="s.value">{{ s.label }}</option>
+            </select>
+            <select [(ngModel)]="filtreTypeMesure" class="filtre-select">
+              <option value="">Tous types</option>
+              <option *ngFor="let t of typesMesure" [value]="t.value">{{ t.icon }} {{ t.label }}</option>
+            </select>
+            <button class="btn-add"
+              (click)="showMsForm = true; editingMs = null; msForm.reset({ type_mesure:'preventive', cout_complexite:2, echeance_mois:6, statut:'planifiee', scenarios_couverts:[] })">
+              + Mesure
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="!listeMsFiltre.length" class="empty-state">Aucune mesure de sécurité définie</div>
+
+        <div class="ms-list">
+          <div *ngFor="let ms of listeMsFiltre" class="ms-card">
+            <div class="ms-header">
+              <div class="ms-type-icon">{{ getTypeMesure(ms.type_mesure).icon }}</div>
+              <div class="ms-info">
+                <div class="ms-libelle">{{ ms.libelle }}</div>
+                <div class="ms-meta">
+                  <span class="ms-type-badge {{ ms.type_mesure }}">
+                    {{ getTypeMesure(ms.type_mesure).label }}
+                  </span>
+                  <span *ngIf="ms.echeance_mois">🗓️ {{ ms.echeance_mois }} mois</span>
+                  <span *ngIf="ms.responsable">👤 {{ ms.responsable }}</span>
+                  <span class="ms-cout">💶 {{ getCoutLabel(ms.cout_complexite) }}</span>
+                </div>
+                <div class="ms-desc" *ngIf="ms.description">{{ ms.description }}</div>
+                <!-- SS couverts -->
+                <div class="ms-ss-tags" *ngIf="ms.scenarios_couverts?.length > 0">
+                  <span *ngFor="let ssId of ms.scenarios_couverts" class="ms-ss-tag">
+                    🗺️ {{ getSSById(ssId)?.libelle || 'SS#'+ssId | slice:0:30 }}
+                  </span>
+                </div>
+                <div *ngIf="ms.frein_difficulte" class="ms-frein">⚠️ {{ ms.frein_difficulte }}</div>
+              </div>
+              <div class="ms-right">
+                <span class="{{ getStatutMs(ms.statut).class }}">{{ getStatutMs(ms.statut).label }}</span>
+                <button class="btn-icon" (click)="editMS(ms)">✏️</button>
+                <button class="btn-icon danger" (click)="deleteMS(ms.id)">🗑️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RISQUES RÉSIDUELS ══ -->
+    <div *ngIf="activeView === 'residuels'">
+
+      <!-- Alerte SS non évalués -->
+      <div class="alert-warning" *ngIf="ssNonEvalues.length > 0">
+        ⚠️ {{ ssNonEvalues.length }} scénario(s) stratégique(s) n'ont pas encore de risque résiduel défini.
+      </div>
+
+      <!-- Formulaire RR -->
+      <div *ngIf="showRrForm" class="panel form-block" [formGroup]="rrForm">
+        <h3 class="form-subtitle">{{ editingRr ? 'Modifier' : 'Nouveau' }} risque résiduel</h3>
+
+        <div class="field required">
+          <label>Scénario stratégique</label>
+          <select formControlName="scenario_strategique_id">
+            <option value="">— Sélectionner —</option>
+            <option *ngFor="let ss of listeSS" [value]="ss.id">
+              {{ ss.libelle }} (initial : G{{ ss.gravite }}×V{{ ss.vraisemblance }}={{ ss.score }})
+            </option>
+          </select>
+        </div>
+
+        <!-- G/V résiduel -->
+        <div class="rr-gv-section">
+          <div class="rr-gv-title">Évaluation après application des mesures</div>
+          <div class="rr-gv-row">
+            <div class="rr-gv-item">
+              <span class="rr-gv-label">⚠️ Gravité résiduelle</span>
+              <div class="gv-btns">
+                <button *ngFor="let n of getRange(analyse?.echelle_impact || 4)" type="button"
+                  class="gv-btn" [class.selected]="rrForm.get('gravite_residuelle')?.value === n"
+                  [ngClass]="'gv-' + (n <= 1 ? 1 : n <= 2 ? 2 : n <= 3 ? 3 : 4)"
+                  (click)="rrForm.get('gravite_residuelle')?.setValue(n)">{{ n }}</button>
+              </div>
+            </div>
+            <div class="rr-gv-item">
+              <span class="rr-gv-label">📊 Vraisemblance résiduelle</span>
+              <div class="gv-btns">
+                <button *ngFor="let n of getRange(analyse?.echelle_probabilite || 4)" type="button"
+                  class="gv-btn" [class.selected]="rrForm.get('vraisemblance_residuelle')?.value === n"
+                  [ngClass]="'gv-' + (n <= 1 ? 1 : n <= 2 ? 2 : n <= 3 ? 3 : 4)"
+                  (click)="rrForm.get('vraisemblance_residuelle')?.setValue(n)">{{ n }}</button>
+              </div>
+            </div>
+            <div class="rr-preview">
+              <span>Risque résiduel : </span>
+              <span class="rr-prev-val {{ getNiveauClass(calcPreviewRR()) }}">
+                G{{ rrForm.get('gravite_residuelle')?.value }} × V{{ rrForm.get('vraisemblance_residuelle')?.value }}
+                = {{ (rrForm.get('gravite_residuelle')?.value || 1) * (rrForm.get('vraisemblance_residuelle')?.value || 1) }}
+                → {{ getNiveauLabel(calcPreviewRR()) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Décision -->
+        <div class="decision-rr-section">
+          <div class="dec-title">Décision finale</div>
+          <div class="dec-cards">
+            <label *ngFor="let d of decisionsRR"
+              class="dec-card {{ d.class }}"
+              [class.selected]="rrForm.get('decision')?.value === d.value">
+              <input type="radio" formControlName="decision" [value]="d.value"/>
+              <span>{{ d.label }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Justification</label>
+          <textarea formControlName="justification" rows="2"
+            placeholder="Justifier l'acceptation ou les mesures complémentaires..."></textarea>
+        </div>
+
+        <div class="form-footer">
+          <button class="btn-cancel" (click)="showRrForm = false; editingRr = null">Annuler</button>
+          <button class="btn-save" (click)="submitRR()">{{ editingRr ? 'Modifier' : 'Enregistrer' }}</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Risques résiduels</h2>
+            <p class="panel-desc">Niveau de risque restant après application des mesures de sécurité.</p>
+          </div>
+          <button class="btn-add"
+            (click)="showRrForm = true; editingRr = null; rrForm.reset({ gravite_residuelle:1, vraisemblance_residuelle:1, decision:'accepter' })">
+            + Risque résiduel
+          </button>
+        </div>
+
+        <div *ngIf="!listeRR.length" class="empty-state">Aucun risque résiduel évalué</div>
+
+        <div class="rr-list">
+          <div *ngFor="let rr of listeRR" class="rr-card">
+            <div class="rr-header">
+              <!-- Flèche risque initial → résiduel -->
+              <div class="rr-evolution">
+                <div class="rr-initial {{ getNiveauClass(rr.scenario_niveau_initial) }}">
+                  <span class="rr-label-sm">Initial</span>
+                  <span class="rr-val">{{ rr.scenario_niveau_initial ? getNiveauLabel(rr.scenario_niveau_initial) : '—' }}</span>
+                </div>
+                <div class="rr-arrow">→</div>
+                <div class="rr-residuel {{ getNiveauClass(rr.niveau_risque_residuel) }}">
+                  <span class="rr-label-sm">Résiduel</span>
+                  <span class="rr-val">{{ getNiveauLabel(rr.niveau_risque_residuel) }}</span>
+                </div>
+              </div>
+              <div class="rr-info">
+                <div class="rr-ss-libelle">{{ rr.scenario_libelle }}</div>
+                <div class="rr-details">
+                  G{{ rr.gravite_residuelle }} × V{{ rr.vraisemblance_residuelle }} = {{ rr.score_residuel }}
+                  · {{ rr.justification }}
+                </div>
+              </div>
+              <div class="rr-right">
+                <span class="dec-badge {{ getDecision(rr.decision).class }}">
+                  {{ getDecision(rr.decision).label }}
+                </span>
+                <button class="btn-icon" (click)="editRR(rr)">✏️</button>
+                <button class="btn-icon danger" (click)="deleteRR(rr.id)">🗑️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SYNTHÈSE FINALE ══ -->
+    <div *ngIf="activeView === 'synthese'">
+      <div class="panel">
+        <h2 class="panel-title">Synthèse de l'analyse EBIOS RM</h2>
+        <p class="panel-desc">Vue globale : risques initiaux, mesures appliquées, risques résiduels.</p>
+
+        <table class="synthese-table">
+          <thead>
+            <tr>
+              <th>Scénario stratégique</th>
+              <th class="text-center">Risque initial</th>
+              <th class="text-center">Nb mesures</th>
+              <th class="text-center">Risque résiduel</th>
+              <th class="text-center">Réduction</th>
+              <th>Décision</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of synthese">
+              <td>
+                <div class="synth-libelle">{{ item.ss.libelle }}</div>
+                <div class="synth-meta">G{{ item.ss.gravite }} × V{{ item.ss.vraisemblance }} = {{ item.ss.score }}</div>
+              </td>
+              <td class="text-center">
+                <span class="niveau-badge {{ getNiveauClass(item.ss.niveau_risque) }}">
+                  {{ getNiveauLabel(item.ss.niveau_risque) }}
+                </span>
+              </td>
+              <td class="text-center">
+                <span class="nb-mesures" [class.zero]="item.nb_mesures === 0">
+                  {{ item.nb_mesures }}
+                </span>
+              </td>
+              <td class="text-center">
+                <span *ngIf="item.rr" class="niveau-badge {{ getNiveauClass(item.rr.niveau_risque_residuel) }}">
+                  {{ getNiveauLabel(item.rr.niveau_risque_residuel) }}
+                </span>
+                <span *ngIf="!item.rr" class="non-evalue">Non évalué</span>
+              </td>
+              <td class="text-center">
+                <span *ngIf="item.reduction !== null"
+                  class="reduction" [class.positive]="item.reduction > 0"
+                  [class.neutre]="item.reduction === 0">
+                  {{ item.reduction > 0 ? '↓ ' + item.reduction : item.reduction === 0 ? '= stable' : '↑ ' + Math.abs(item.reduction) }}
+                </span>
+                <span *ngIf="item.reduction === null" class="non-evalue">—</span>
+              </td>
+              <td>
+                <span *ngIf="item.rr" class="dec-badge {{ getDecision(item.rr.decision).class }}">
+                  {{ getDecision(item.rr.decision).label }}
+                </span>
+                <span *ngIf="!item.rr" class="non-evalue">—</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,496 @@
+<!-- ebios-atelier3.component.html -->
+<div class="atelier3-page">
+
+  <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert-error"   *ngIf="error">{{ error }}</div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div> Chargement atelier 3...
+  </div>
+
+  <div *ngIf="!loading && data">
+
+    <!-- Header -->
+    <div class="a3-header">
+      <div class="a3-desc">
+        <p>
+          Construire les <strong>scénarios stratégiques</strong> en combinant les couples SR/OV retenus avec
+          les parties prenantes de l'écosystème, et évaluer leur <strong>niveau de risque</strong>.
+        </p>
+      </div>
+      <div class="a3-stats" *ngIf="data.stats">
+        <div class="a3-stat">       <span>{{ data.stats.pp_retenues }}</span>PP retenues</div>
+        <div class="a3-stat">       <span>{{ data.stats.ss_total }}</span>Scénarios</div>
+        <div class="a3-stat eleve"> <span>{{ data.stats.ss_eleve }}</span>Élevés</div>
+        <div class="a3-stat moyen"> <span>{{ data.stats.ss_moyen }}</span>Moyens</div>
+        <div class="a3-stat faible"><span>{{ data.stats.ss_faible }}</span>Faibles</div>
+      </div>
+    </div>
+
+    <!-- Onglets -->
+    <div class="view-tabs">
+      <button class="vtab" [class.active]="activeView === 'parties'"
+        (click)="activeView = 'parties'">
+        🤝 Parties prenantes
+        <span class="vtab-count">{{ listePP.length }}</span>
+      </button>
+      <button class="vtab" [class.active]="activeView === 'scenarios'"
+        (click)="activeView = 'scenarios'">
+        🗺️ Scénarios stratégiques
+        <span class="vtab-count">{{ listeSS.length }}</span>
+      </button>
+      <button class="vtab" [class.active]="activeView === 'cartographie'"
+        (click)="activeView = 'cartographie'">
+        📊 Cartographie des risques
+      </button>
+    </div>
+
+    <!-- ══ PARTIES PRENANTES ══ -->
+    <div *ngIf="activeView === 'parties'">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Parties prenantes de l'écosystème</h2>
+            <p class="panel-desc">
+              Identifier et évaluer les tiers pouvant être impliqués dans un scénario de menace.
+              La fiabilité cyber = (Dépendance × Pénétration) / (Maturité × Confiance).
+            </p>
+          </div>
+          <button class="btn-add"
+            (click)="showPpForm = true; editingPp = null; ppForm.reset({ categorie:'fournisseur', dependance:2, penetration:2, maturite_cyber:2, confiance:2, retenu:true })">
+            + Ajouter
+          </button>
+        </div>
+
+        <!-- Formulaire PP -->
+        <div *ngIf="showPpForm" class="form-block" [formGroup]="ppForm">
+          <h3 class="form-subtitle">{{ editingPp ? 'Modifier' : 'Nouvelle' }} partie prenante</h3>
+          <div class="grid-2">
+            <div class="field required">
+              <label>Libellé</label>
+              <input formControlName="libelle" placeholder="Ex: Fournisseur AWS, Prestataire maintenance..."/>
+              <span class="err" *ngIf="ppForm.get('libelle')?.invalid && ppForm.get('libelle')?.touched">Requis</span>
+            </div>
+            <div class="field">
+              <label>Catégorie</label>
+              <select formControlName="categorie">
+                <option *ngFor="let c of categoriesPP" [value]="c.value">{{ c.icon }} {{ c.label }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea formControlName="description" rows="2"
+              placeholder="Rôle et interactions avec l'organisme..."></textarea>
+          </div>
+
+          <!-- Critères d'évaluation -->
+          <div class="eval-criteres">
+            <div class="eval-titre">Évaluation de la fiabilité cyber (1=faible, 4=élevé)</div>
+            <div class="criteres-grid">
+              <div class="critere-item">
+                <div class="critere-header">
+                  <span>🔗 Dépendance</span>
+                  <span class="critere-hint">Dépendance de l'organisme à ce tiers</span>
+                </div>
+                <div class="critere-btns">
+                  <button *ngFor="let n of [1,2,3,4]" type="button"
+                    class="crit-btn" [class.selected]="ppForm.get('dependance')?.value === n"
+                    [class]="'crit-btn n' + n + (ppForm.get('dependance')?.value === n ? ' selected' : '')"
+                    (click)="ppForm.get('dependance')?.setValue(n)">{{ n }}</button>
+                </div>
+              </div>
+              <div class="critere-item">
+                <div class="critere-header">
+                  <span>🔓 Pénétration</span>
+                  <span class="critere-hint">Niveau d'accès au SI de l'organisme</span>
+                </div>
+                <div class="critere-btns">
+                  <button *ngFor="let n of [1,2,3,4]" type="button"
+                    class="crit-btn" [class]="'crit-btn n' + n + (ppForm.get('penetration')?.value === n ? ' selected' : '')"
+                    (click)="ppForm.get('penetration')?.setValue(n)">{{ n }}</button>
+                </div>
+              </div>
+              <div class="critere-item">
+                <div class="critere-header">
+                  <span>🛡️ Maturité cyber</span>
+                  <span class="critere-hint">Niveau de sécurité du tiers</span>
+                </div>
+                <div class="critere-btns">
+                  <button *ngFor="let n of [1,2,3,4]" type="button"
+                    class="crit-btn" [class]="'crit-btn n' + n + (ppForm.get('maturite_cyber')?.value === n ? ' selected' : '')"
+                    (click)="ppForm.get('maturite_cyber')?.setValue(n)">{{ n }}</button>
+                </div>
+              </div>
+              <div class="critere-item">
+                <div class="critere-header">
+                  <span>🤝 Confiance</span>
+                  <span class="critere-hint">Niveau de confiance accordé</span>
+                </div>
+                <div class="critere-btns">
+                  <button *ngFor="let n of [1,2,3,4]" type="button"
+                    class="crit-btn" [class]="'crit-btn n' + n + (ppForm.get('confiance')?.value === n ? ' selected' : '')"
+                    (click)="ppForm.get('confiance')?.setValue(n)">{{ n }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-checkbox">
+            <input type="checkbox" formControlName="retenu" id="pp-retenu"/>
+            <label for="pp-retenu">Partie prenante retenue dans l'analyse</label>
+          </div>
+          <div class="form-footer">
+            <button class="btn-cancel" (click)="showPpForm = false; editingPp = null">Annuler</button>
+            <button class="btn-save" (click)="submitPP()">{{ editingPp ? 'Modifier' : 'Ajouter' }}</button>
+          </div>
+        </div>
+
+        <div *ngIf="!listePP.length" class="empty-state">Aucune partie prenante définie</div>
+
+        <table class="pp-table" *ngIf="listePP.length > 0">
+          <thead>
+            <tr>
+              <th>Partie prenante</th><th>Catégorie</th>
+              <th class="num-col">Dép.</th><th class="num-col">Pén.</th>
+              <th class="num-col">Mat.</th><th class="num-col">Conf.</th>
+              <th>Fiabilité cyber</th><th>Statut</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pp of listePP" [class.row-exclu]="!pp.retenu">
+              <td>
+                <div class="pp-nom">{{ pp.libelle }}</div>
+                <div class="pp-desc" *ngIf="pp.description">{{ pp.description }}</div>
+              </td>
+              <td>
+                <span class="cat-pp-badge {{ pp.categorie }}">
+                  {{ getCatPP(pp.categorie).icon }} {{ getCatPP(pp.categorie).label }}
+                </span>
+              </td>
+              <td class="text-center"><span class="crit-val">{{ pp.dependance }}</span></td>
+              <td class="text-center"><span class="crit-val">{{ pp.penetration }}</span></td>
+              <td class="text-center"><span class="crit-val">{{ pp.maturite_cyber }}</span></td>
+              <td class="text-center"><span class="crit-val">{{ pp.confiance }}</span></td>
+              <td>
+                <div class="fiabilite-display">
+                  <div class="fib-bar">
+                    <div class="fib-fill {{ getFiabiliteClass(pp.fiabilite_cyber) }}"
+                      [style.width.%]="Math.min(100, pp.fiabilite_cyber * 25)"></div>
+                  </div>
+                  <span class="fib-val {{ getFiabiliteClass(pp.fiabilite_cyber) }}">
+                    {{ pp.fiabilite_cyber?.toFixed(2) }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                <button class="btn-toggle-sm"
+                  [class.retenu]="pp.retenu" [class.exclu]="!pp.retenu"
+                  (click)="toggleRetenuPP(pp)">
+                  {{ pp.retenu ? '✓ Retenu' : '✗ Exclu' }}
+                </button>
+              </td>
+              <td class="actions-col">
+                <button class="btn-icon" (click)="editPP(pp)">✏️</button>
+                <button class="btn-icon danger" (click)="deletePP(pp.id)">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ SCÉNARIOS STRATÉGIQUES ══ -->
+    <div *ngIf="activeView === 'scenarios'">
+
+      <!-- Formulaire SS -->
+      <div *ngIf="showSsForm" class="panel form-block ss-form" [formGroup]="ssForm">
+        <h3 class="form-subtitle">{{ editingSs ? 'Modifier' : 'Nouveau' }} scénario stratégique</h3>
+
+        <div class="field required">
+          <label>Libellé du scénario</label>
+          <input formControlName="libelle"
+            placeholder="Ex: SS1 — Attaque ransomware via fournisseur compromis..."/>
+          <span class="err" *ngIf="ssForm.get('libelle')?.invalid && ssForm.get('libelle')?.touched">Requis</span>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea formControlName="description" rows="2"
+            placeholder="Décrire le déroulé général du scénario..."></textarea>
+        </div>
+
+        <!-- SR → OV -->
+        <div class="grid-3">
+          <div class="field required">
+            <label>Source de risque</label>
+            <select formControlName="source_id" (change)="ssForm.get('objectif_id')?.reset('')">
+              <option value="">— Sélectionner —</option>
+              <option *ngFor="let s of listeSR" [value]="s.id">
+                {{ s.libelle }}
+              </option>
+            </select>
+          </div>
+          <div class="field required">
+            <label>Objectif visé</label>
+            <select formControlName="objectif_id">
+              <option value="">— Sélectionner —</option>
+              <option *ngFor="let o of getOVForSR(+ssForm.get('source_id')?.value)" [value]="o.id">
+                {{ o.libelle }}
+              </option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Événement redouté ciblé</label>
+            <select formControlName="evenement_id">
+              <option value="">— Aucun —</option>
+              <option *ngFor="let e of listeER" [value]="e.id">
+                G{{ e.gravite }} — {{ e.libelle }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Évaluation G/V -->
+        <div class="gv-section">
+          <div class="gv-item">
+            <div class="gv-label">⚠️ Gravité (impact) — 1 à {{ analyse?.echelle_impact || 4 }}</div>
+            <div class="gv-btns">
+              <button *ngFor="let n of getRange(analyse?.echelle_impact || 4)" type="button"
+                class="gv-btn"
+                [class.selected]="ssForm.get('gravite')?.value === n"
+                [ngClass]="getGVClass(n, analyse?.echelle_impact || 4)"
+                (click)="ssForm.get('gravite')?.setValue(n)">
+                {{ n }}
+              </button>
+            </div>
+          </div>
+          <div class="gv-item">
+            <div class="gv-label">📊 Vraisemblance — 1 à {{ analyse?.echelle_probabilite || 4 }}</div>
+            <div class="gv-btns">
+              <button *ngFor="let n of getRange(analyse?.echelle_probabilite || 4)" type="button"
+                class="gv-btn"
+                [class.selected]="ssForm.get('vraisemblance')?.value === n"
+                [ngClass]="getGVClass(n, analyse?.echelle_probabilite || 4)"
+                (click)="ssForm.get('vraisemblance')?.setValue(n)">
+                {{ n }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Score calculé en temps réel -->
+          <div class="score-preview" *ngIf="ssForm.get('gravite')?.value && ssForm.get('vraisemblance')?.value">
+            <span class="score-label">Score : </span>
+            <span class="score-val {{ getNiveauClass(calcNiveauPreview()) }}">
+              G{{ ssForm.get('gravite')?.value }} × V{{ ssForm.get('vraisemblance')?.value }}
+              = {{ ssForm.get('gravite')?.value * ssForm.get('vraisemblance')?.value }}
+              → {{ getNiveauLabel(calcNiveauPreview()) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Parties prenantes impliquées -->
+        <div class="pp-section" formArrayName="parties_prenantes">
+          <div class="pp-section-header">
+            <label class="field-label">Parties prenantes impliquées</label>
+            <div class="pp-add-row">
+              <select #ppSelect class="pp-select-add">
+                <option value="">— Sélectionner —</option>
+                <option *ngFor="let p of listePP" [value]="p.id"
+                  [disabled]="!p.retenu">
+                  {{ getCatPP(p.categorie).icon }} {{ p.libelle }}
+                </option>
+              </select>
+              <button type="button" class="btn-add-sm"
+                (click)="addPPInSS(+ppSelect.value); ppSelect.value = ''">
+                + Ajouter
+              </button>
+            </div>
+          </div>
+          <div *ngIf="ppParties.length === 0" class="empty-mini">Aucune partie prenante impliquée</div>
+          <div *ngFor="let item of ppParties.controls; let i = index" [formGroupName]="i"
+            class="pp-ss-item">
+            <span class="pp-ss-nom">
+              {{ getPPById(item.get('pp_id')?.value)?.libelle || 'PP inconnue' }}
+            </span>
+            <select formControlName="role" class="role-select">
+              <option value="vecteur">Vecteur d'attaque</option>
+              <option value="victime">Victime collatérale</option>
+              <option value="complice">Complice</option>
+            </select>
+            <button type="button" class="btn-remove-sm" (click)="removePPFromSS(i)">✕</button>
+          </div>
+        </div>
+
+        <!-- Décision de traitement -->
+        <div class="decision-section">
+          <div class="decision-title">Décision de traitement du risque</div>
+          <div class="decision-cards">
+            <label *ngFor="let d of decisionsTraitement"
+              class="decision-card {{ d.class }}"
+              [class.selected]="ssForm.get('decision_traitement')?.value === d.value">
+              <input type="radio" formControlName="decision_traitement" [value]="d.value"/>
+              <div>
+                <div class="dec-label">{{ d.label }}</div>
+                <div class="dec-desc">{{ d.desc }}</div>
+              </div>
+            </label>
+          </div>
+          <div class="field" *ngIf="ssForm.get('decision_traitement')?.value !== 'traiter'">
+            <label>Justification</label>
+            <input formControlName="justification_decision"
+              placeholder="Justifier la décision de traitement..."/>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <button class="btn-cancel" (click)="showSsForm = false; editingSs = null">Annuler</button>
+          <button class="btn-save" (click)="submitSS()">{{ editingSs ? 'Modifier' : 'Créer' }}</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Scénarios stratégiques</h2>
+            <p class="panel-desc">Construction et évaluation des scénarios à partir des couples SR/OV.</p>
+          </div>
+          <div class="panel-header-right">
+            <select [(ngModel)]="filtreNiveau" class="filtre-select">
+              <option value="">Tous niveaux</option>
+              <option value="3">Élevé</option>
+              <option value="2">Moyen</option>
+              <option value="1">Faible</option>
+            </select>
+            <select [(ngModel)]="filtreDecision" class="filtre-select">
+              <option value="">Toutes décisions</option>
+              <option *ngFor="let d of decisionsTraitement" [value]="d.value">{{ d.label }}</option>
+            </select>
+            <button class="btn-add"
+              (click)="showSsForm = true; editingSs = null; ssForm.reset({ gravite:2, vraisemblance:2, decision_traitement:'traiter' }); ppParties.clear()">
+              + Nouveau scénario
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="!listeSsFiltre.length" class="empty-state">Aucun scénario stratégique défini</div>
+
+        <div class="ss-list">
+          <div *ngFor="let ss of listeSsFiltre"
+            class="ss-card niveau-border-{{ ss.niveau_risque }}">
+            <div class="ss-header">
+              <div class="ss-left">
+                <div class="ss-score {{ getNiveauClass(ss.niveau_risque) }}">
+                  <span class="score-num">{{ ss.score_risque }}</span>
+                  <span class="score-lbl">{{ getNiveauLabel(ss.niveau_risque) }}</span>
+                </div>
+                <div class="ss-info">
+                  <div class="ss-libelle">{{ ss.libelle }}</div>
+                  <div class="ss-meta">
+                    <span class="ss-source">⚡ {{ ss.source_libelle }}</span>
+                    <span class="ss-sep">→</span>
+                    <span class="ss-objectif">🎯 {{ ss.objectif_libelle }}</span>
+                  </div>
+                  <div class="ss-evenement" *ngIf="ss.evenement_libelle">
+                    ⚠️ {{ ss.evenement_libelle }}
+                  </div>
+                </div>
+              </div>
+              <div class="ss-right">
+                <span class="gv-display">
+                  G{{ ss.gravite }} × V{{ ss.vraisemblance }}
+                </span>
+                <span class="dec-badge {{ getDecision(ss.decision_traitement).class }}">
+                  {{ getDecision(ss.decision_traitement).label }}
+                </span>
+                <button class="btn-icon" (click)="editSS(ss)">✏️</button>
+                <button class="btn-icon danger" (click)="deleteSS(ss.id)">🗑️</button>
+              </div>
+            </div>
+
+            <div class="ss-body" *ngIf="ss.description || ss.parties_prenantes?.length > 0">
+              <div class="ss-desc" *ngIf="ss.description">{{ ss.description }}</div>
+              <div class="ss-pp-tags" *ngIf="ss.parties_prenantes?.length > 0">
+                <span *ngFor="let pp of ss.parties_prenantes" class="pp-tag {{ pp.role }}">
+                  {{ getPPById(pp.pp_id)?.libelle || 'PP' }} — {{ pp.role }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CARTOGRAPHIE ══ -->
+    <div *ngIf="activeView === 'cartographie'">
+      <div class="panel">
+        <h2 class="panel-title">Cartographie des risques stratégiques</h2>
+        <p class="panel-desc">Vue synthétique des scénarios par niveau de risque.</p>
+
+        <!-- Élévés -->
+        <div class="carto-section eleve">
+          <div class="carto-header">
+            <span class="carto-badge eleve">Élevé</span>
+            <span class="carto-count">{{ ssParNiveau.eleve.length }} scénario(s)</span>
+          </div>
+          <div *ngIf="!ssParNiveau.eleve.length" class="carto-empty">Aucun scénario à risque élevé</div>
+          <div class="carto-chips">
+            <div *ngFor="let ss of ssParNiveau.eleve" class="carto-chip eleve"
+              (click)="activeView = 'scenarios'">
+              <div class="chip-score">{{ ss.score_risque }}</div>
+              <div class="chip-body">
+                <div class="chip-libelle">{{ ss.libelle }}</div>
+                <div class="chip-meta">G{{ ss.gravite }} × V{{ ss.vraisemblance }}</div>
+              </div>
+              <span class="dec-chip {{ getDecision(ss.decision_traitement).class }}">
+                {{ getDecision(ss.decision_traitement).label }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Moyens -->
+        <div class="carto-section moyen">
+          <div class="carto-header">
+            <span class="carto-badge moyen">Moyen</span>
+            <span class="carto-count">{{ ssParNiveau.moyen.length }} scénario(s)</span>
+          </div>
+          <div *ngIf="!ssParNiveau.moyen.length" class="carto-empty">Aucun scénario à risque moyen</div>
+          <div class="carto-chips">
+            <div *ngFor="let ss of ssParNiveau.moyen" class="carto-chip moyen">
+              <div class="chip-score">{{ ss.score_risque }}</div>
+              <div class="chip-body">
+                <div class="chip-libelle">{{ ss.libelle }}</div>
+                <div class="chip-meta">G{{ ss.gravite }} × V{{ ss.vraisemblance }}</div>
+              </div>
+              <span class="dec-chip {{ getDecision(ss.decision_traitement).class }}">
+                {{ getDecision(ss.decision_traitement).label }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Faibles -->
+        <div class="carto-section faible">
+          <div class="carto-header">
+            <span class="carto-badge faible">Faible</span>
+            <span class="carto-count">{{ ssParNiveau.faible.length }} scénario(s)</span>
+          </div>
+          <div *ngIf="!ssParNiveau.faible.length" class="carto-empty">Aucun scénario à risque faible</div>
+          <div class="carto-chips">
+            <div *ngFor="let ss of ssParNiveau.faible" class="carto-chip faible">
+              <div class="chip-score">{{ ss.score_risque }}</div>
+              <div class="chip-body">
+                <div class="chip-libelle">{{ ss.libelle }}</div>
+                <div class="chip-meta">G{{ ss.gravite }} × V{{ ss.vraisemblance }}</div>
+              </div>
+              <span class="dec-chip {{ getDecision(ss.decision_traitement).class }}">
+                {{ getDecision(ss.decision_traitement).label }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

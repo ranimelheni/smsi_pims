@@ -245,4 +245,5 @@ export class DpoComponent implements OnInit {
     };
     return map[statut] || statut;
   }
+  
 }
