@@ -4,11 +4,13 @@ import { FormsModule }       from '@angular/forms';
 import { HttpClient }        from '@angular/common/http';
 import { Router }            from '@angular/router';
 import { AuthService }       from '../../services/auth.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { SafePipe } from '../../safe.pipe';
 
 @Component({
   selector:    'app-registre',
   standalone:  true,
-  imports:     [CommonModule, FormsModule],
+  imports:     [CommonModule, FormsModule, SafePipe],
   templateUrl: './registre.component.html',
   styleUrls:   ['./registre.component.scss']
 })
@@ -32,6 +34,14 @@ export class RegistreComponent implements OnInit {
   // Edition risques inline
   editingRisque: any = null;
   savingRisque       = false;
+    // ── PIA modal ──────────────────────────────────────────────────────────
+  showPiaModal      = false;
+  piaIframeUrl      = '';
+  piaCurrentId: number | null = null;
+  piaCurrentService = '';
+
+    PIA_URL = 'http://localhost:4300';
+
 
   private api = 'http://localhost:8080/api';
 
@@ -54,7 +64,9 @@ export class RegistreComponent implements OnInit {
   constructor(
     private http:   HttpClient,
     private router: Router,
-    private auth:   AuthService
+    private auth:   AuthService,
+    private sanitizer: DomSanitizer
+
   ) {}
 
   ngOnInit(): void {
@@ -136,26 +148,56 @@ export class RegistreComponent implements OnInit {
 
   // ── PIA ───────────────────────────────────────────────────────────────
   ouvrirPia(r: any, event: Event): void {
-    event.stopPropagation();
-    // Redirection future vers le module PIA
-    this.router.navigate(['/dashboard/pia', r.id]);
+      event.stopPropagation();
+    this.piaCurrentId      = r.id;
+    this.piaCurrentService = r.service;
+    this.piaIframeUrl      = this.PIA_URL;
+    this.showPiaModal      = true;
+
+    // Marquer en cours si pas encore fait
+    if (r.pia_statut === 'non_requis' || r.pia_statut === 'a_realiser') {
+      this.http.patch<any>(
+        `${this.api}/registre-traitement/${r.id}/pia`,
+        { pia_statut: 'en_cours' }
+      ).subscribe({ next: (u) => this.replaceInList(u) });
+    }
+  }
+  fermerPia(): void {
+    this.showPiaModal   = false;
+    this.piaIframeUrl   = '';
+    this.piaCurrentId   = null;
+    this.piaCurrentService = '';
+  }
+  
+  /** Marque le PIA comme réalisé et ferme la modale */
+  confirmerPiaRealise(): void {
+    if (!this.piaCurrentId) return;
+    this.http.patch<any>(
+      `${this.api}/registre-traitement/${this.piaCurrentId}/pia`,
+      { analyse_pia: true, pia_statut: 'realise' }
+    ).subscribe({
+      next: (u) => {
+        this.replaceInList(u);
+        this.fermerPia();
+        this.showSuccess('✅ PIA marqué comme réalisé');
+      }
+    });
   }
 
+  /** Marquer réalisé depuis la ligne (sans ouvrir la modale) */
   marquerPiaRealise(r: any, event: Event): void {
     event.stopPropagation();
     this.http.patch<any>(
       `${this.api}/registre-traitement/${r.id}/pia`,
       { analyse_pia: true, pia_statut: 'realise' }
-    ).subscribe({
-      next: (updated) => {
-        const idx = this.registres.findIndex(x => x.id === updated.id);
-        if (idx >= 0) this.registres[idx] = updated;
-        if (this.selectedRow?.id === updated.id) this.selectedRow = updated;
-        this.showSuccess('PIA marqué comme réalisé');
-      }
-    });
+    ).subscribe({ next: (u) => { this.replaceInList(u); this.showSuccess('✅ PIA réalisé'); } });
   }
-
+  // ── Helpers ────────────────────────────────────────────────────────────
+  private replaceInList(updated: any): void {
+    const idx = this.registres.findIndex(x => x.id === updated.id);
+    if (idx >= 0) this.registres[idx] = updated;
+    if (this.selectedRow?.id === updated.id) this.selectedRow = updated;
+  }
   // ── Valider un traitement ─────────────────────────────────────────────
   validerTraitement(r: any, event: Event): void {
     event.stopPropagation();
@@ -218,4 +260,5 @@ export class RegistreComponent implements OnInit {
   retourDashboard(): void {
     this.router.navigate(['/dashboard/dpo']);
   }
+  
 }

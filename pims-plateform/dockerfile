@@ -1,0 +1,28 @@
+# ── Étape 1 : Build Maven ──────────────────────────────────────────────────
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
+
+WORKDIR /app
+
+# Copier pom.xml en premier pour profiter du cache Docker
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copier les sources et builder
+COPY src ./src
+RUN mvn package -DskipTests -B
+
+# ── Étape 2 : Image runtime légère ────────────────────────────────────────
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /app
+
+# Copier le jar buildé
+COPY --from=builder /app/target/*.jar app.jar
+
+# Utilisateur non-root pour la sécurité
+RUN addgroup -S pims && adduser -S pims -G pims
+USER pims
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
