@@ -93,6 +93,21 @@ isRiskAnalysisEnabled = false;
   icon: 'database',
   route: '/dashboard/dpo/registre',  // ✅ CORRECT
   roles: ['dpo', 'super_admin']
+},
+{
+  label:  'Clause 7 — Support',
+  icon:   'support',
+  route:  '/dashboard/clause7',
+  clause: 'Clause 7',
+  roles:  [
+    'rssi',
+    'admin_organism',
+    'super_admin',
+    'direction',
+    'employe',
+    'pilote_processus',
+    'dpo'
+  ]
 }
   ];
 

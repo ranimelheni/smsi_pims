@@ -1,0 +1,884 @@
+<div class="clause7-page">
+
+  <!-- HEADER -->
+  <div class="c7-header">
+    <div>
+      <h1>📋 Clause 7 — Soutien</h1>
+      <p class="c7-sub">ISO 27001 / 27701 · Compétences, Sensibilisation, Communication, Documents</p>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div class="toast success" *ngIf="success">{{ success }}</div>
+  <div class="toast error"   *ngIf="error">{{ error }}</div>
+
+  <!-- ONGLETS -->
+  <div class="c7-tabs">
+    <button *ngFor="let t of tabs"
+      class="c7-tab" [class.active]="activeTab === t.key"
+      (click)="setTab(t.key)">
+      <span>{{ t.icon }}</span> {{ t.label }}
+    </button>
+  </div>
+
+  <div class="c7-body">
+
+    <!-- ════════════════════════════════════════════════════════════
+         7.1 — COMPÉTENCES
+    ════════════════════════════════════════════════════════════ -->
+    <div *ngIf="activeTab === 'competences'">
+
+      <!-- MON PROFIL (employé) -->
+<div class="section-card" *ngIf="monProfil && !isDirection && !isRssi">
+        <div class="sc-header">
+          <div class="sc-title">🎓 Mon profil de compétences</div>
+          <button class="btn-primary" (click)="editProfil = !editProfil">
+            {{ editProfil ? 'Annuler' : '✏️ Modifier' }}
+          </button>
+        </div>
+
+        <!-- Affichage -->
+        <div *ngIf="!editProfil" class="profil-view">
+          <div class="pv-grid">
+            <div class="pv-field"><label>Nom complet</label><span>{{ monProfil.prenom }} {{ monProfil.nom }}</span></div>
+            <div class="pv-field"><label>Email</label><span>{{ monProfil.email }}</span></div>
+            <div class="pv-field"><label>Poste</label><span>{{ monProfil.poste || '—' }}</span></div>
+            <div class="pv-field"><label>Département</label><span>{{ monProfil.departement || '—' }}</span></div>
+            <div class="pv-field"><label>Téléphone</label><span>{{ monProfil.telephone || '—' }}</span></div>
+            <div class="pv-field"><label>Date d'entrée</label><span>{{ monProfil.date_entree || '—' }}</span></div>
+          </div>
+          <div class="pv-field full"><label>Bio</label><span>{{ monProfil.bio || '—' }}</span></div>
+
+          <!-- Score évaluation -->
+          <div class="eval-result" *ngIf="monProfil.score_global">
+            <div class="er-score">{{ monProfil.score_global }}<span>/10</span></div>
+            <div>
+              <div class="er-label">Score de compétences</div>
+              <div class="er-par" *ngIf="monProfil.evalue_par">Évalué par {{ monProfil.evalue_par }}</div>
+              <p class="er-comment" *ngIf="monProfil.commentaire_admin">{{ monProfil.commentaire_admin }}</p>
+            </div>
+          </div>
+
+          <!-- ── CV ── -->
+          <div class="cv-section">
+            <div class="cvs-header">
+              <div class="cs-title">📄 CV</div>
+            </div>
+            <!-- CV existant -->
+            <div *ngIf="monProfil.nb_cvs > 0" class="cv-item">
+              <span class="file-icon">📕</span>
+              <div class="cv-info">
+                <div class="cv-nom">{{ monProfil.cvs?.[0]?.nom_fichier || 'CV uploadé' }}</div>
+                <div class="cv-meta" *ngIf="monProfil.cvs?.[0]?.taille">
+                  {{ formatTaille(monProfil.cvs[0].taille) }}
+                </div>
+              </div>
+              <div class="cv-actions">
+                <button class="btn-del-certif" (click)="supprimerCv()">🗑️</button>
+              </div>
+            </div>
+            <!-- Upload CV -->
+            <div class="upload-zone" [class.has-file]="cvFile">
+              <label class="upload-label">
+                <input type="file" accept=".pdf,.doc,.docx"
+                  (change)="onCvSelected($event)" style="display:none" #cvInput/>
+                <span *ngIf="!cvFile" class="upload-placeholder"
+                  (click)="cvInput.click()">
+                  📤 {{ monProfil.nb_cvs > 0 ? 'Remplacer le CV' : 'Téléverser un CV' }}
+                  <span class="upload-hint">PDF, DOC, DOCX · max 10 Mo</span>
+                </span>
+                <span *ngIf="cvFile" class="upload-selected">
+                  {{ getFileIcon(cvFile.name) }} {{ cvFile.name }}
+                  ({{ formatTaille(cvFile.size) }})
+                </span>
+              </label>
+              <div *ngIf="cvFile" class="upload-actions">
+                <button class="btn-secondary btn-sm" (click)="cvFile = null">✕ Annuler</button>
+                <button class="btn-primary btn-sm" [disabled]="uploadingCv"
+                  (click)="uploadCv()">
+                  {{ uploadingCv ? 'Envoi...' : '💾 Envoyer' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Certifications -->
+          <div class="certifs-section">
+            <div class="cs-title">🏅 Certifications ({{ monProfil.nb_certifications }})</div>
+            <div *ngIf="!monProfil.certifications?.length" class="cs-empty">Aucune certification ajoutée</div>
+
+            <!-- Bouton ajouter -->
+            <button class="btn-primary" (click)="showCertifForm = !showCertifForm">
+              {{ showCertifForm ? 'Annuler' : 'Ajouter une certification' }}
+            </button>
+
+            <!-- Formulaire certification -->
+            <div *ngIf="showCertifForm" class="certif-form-card">
+              <div class="certif-form-title">Nouvelle certification</div>
+              <div class="pf-grid">
+                <div class="field">
+                  <label>Nom de la certification *</label>
+                  <input [(ngModel)]="certifForm.nom"
+                    placeholder="Ex: CISA, CISSP, ISO 27001 Lead Auditor..."/>
+                </div>
+                <div class="field">
+                  <label>Organisme certificateur</label>
+                  <input [(ngModel)]="certifForm.organisme"
+                    placeholder="Ex: ISACA, ISC², PECB..."/>
+                </div>
+                <div class="field">
+                  <label>Date d'obtention</label>
+                  <input type="date" [(ngModel)]="certifForm.date_obtention"/>
+                </div>
+                <div class="field">
+                  <label>Date d'expiration</label>
+                  <input type="date" [(ngModel)]="certifForm.date_expiration"/>
+                </div>
+              </div>
+              <!-- Upload pièce jointe -->
+              <div class="field">
+                <label>Pièce jointe (certificat)</label>
+                <div class="upload-zone-sm" [class.has-file]="certifFile">
+                  <label class="upload-label-sm">
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png"
+                      (change)="onCertifFileSelected($event)"
+                      style="display:none" #certifInput/>
+                    <span *ngIf="!certifFile" class="upload-placeholder-sm"
+                      (click)="certifInput.click()">
+                      📎 Joindre le certificat
+                      <span class="upload-hint">PDF, JPG, PNG · max 5 Mo</span>
+                    </span>
+                    <span *ngIf="certifFile" class="upload-selected-sm">
+                      {{ getFileIcon(certifFile.name) }} {{ certifFile.name }}
+                      <button class="btn-clear-file" type="button"
+                        (click)="certifFile = null; $event.stopPropagation()">✕</button>
+                    </span>
+                  </label>
+                </div>
+              </div>
+              <div class="certif-form-actions">
+                <button class="btn-secondary btn-sm"
+                  (click)="showCertifForm = false; certifFile = null">Annuler</button>
+                <button class="btn-primary btn-sm"
+                  [disabled]="savingCertif" (click)="ajouterCertif()">
+                  {{ savingCertif ? 'Envoi...' : '💾 Ajouter' }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Liste certifications existantes -->
+            <div class="certifs-list">
+              <div *ngFor="let c of monProfil.certifications" class="certif-item">
+                <div class="ci-main">
+                  <div class="ci-nom">{{ c.nom }}</div>
+                  <div class="ci-meta">
+                    <span *ngIf="c.organisme" class="ci-org">{{ c.organisme }}</span>
+                    <span *ngIf="c.date_obtention">Obtenu : {{ c.date_obtention }}</span>
+                    <span *ngIf="c.date_expiration" class="ci-exp">
+                      Expire : {{ c.date_expiration }}
+                    </span>
+                  </div>
+                </div>
+                <div class="ci-actions">
+                  <span *ngIf="!c.nom_fichier" class="no-file">📎 Sans fichier</span>
+                  <button class="btn-del-certif"
+                    (click)="supprimerCertification(c.id)">🗑️</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Formulaire édition -->
+        <div *ngIf="editProfil" class="profil-form">
+          <div class="pf-grid">
+            <div class="field"><label>Poste</label><input [(ngModel)]="profilForm.poste" placeholder="Votre intitulé de poste"/></div>
+            <div class="field"><label>Département</label><input [(ngModel)]="profilForm.departement" placeholder="Ex: RH, IT, Finance..."/></div>
+            <div class="field"><label>Téléphone</label><input [(ngModel)]="profilForm.telephone" placeholder="+33..."/></div>
+            <div class="field"><label>Date d'entrée</label><input type="date" [(ngModel)]="profilForm.date_entree"/></div>
+          </div>
+          <div class="field">
+            <label>Bio / Compétences clés</label>
+            <textarea [(ngModel)]="profilForm.bio" rows="3"
+              placeholder="Décrivez vos compétences, expériences clés..."></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" [disabled]="savingProfil" (click)="saveProfil()">
+              {{ savingProfil ? 'Sauvegarde...' : '💾 Enregistrer' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LISTE EMPLOYÉS — RSSI/Admin (nouveau layout avec panneau détail) -->
+      <div class="section-card" *ngIf="canVoirProfils && profils.length">
+        <div class="sc-header">
+          <div class="sc-title">👥 Compétences des employés</div>
+          <span class="badge-count">{{ profils.length }}</span>
+        </div>
+
+        <div class="profils-layout">
+
+          <!-- Tableau liste -->
+          <div class="profils-liste">
+            <table class="c7-table">
+              <thead>
+                <tr>
+                  <th>Employé</th>
+                  <th>Poste</th>
+                  <th>Certifications</th>
+                  <th>Évaluation</th>
+                  <th>Score</th>
+                  <th *ngIf="!isDirection">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let p of profils" 
+                  [class.row-selected]="profilSelecte?.id === p.id"
+                  (click)="voirProfilEmploye(p)">
+                  <td>
+                    <div class="emp-name">{{ p.prenom }} {{ p.nom }}</div>
+                    <div class="emp-email">{{ p.email }}</div>
+                  </td>
+                  <td>{{ p.poste || '—' }}</td>
+                  <td>
+                    <span class="badge-count">{{ p.nb_certifications }}</span>
+                    <span *ngIf="p.nb_cvs > 0" class="cv-chip">📄 CV</span>
+                  </td>
+                  <td>
+                    <span class="badge-eval {{ getStatutEvalClass(p.statut_evaluation) }}">
+                      {{ getStatutEvalLabel(p.statut_evaluation) }}
+                    </span>
+                  </td>
+                  <td>
+                    <span *ngIf="p.score_global" class="score-display">
+                      {{ p.score_global }}/10
+                    </span>
+                    <span *ngIf="!p.score_global" class="text-muted">—</span>
+                  </td>
+                  <td *ngIf="!isDirection" (click)="$event.stopPropagation()">
+                    <div class="td-actions">
+                      <button class="btn-secondary btn-sm"
+                        (click)="voirProfilEmploye(p)">
+                        {{ profilSelecte?.id === p.id ? '▲' : '▼ Détail' }}
+                      </button>
+                      <button *ngIf="canEvaluerEmploye" class="btn-primary btn-sm"
+                        (click)="ouvrirEvaluation(p)">✏️ Évaluer</button>
+                    </div>
+                  </td>
+                    <td *ngIf="isDirection" (click)="$event.stopPropagation()">
+              <!-- click sur la ligne suffit, pas de bouton évaluer -->
+            </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Panneau détail profil employé -->
+          <div *ngIf="profilSelecte" class="profil-detail-panel">
+            <div class="pdp-header">
+              <div>
+                <div class="pdp-nom">{{ profilSelecte.prenom }} {{ profilSelecte.nom }}</div>
+                <div class="pdp-role">{{ profilSelecte.poste || profilSelecte.role }}</div>
+              </div>
+              <button class="btn-close-sm" (click)="fermerProfilSelecte()">✕</button>
+            </div>
+
+            <!-- Infos générales -->
+            <div class="pdp-section">
+              <div class="pdp-stitle">Informations</div>
+              <div class="pdp-grid">
+                <div class="pdp-field"><label>Email</label><span>{{ profilSelecte.email }}</span></div>
+                <div class="pdp-field"><label>Département</label><span>{{ profilSelecte.departement || '—' }}</span></div>
+                <div class="pdp-field"><label>Téléphone</label><span>{{ profilSelecte.telephone || '—' }}</span></div>
+                <div class="pdp-field"><label>Date entrée</label><span>{{ profilSelecte.date_entree || '—' }}</span></div>
+              </div>
+              <div *ngIf="profilSelecte.bio" class="pdp-bio">{{ profilSelecte.bio }}</div>
+            </div>
+
+            <!-- Score évaluation -->
+            <div class="pdp-section" *ngIf="profilSelecte.score_global">
+              <div class="pdp-stitle">Évaluation</div>
+              <div class="eval-result">
+                <div class="er-score">{{ profilSelecte.score_global }}<span>/10</span></div>
+                <div>
+                  <div class="er-label">Score de compétences</div>
+                  <div class="er-par" *ngIf="profilSelecte.evalue_par">
+                    Par {{ profilSelecte.evalue_par }}
+                  </div>
+                  <p class="er-comment" *ngIf="profilSelecte.commentaire_admin">
+                    {{ profilSelecte.commentaire_admin }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- CV -->
+            <div class="pdp-section">
+              <div class="pdp-stitle">CV ({{ profilSelecte.cvs?.length || 0 }})</div>
+              <div *ngIf="!profilSelecte.cvs?.length" class="pdp-empty">
+                Aucun CV déposé
+              </div>
+              <div *ngFor="let cv of profilSelecte.cvs" class="cv-item">
+                <span class="file-icon">📕</span>
+                <div class="cv-info">
+                  <div class="cv-nom">{{ cv.nom_fichier }}</div>
+                  <div class="cv-meta">{{ formatTaille(cv.taille) }} · {{ cv.uploaded_at | slice:0:10 }}</div>
+                </div>
+                <button class="btn-dl"
+                  (click)="telechargerCv(profilSelecte.user_id, cv.nom_fichier)">
+                  ⬇️ Télécharger
+                </button>
+              </div>
+            </div>
+
+            <!-- Certifications -->
+            <div class="pdp-section">
+              <div class="pdp-stitle">
+                Certifications ({{ profilSelecte.certifications?.length || 0 }})
+              </div>
+              <div *ngIf="!profilSelecte.certifications?.length" class="pdp-empty">
+                Aucune certification
+              </div>
+              <div *ngFor="let c of profilSelecte.certifications" class="certif-item"
+                [class.expired]="isCertifExpired(c.date_expiration)"
+                [class.expiring]="isCertifExpiringSoon(c.date_expiration)">
+                <div class="ci-main">
+                  <div class="ci-nom">{{ c.nom }}</div>
+                  <div class="ci-meta">
+                    <span *ngIf="c.organisme" class="ci-org">{{ c.organisme }}</span>
+                    <span *ngIf="c.date_obtention">{{ c.date_obtention }}</span>
+                    <span *ngIf="c.date_expiration" class="ci-exp"
+                      [class.text-red]="isCertifExpired(c.date_expiration)"
+                      [class.text-amber]="isCertifExpiringSoon(c.date_expiration)">
+                      Expire : {{ c.date_expiration }}
+                      <span *ngIf="isCertifExpired(c.date_expiration)">⚠️</span>
+                    </span>
+                  </div>
+                </div>
+                <button *ngIf="c.a_fichier" class="btn-dl btn-sm"
+                  (click)="telechargerCertif(c.id, c.nom_fichier)">
+                  ⬇️
+                </button>
+                <span *ngIf="!c.a_fichier" class="no-file">Sans fichier</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Modale évaluation -->
+        <div *ngIf="evalTarget" class="modal-overlay" (click)="evalTarget=null">
+          <div class="modal-box" (click)="$event.stopPropagation()">
+            <div class="modal-title">Évaluer {{ evalTarget.prenom }} {{ evalTarget.nom }}</div>
+            <div class="field">
+              <label>Score global (0 – 10) *</label>
+              <input type="number" min="0" max="10" step="0.5"
+                [(ngModel)]="evalForm.score_global" placeholder="Ex: 7.5"/>
+            </div>
+            <div class="field">
+              <label>Commentaire</label>
+              <textarea [(ngModel)]="evalForm.commentaire_admin" rows="3"
+                placeholder="Points forts, axes d'amélioration..."></textarea>
+            </div>
+            <div class="modal-actions">
+              <button class="btn-secondary" (click)="evalTarget=null">Annuler</button>
+              <button class="btn-primary" (click)="sauvegarderEvaluation()">💾 Enregistrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         7.2 — SENSIBILISATION & FORMATION
+    ════════════════════════════════════════════════════════════ -->
+    <div *ngIf="activeTab === 'formations'">
+
+      <div class="tab-toolbar">
+        <div class="tt-title">📚 Sessions de formation & sensibilisation</div>
+        <button *ngIf="canPublish" class="btn-primary"
+          (click)="showNewSession = !showNewSession">
+          {{ showNewSession ? 'Annuler' : '+ Nouvelle session' }}
+        </button>
+      </div>
+
+      <!-- Formulaire nouvelle session -->
+      <div *ngIf="showNewSession" class="form-card">
+        <div class="fc-title">Créer une session</div>
+        <div class="pf-grid">
+          <div class="field full"><label>Titre *</label><input [(ngModel)]="sessionForm.titre" placeholder="Titre de la session..."/></div>
+          <div class="field"><label>Type</label>
+            <select [(ngModel)]="sessionForm.type">
+              <option *ngFor="let t of typesSession" [value]="t">{{ t | titlecase }}</option>
+            </select>
+          </div>
+          <div class="field"><label>Mode</label>
+            <select [(ngModel)]="sessionForm.mode">
+              <option *ngFor="let m of modesSession" [value]="m">{{ m | titlecase }}</option>
+            </select>
+          </div>
+          <div class="field"><label>Date début *</label><input type="datetime-local" [(ngModel)]="sessionForm.date_debut"/></div>
+          <div class="field"><label>Date fin</label><input type="datetime-local" [(ngModel)]="sessionForm.date_fin"/></div>
+          <div class="field"><label>Lieu</label><input [(ngModel)]="sessionForm.lieu" placeholder="Salle, adresse..."/></div>
+          <div class="field"><label>Lien visio</label><input [(ngModel)]="sessionForm.lien_visio" placeholder="https://..."/></div>
+          <div class="field"><label>Max participants</label><input type="number" [(ngModel)]="sessionForm.max_participants"/></div>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea [(ngModel)]="sessionForm.description" rows="3" placeholder="Objectifs, programme..."></textarea>
+        </div>
+        <div class="toggle-field">
+          <label><input type="checkbox" [(ngModel)]="sessionForm.obligatoire"/> Session obligatoire</label>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" (click)="creerSession()">💾 Créer la session</button>
+        </div>
+      </div>
+
+      <!-- Liste sessions -->
+      <div class="sessions-grid">
+        <div *ngFor="let s of sessions" class="session-card"
+          [class.selected]="sessionSelectee?.id === s.id">
+          <div class="sc-top">
+            <div class="sc-type-badge type-{{ s.type }}">{{ s.type }}</div>
+            <div class="sc-mode">{{ s.mode }}</div>
+            <span *ngIf="s.obligatoire" class="sc-oblig">Obligatoire</span>
+          </div>
+          <div class="sc-titre">{{ s.titre }}</div>
+          <div class="sc-date">📅 {{ s.date_debut | date:'dd/MM/yyyy HH:mm' }}</div>
+          <div class="sc-lieu" *ngIf="s.lieu">📍 {{ s.lieu }}</div>
+          <div class="sc-meta">
+            <span class="sc-inscrits">👥 {{ s.nb_inscrits }} inscrits</span>
+            <span class="sc-statut statut-{{ s.statut }}">{{ s.statut }}</span>
+          </div>
+
+          <div class="sc-actions">
+            <!-- Employé -->
+            <ng-container *ngIf="isEmploye">
+              <button *ngIf="!s.suis_inscrit" class="btn-primary btn-sm" (click)="sInscrire(s)">S'inscrire</button>
+              <button *ngIf="s.suis_inscrit"  class="btn-secondary btn-sm" (click)="seDesinscrire(s)">Se désinscrire</button>
+              <span *ngIf="s.suis_inscrit" class="inscrit-badge">✅ Inscrit</span>
+            </ng-container>
+            <!-- RSSI/Admin -->
+            <button *ngIf="isRssiOrAdmin" class="btn-secondary btn-sm" (click)="voirParticipants(s)">
+              👥 Participants
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panneau participants -->
+      <div *ngIf="sessionSelectee && isRssiOrAdmin" class="participants-panel">
+        <div class="pp-header">
+          <div class="pp-title">Participants — {{ sessionSelectee.titre }}</div>
+          <button class="btn-close-sm" (click)="sessionSelectee=null">✕</button>
+        </div>
+        <table class="c7-table">
+          <thead>
+            <tr>
+              <th>Employé</th>
+              <th>Statut présence</th>
+              <th>Présence confirmée</th>
+              <th>Score</th>
+              <th>Commentaire RSSI</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of participants">
+              <td>
+                <div>{{ p.employe_prenom }} {{ p.employe_nom }}</div>
+                <div class="emp-email">{{ p.employe_email }}</div>
+              </td>
+              <td><span class="presence-badge {{ getPresenceClass(p.statut) }}">{{ p.statut }}</span></td>
+              <td>{{ p.presence_confirmee ? '✅' : '—' }}</td>
+              <td>{{ p.score_evaluation ? p.score_evaluation + '/10' : '—' }}</td>
+              <td>{{ p.commentaire_rssi || '—' }}</td>
+              <td>
+                <button *ngIf="canEvaluerPresence" class="btn-primary btn-sm"
+                  (click)="ouvrirEvalPresence(p)">✏️ Évaluer</button>
+                <span *ngIf="!canEvaluerPresence" class="text-muted">—</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Formulaire éval présence -->
+        <div *ngIf="evalPresenceTarget" class="modal-overlay" (click)="evalPresenceTarget=null">
+          <div class="modal-box" (click)="$event.stopPropagation()">
+            <div class="modal-title">Évaluer {{ evalPresenceTarget.employe_prenom }}</div>
+            <div class="field"><label>Statut</label>
+              <select [(ngModel)]="evalPresenceForm.statut">
+                <option value="inscrit">Inscrit</option>
+                <option value="present">Présent</option>
+                <option value="absent">Absent</option>
+                <option value="excuse">Excusé</option>
+              </select>
+            </div>
+            <div class="field">
+              <label><input type="checkbox" [(ngModel)]="evalPresenceForm.presence_confirmee"/> Présence confirmée</label>
+            </div>
+            <div class="field"><label>Score (0-10)</label>
+              <input type="number" min="0" max="10" step="0.5" [(ngModel)]="evalPresenceForm.score_evaluation"/>
+            </div>
+            <div class="field"><label>Commentaire</label>
+              <textarea [(ngModel)]="evalPresenceForm.commentaire_rssi" rows="2"></textarea>
+            </div>
+            <div class="modal-actions">
+              <button class="btn-secondary" (click)="evalPresenceTarget=null">Annuler</button>
+              <button class="btn-primary" (click)="sauvegarderPresence()">💾 Enregistrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         7.3 — COMMUNICATION
+    ════════════════════════════════════════════════════════════ -->
+    <div *ngIf="activeTab === 'communication'">
+
+      <div class="tab-toolbar">
+        <div class="tt-title">📢 Communications</div>
+        <button *ngIf="canPublish" class="btn-primary"
+          (click)="showNewPub = !showNewPub">
+          {{ showNewPub ? 'Annuler' : '+ Nouvelle publication' }}
+        </button>
+      </div>
+
+      <!-- Formulaire nouvelle publication -->
+      <div *ngIf="showNewPub && canPublish" class="form-card">
+        <div class="fc-title">Créer une publication</div>
+        <div class="field"><label>Titre *</label><input [(ngModel)]="pubForm.titre" placeholder="Titre de la communication..."/></div>
+        <div class="pf-grid">
+          <div class="field"><label>Type</label>
+            <select [(ngModel)]="pubForm.type">
+              <option *ngFor="let t of typesPub" [value]="t">{{ t | titlecase }}</option>
+            </select>
+          </div>
+          <div class="field"><label>Priorité</label>
+            <select [(ngModel)]="pubForm.priorite">
+              <option *ngFor="let p of prioritesPub" [value]="p">{{ p | titlecase }}</option>
+            </select>
+          </div>
+          <div class="field"><label>Destinataires</label>
+            <select [(ngModel)]="pubForm.cible">
+              <option *ngFor="let c of ciblesPub" [value]="c">{{ c | titlecase }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>Contenu *</label>
+          <textarea [(ngModel)]="pubForm.contenu" rows="5" placeholder="Rédigez votre message..."></textarea>
+        </div>
+        <div class="toggle-field">
+          <label><input type="checkbox" [(ngModel)]="pubForm.est_publie"/> Publier immédiatement</label>
+          <label><input type="checkbox" [(ngModel)]="pubForm.est_epingle"/> Épingler</label>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" (click)="creerPublication()">💾 Créer</button>
+        </div>
+      </div>
+
+      <!-- Liste publications -->
+      <div class="pubs-list">
+        <div *ngFor="let p of publications"
+          class="pub-card"
+          [class.epingle]="p.est_epingle"
+          [class.non-lu]="!p.lu && p.est_publie"
+          (click)="selectPub(p)">
+
+          <div class="pub-top">
+            <div class="pub-badges">
+              <span class="pub-type type-{{ p.type }}">{{ p.type }}</span>
+              <span class="pub-prio {{ getPrioriteClass(p.priorite) }}">{{ p.priorite }}</span>
+              <span *ngIf="p.est_epingle" class="pub-pin">📌</span>
+              <span *ngIf="!p.est_publie" class="pub-draft">Brouillon</span>
+            </div>
+            <div class="pub-meta">
+              <span class="pub-par">{{ p.publie_par }}</span>
+              <span class="pub-date" *ngIf="p.publie_at">· {{ p.publie_at | slice:0:10 }}</span>
+              <span class="pub-lectures">👁️ {{ p.nb_lectures }}</span>
+            </div>
+          </div>
+
+          <div class="pub-titre">
+            <span *ngIf="!p.lu && p.est_publie" class="unread-dot"></span>
+            {{ p.titre }}
+          </div>
+
+          <div *ngIf="pubSelectee?.id === p.id" class="pub-contenu">
+            {{ p.contenu }}
+            <div class="pub-cible">Destinataires : {{ p.cible }}</div>
+          </div>
+
+          <div class="pub-actions" *ngIf="canPublish && !p.est_publie" (click)="$event.stopPropagation()">
+            <button class="btn-sm btn-primary" (click)="publierCommunication(p)">📢 Publier</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         7.4 — INFORMATIONS DOCUMENTÉES
+    ════════════════════════════════════════════════════════════ -->
+    <div *ngIf="activeTab === 'documents'">
+
+      <div class="tab-toolbar">
+        <div class="tt-title">📄 Informations documentées</div>
+        <div class="tt-actions">
+          <select [(ngModel)]="filtreTypeDoc" class="filter-select">
+            <option value="">Tous types</option>
+            <option *ngFor="let t of typesDoc" [value]="t">{{ t | titlecase }}</option>
+          </select>
+          <button *ngIf="isRssiOrAdmin" class="btn-primary"
+            (click)="showNewDoc = !showNewDoc">
+            {{ showNewDoc ? 'Annuler' : '+ Nouveau document' }}
+          </button>
+          <button *ngIf="isEmploye" class="btn-secondary"
+  (click)="showNewDoc = !showNewDoc">
+  {{ showNewDoc ? 'Annuler' : '📤 Soumettre un document' }}
+</button>
+        </div>
+      </div>
+
+      <!-- Formulaire nouveau document -->
+      <div *ngIf="showNewDoc && isRssiOrAdmin" class="form-card">
+        <div class="fc-title">Nouveau document</div>
+        <div class="pf-grid">
+          <div class="field"><label>Référence</label>
+            <input [(ngModel)]="docForm.reference" placeholder="DOC-2024-001"/></div>
+          <div class="field"><label>Version</label>
+            <input [(ngModel)]="docForm.version" placeholder="v1.0"/></div>
+          <div class="field"><label>Type</label>
+            <select [(ngModel)]="docForm.type_document">
+              <option value="procedure">Procédure</option>
+              <option value="politique">Politique</option>
+              <option value="enregistrement">Enregistrement</option>
+              <option value="formulaire">Formulaire</option>
+              <option value="guide">Guide</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+          <div class="field full"><label>Titre *</label>
+            <input [(ngModel)]="docForm.titre" placeholder="Titre du document..."/></div>
+        </div>
+        <div class="field"><label>Description</label>
+          <textarea [(ngModel)]="docForm.description" rows="2"
+            placeholder="Objet et portée..."></textarea>
+        </div>
+        <div class="pf-grid">
+          <div class="field"><label>Date de révision</label>
+            <input type="date" [(ngModel)]="docForm.date_revision"/></div>
+          <div class="field"><label>Date d'expiration</label>
+            <input type="date" [(ngModel)]="docForm.date_expiration"/></div>
+        </div>
+        <!-- Upload fichier -->
+        <div class="field">
+          <label>Pièce jointe *</label>
+          <div class="upload-zone" [class.has-file]="docFile">
+            <label class="upload-label">
+              <input type="file"
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
+                (change)="onDocFileSelected($event)"
+                style="display:none" #docInput/>
+              <span *ngIf="!docFile" class="upload-placeholder"
+                (click)="docInput.click()">
+                📤 Joindre un document
+                <span class="upload-hint">
+                  PDF, Word, Excel, PowerPoint, TXT · max 10 Mo
+                </span>
+              </span>
+              <span *ngIf="docFile" class="upload-selected">
+                {{ getFileIcon(docFile.name) }} {{ docFile.name }}
+                ({{ formatTaille(docFile.size) }})
+              </span>
+            </label>
+            <button *ngIf="docFile" class="btn-clear-file"
+              type="button" (click)="docFile = null">✕</button>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-secondary" (click)="showNewDoc = false; docFile = null">
+            Annuler
+          </button>
+          <button class="btn-primary" [disabled]="uploadingDoc"
+            (click)="creerDocument()">
+            {{ uploadingDoc ? 'Envoi en cours...' : '💾 Créer' }}
+          </button>
+        </div>
+      </div>
+<div *ngIf="showNewDoc && isEmploye" class="form-card">
+
+  <!-- Badge informatif visible uniquement par l'employé -->
+  <div *ngIf="isEmploye" class="info-banner">
+    ℹ️ Votre document sera soumis en attente de validation par le RSSI.
+  </div>
+
+  <div class="fc-title">
+    {{ isRssiOrAdmin ? 'Nouveau document' : 'Soumettre un document' }}
+  </div>
+
+  <div class="pf-grid">
+    <!-- Référence : masquée pour l'employé, gérée par le RSSI -->
+    <div class="field" *ngIf="isRssiOrAdmin">
+      <label>Référence</label>
+      <input [(ngModel)]="docForm.reference" placeholder="DOC-2024-001"/>
+    </div>
+    <div class="field" *ngIf="isRssiOrAdmin">
+      <label>Version</label>
+      <input [(ngModel)]="docForm.version" placeholder="v1.0"/>
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select [(ngModel)]="docForm.type_document">
+        <option value="procedure">Procédure</option>
+        <option value="politique">Politique</option>
+        <option value="enregistrement">Enregistrement</option>
+        <option value="formulaire">Formulaire</option>
+        <option value="guide">Guide</option>
+        <option value="autre">Autre</option>
+      </select>
+    </div>
+    <div class="field full">
+      <label>Titre *</label>
+      <input [(ngModel)]="docForm.titre" placeholder="Titre du document..."/>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Description</label>
+    <textarea [(ngModel)]="docForm.description" rows="2"
+      placeholder="Objet et portée du document..."></textarea>
+  </div>
+
+  <!-- Dates : uniquement RSSI/Admin -->
+  <div class="pf-grid" *ngIf="isRssiOrAdmin">
+    <div class="field">
+      <label>Date de révision</label>
+      <input type="date" [(ngModel)]="docForm.date_revision"/>
+    </div>
+    <div class="field">
+      <label>Date d'expiration</label>
+      <input type="date" [(ngModel)]="docForm.date_expiration"/>
+    </div>
+  </div>
+
+  <!-- Upload fichier (tous) -->
+  <div class="field">
+    <label>Pièce jointe *</label>
+    <div class="upload-zone" [class.has-file]="docFile">
+      <label class="upload-label">
+        <input type="file"
+          accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
+          (change)="onDocFileSelected($event)"
+          style="display:none" #docInput/>
+        <span *ngIf="!docFile" class="upload-placeholder"
+          (click)="docInput.click()">
+          📤 Joindre un document
+          <span class="upload-hint">PDF, Word, Excel, PowerPoint, TXT · max 10 Mo</span>
+        </span>
+        <span *ngIf="docFile" class="upload-selected">
+          {{ getFileIcon(docFile.name) }} {{ docFile.name }}
+          ({{ formatTaille(docFile.size) }})
+        </span>
+      </label>
+      <button *ngIf="docFile" class="btn-clear-file"
+        type="button" (click)="docFile = null">✕</button>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn-secondary"
+      (click)="showNewDoc = false; docFile = null">Annuler</button>
+    <button class="btn-primary" [disabled]="uploadingDoc"
+      (click)="creerDocument()">
+      {{ uploadingDoc ? 'Envoi en cours...' : (isEmploye ? '📤 Soumettre' : '💾 Créer') }}
+    </button>
+  </div>
+</div>
+      <!-- Tableau documents -->
+      <div class="table-container">
+        <table class="c7-table">
+          <thead>
+            <tr>
+              <th>Référence</th>
+              <th>Document</th>
+              <th>Type</th>
+              <th>Version</th>
+              <th>Fiche liée</th>
+              <th>Statut</th>
+              <th>Révision</th>
+              <th>Déposé par</th>
+              <th>Fichier joint</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of documentsFiltres">
+              <td class="td-ref">{{ d.reference || '—' }}</td>
+              <td>
+                <div class="doc-icon-titre">
+                  <span>{{ getTypeDocIcon(d.type_document) }}</span>
+                  <div>
+                    <div class="doc-titre">{{ d.titre }}</div>
+                    <div class="doc-desc" *ngIf="d.description">
+                      {{ d.description | slice:0:60 }}{{ d.description.length > 60 ? '...' : '' }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ d.type_document }}</td>
+              <td><span class="version-badge">{{ d.version }}</span></td>
+              <td>
+                <span *ngIf="d.fiche_intitule" class="fiche-link">{{ d.fiche_intitule }}</span>
+                <span *ngIf="!d.fiche_intitule">—</span>
+              </td>
+              <td><span class="doc-statut {{ getStatutDocClass(d.statut) }}">{{ d.statut }}</span></td>
+              <td>{{ d.date_revision || '—' }}</td>
+              <td>
+                <div class="uploaded-by-cell">
+                  <span>{{ d.uploaded_by }}</span>
+                  <span class="role-chip role-{{ d.uploaded_by_role }}">
+                    {{ d.uploaded_by_role }}
+                  </span>
+                </div>
+              </td>
+              <!-- ── Colonne fichier joint ── -->
+              <td>
+                <div *ngIf="d.a_fichier" class="fichier-cell">
+                  <span class="file-icon-sm">{{ getFileIcon(d.nom_fichier) }}</span>
+                  <span class="fichier-nom" [title]="d.nom_fichier">
+                    {{ d.nom_fichier | slice:0:25 }}{{ (d.nom_fichier?.length || 0) > 25 ? '...' : '' }}
+                  </span>
+                  <span class="fichier-taille" *ngIf="d.taille">{{ formatTaille(d.taille) }}</span>
+                  <button class="btn-dl btn-sm"
+                    (click)="telechargerDocument(d.id, d.nom_fichier)">
+                    ⬇️
+                  </button>
+                </div>
+                <span *ngIf="!d.a_fichier" class="no-file">Sans fichier</span>
+              </td>
+              <td>
+                <div class="doc-td-actions">
+                  <button *ngIf="d.statut !== 'approuve' && canApprouverDoc"
+                    class="btn-primary btn-sm" (click)="approuverDocument(d)">
+                    ✅ Approuver
+                  </button>
+                  <span *ngIf="d.statut === 'approuve'" class="text-green">✅ Approuvé</span>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!documentsFiltres.length">
+              <td colspan="10" class="empty-row">
+                Aucun document — cliquez sur "+ Nouveau document" pour en ajouter un.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>

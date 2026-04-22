@@ -48,6 +48,7 @@ export class ActorsComponent implements OnInit {
     soc:                    'red',
     responsable_qualite:    'green',
     utilisateur_metier:     'gray',
+    employe:                'gray',
     direction:              'blue',
     comite_securite:        'purple',
     admin_organism:         'blue',

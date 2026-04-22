@@ -3,6 +3,8 @@ package com.pims.plateform.repository;
 import com.pims.plateform.entity.FicheTechnique;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,4 +27,6 @@ public interface FicheTechniqueRepository extends JpaRepository<FicheTechnique, 
 
     @EntityGraph(attributePaths = {"organism", "acteur", "validePar"})
     Optional<FicheTechnique> findById(Long id);
+    @Query("SELECT f FROM FicheTechnique f JOIN FETCH f.acteur WHERE f.id = :id")
+Optional<FicheTechnique> findByIdWithActeur(@Param("id") Long id);
 }

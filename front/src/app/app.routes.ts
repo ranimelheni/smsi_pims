@@ -83,7 +83,13 @@ loadComponent: () =>
   loadComponent: () =>
     import('./components/registre/registre.component')
       .then(m => m.RegistreComponent),
-}
+},
+  {
+    path: 'clause7',
+    loadComponent: () =>
+      import('./components/clause7/clause7.component')
+        .then(m => m.Clause7Component)
+  }
     ]
   },
  

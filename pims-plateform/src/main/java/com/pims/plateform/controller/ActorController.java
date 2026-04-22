@@ -29,7 +29,7 @@ public class ActorController {
         "admin_organism", "rssi", "dpo", "iso",
         "auditeur_interne", "auditeur_externe", "pilote_processus",
         "proprietaire_risque", "proprietaire_actif", "responsable_conformite",
-         "responsable_qualite", "utilisateur_metier",
+         "responsable_qualite", "utilisateur_metier","employe",
         "direction", "comite_securite","membre_equipe_technique"
     );
 
@@ -47,6 +47,7 @@ public class ActorController {
         Map.entry("responsable_conformite", "Responsable conformité"),
         Map.entry("responsable_qualite",    "Responsable qualité"),
         Map.entry("utilisateur_metier",     "Utilisateur métier"),
+        Map.entry("employe",                "Employé"),
         Map.entry("direction",              "Direction / DSI"),
         Map.entry("comite_securite",        "Comité sécurité"),
             Map.entry("super_admin",           "Super administrateur")

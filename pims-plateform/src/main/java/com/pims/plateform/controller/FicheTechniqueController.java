@@ -164,8 +164,11 @@ public class FicheTechniqueController {
         // Mesures
         if (data.containsKey("mesures_securite"))    fiche.setMesuresSecurite(toJson(data.get("mesures_securite")));
 
-        return ResponseEntity.ok(toMap(ficheRepo.save(fiche)));
-    }
+ficheRepo.save(fiche);
+
+FicheTechnique ficheLoaded = ficheRepo.findByIdWithActeur(id).orElseThrow();
+
+return ResponseEntity.ok(toMap(ficheLoaded));    }
 
     // ── PUT /api/fiches-techniques/{id}/statut ────────────────────────────────
     @PutMapping("/{id}/statut")
