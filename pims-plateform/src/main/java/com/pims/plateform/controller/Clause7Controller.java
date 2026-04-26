@@ -981,7 +981,7 @@ public ResponseEntity<?> supprimerCertification(
 // Voir tous  : rssi uniquement (pour approbation)
 // ════════════════════════════════════════════════════════════════
 private static final List<String> ROLES_PEUT_DEPOSER_DOC =
-    List.of("rssi", "direction", "dpo", "admin_organism", "employe", "super_admin");
+    List.of("rssi", "direction", "dpo", "admin_organism", "employe", "super_admin", "pilote_processus");
 
 
 

@@ -1,0 +1,191 @@
+<div class="kpi-page">
+
+  <!-- HEADER -->
+  <div class="kpi-header">
+    <div class="kh-left">
+      <button class="btn-back" (click)="retourDashboard()">← Dashboard</button>
+      <div>
+        <h1>📊 Tableau de bord KPI</h1>
+        <p class="kh-sub">
+          {{ dashboard?.organismNom || '...' }} ·
+          Mis à jour : {{ lastUpdate || '—' }}
+          <span *ngIf="dashboard?.fromCache" class="cache-badge">Cache</span>
+        </p>
+      </div>
+    </div>
+    <div class="kh-right">
+      <button *ngIf="canRefresh" class="btn-refresh"
+        [disabled]="refreshing" (click)="refresh()">
+        <span *ngIf="!refreshing">🔄 Actualiser</span>
+        <span *ngIf="refreshing">Calcul...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ERREUR -->
+  <div class="toast error" *ngIf="error">{{ error }}</div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Calcul des indicateurs...</p>
+    <!-- Skeleton -->
+    <div class="kpi-grid skeleton-grid">
+      <div *ngFor="let i of [1,2,3,4,5]" class="kpi-card skeleton-card">
+        <div class="sk-icon"></div>
+        <div class="sk-title"></div>
+        <div class="sk-value"></div>
+        <div class="sk-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENU -->
+  <div *ngIf="!loading && dashboard" class="kpi-body">
+
+    <!-- ── GRILLE KPI CARDS ── -->
+    <div class="kpi-grid">
+      <div *ngFor="let kpi of dashboard.kpis"
+        class="kpi-card {{ getCouleurClass(kpi.couleur) }}">
+
+        <!-- Header carte -->
+        <div class="kc-header">
+          <span class="kc-icon">{{ kpi.icon }}</span>
+          <span class="kc-tendance {{ getTendanceClass(kpi.tendance) }}">
+            {{ getTendanceIcon(kpi.tendance) }}
+            <span *ngIf="kpi.tendanceDelta !== 0">
+              {{ kpi.tendanceDelta > 0 ? '+' : '' }}{{ kpi.tendanceDelta | number:'1.1-1' }}%
+            </span>
+          </span>
+        </div>
+
+        <!-- Valeur principale -->
+        <div class="kc-value">{{ kpi.valeur | number:'1.1-1' }}%</div>
+
+        <!-- Label -->
+        <div class="kc-label">{{ kpi.label }}</div>
+
+        <!-- Fraction -->
+        <div class="kc-fraction" *ngIf="kpi.denominateur > 0">
+          {{ kpi.numerateur }} / {{ kpi.denominateur }}
+        </div>
+
+        <!-- Barre de progression -->
+        <div class="kc-bar-bg">
+          <div class="kc-bar-fill"
+            [style.width.%]="kpi.valeur"
+            [style.background]="getProgressColor(kpi.valeur)">
+          </div>
+        </div>
+
+        <!-- Score qualitatif -->
+        <div class="kc-score-label">
+          {{ getScoreLabel(kpi.valeur) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DÉTAIL SOA ── -->
+    <div *ngIf="hasSoaDetail" class="section-card">
+      <div class="sc-title">🔐 Détail conformité SoA — ISO 27001</div>
+      <div class="soa-detail-grid">
+
+        <div class="soa-annexe-card">
+          <div class="sa-label">Annexe A.5</div>
+          <div class="sa-sub">Politiques de sécurité</div>
+          <div class="sa-count">{{ dashboard!.soaDetail!.a5Inclus }} contrôles inclus</div>
+        </div>
+
+        <div class="soa-annexe-card">
+          <div class="sa-label">Annexe A.6</div>
+          <div class="sa-sub">Personnes & organisation</div>
+          <div class="sa-count">{{ dashboard!.soaDetail!.a6Inclus }} contrôles inclus</div>
+        </div>
+
+        <div class="soa-annexe-card">
+          <div class="sa-label">Annexe A.7</div>
+          <div class="sa-sub">Sécurité physique</div>
+          <div class="sa-count">{{ dashboard!.soaDetail!.a7Inclus }} contrôles inclus</div>
+        </div>
+
+        <div class="soa-annexe-card">
+          <div class="sa-label">Annexe A.8</div>
+          <div class="sa-sub">Sécurité technologique</div>
+          <div class="sa-count">{{ dashboard!.soaDetail!.a8Inclus }} contrôles inclus</div>
+        </div>
+
+        <div class="soa-total-card">
+          <div class="st-label">Total implémentés</div>
+          <div class="st-value">
+            {{ dashboard!.soaDetail!.nbImplemente }}
+            / {{ dashboard!.soaDetail!.totalInclus }}
+          </div>
+        </div>
+
+        <!-- Radar -->
+        <div class="soa-radar-card">
+          <canvas #radarChart height="220"></canvas>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── GRAPHIQUE HISTORIQUE ── -->
+    <div *ngIf="hasHistorique" class="section-card">
+      <div class="sc-title">📈 Évolution des KPI — 30 derniers jours</div>
+      <div class="chart-container">
+        <canvas #lineChart height="280"></canvas>
+      </div>
+    </div>
+
+    <!-- ── TABLEAU RÉCAPITULATIF ── -->
+    <div class="section-card">
+      <div class="sc-title">📋 Récapitulatif</div>
+      <table class="kpi-table">
+        <thead>
+          <tr>
+            <th>Indicateur</th>
+            <th>Valeur</th>
+            <th>Fraction</th>
+            <th>Tendance</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let kpi of dashboard!.kpis">
+            <td>
+              <span class="kpi-icon-sm">{{ kpi.icon }}</span>
+              {{ kpi.label }}
+            </td>
+            <td class="kpi-val-cell">
+              <strong>{{ kpi.valeur | number:'1.1-1' }}%</strong>
+            </td>
+            <td class="text-muted">
+              {{ kpi.numerateur }} / {{ kpi.denominateur }}
+            </td>
+            <td>
+              <span class="tendance-chip {{ getTendanceClass(kpi.tendance) }}">
+                {{ getTendanceIcon(kpi.tendance) }}
+                <span *ngIf="kpi.tendanceDelta !== 0">
+                  {{ kpi.tendanceDelta > 0 ? '+' : '' }}{{ kpi.tendanceDelta | number:'1.1-1' }}%
+                </span>
+              </span>
+            </td>
+            <td>
+              <span class="statut-chip {{ getCouleurClass(kpi.couleur) }}">
+                {{ getScoreLabel(kpi.valeur) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Message vide -->
+    <div *ngIf="!dashboard.kpis.length" class="empty-state">
+      <span>📊</span>
+      <p>Aucun KPI disponible pour votre rôle ({{ dashboard.roleUtilisateur }}).</p>
+    </div>
+
+  </div>
+</div>

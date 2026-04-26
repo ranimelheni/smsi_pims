@@ -65,4 +65,13 @@ export class AuthService {
     };
     this.router.navigate([routeMap[user?.role] || '/dashboard/organisms']);
   }
+  private currentOrganism: any = null;
+
+setCurrentOrganism(org: any) {
+  this.currentOrganism = org;
+}
+
+getCurrentOrganism() {
+  return this.currentOrganism;
+}
 }

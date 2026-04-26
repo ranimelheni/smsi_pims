@@ -89,7 +89,18 @@ loadComponent: () =>
     loadComponent: () =>
       import('./components/clause7/clause7.component')
         .then(m => m.Clause7Component)
-  }
+  },
+  {path: 'kpi',
+  loadComponent: () =>
+    import('./components/kpi-dashboard/kpi-dashboard.component')
+      .then(m => m.KpiDashboardComponent)
+},
+{
+  path:'fiche-processus',
+  loadComponent: () =>
+    import('./components/fiche-processus/fiche-processus.component')
+      .then(m => m.FicheProcessusComponent)
+}
     ]
   },
  

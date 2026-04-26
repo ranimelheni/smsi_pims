@@ -632,7 +632,7 @@
             <option value="">Tous types</option>
             <option *ngFor="let t of typesDoc" [value]="t">{{ t | titlecase }}</option>
           </select>
-          <button *ngIf="isRssiOrAdmin" class="btn-primary"
+          <button *ngIf="isRssiOrAdmin || isDirection" class="btn-primary"
             (click)="showNewDoc = !showNewDoc">
             {{ showNewDoc ? 'Annuler' : '+ Nouveau document' }}
           </button>
@@ -644,7 +644,7 @@
       </div>
 
       <!-- Formulaire nouveau document -->
-      <div *ngIf="showNewDoc && isRssiOrAdmin" class="form-card">
+      <div *ngIf="showNewDoc && isRssiOrAdmin || isDirection" class="form-card">
         <div class="fc-title">Nouveau document</div>
         <div class="pf-grid">
           <div class="field"><label>Référence</label>

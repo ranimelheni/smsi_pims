@@ -20,7 +20,6 @@
   </div>
 
   <div class="toast-success" *ngIf="success">✓ {{ success }}</div>
-  <div class="alert-error"   *ngIf="error">{{ error }}</div>
 
   <!-- Tabs -->
   <div class="tabs">
@@ -62,7 +61,7 @@
   <!-- Alerte si SoA non validée -->
   <div *ngIf="!loadingImpl && implData?.soa_statut !== 'valide'" class="prereq-banner">
     ⚠️ La SoA doit être <strong>validée par la direction</strong> avant de documenter les implémentations.
-    Statut actuel : <strong>{{ implData?.soa_statut || 'non initialisée' }}</strong>
+    Statut actuel : <strong>{{ implData?.soa_statut || 'non validée' }}</strong>
   </div>
 
   <div *ngIf="!loadingImpl && implData?.soa_statut === 'valide'">
@@ -764,13 +763,7 @@
             </div>
           </div>
 
-          <div class="coming-soon-box">
-            <span>🚧</span>
-            <div>
-              <strong>Module PIA complet</strong>
-              <p>Les ateliers détaillés du PIA (description des traitements, analyse des risques, mesures de protection) seront disponibles prochainement.</p>
-            </div>
-          </div>
+        
         </div>
       </div>
     </div>
@@ -794,9 +787,7 @@
               <div class="meth-card-icon">{{ m.icon }}</div>
               <div class="meth-card-name">{{ m.label }}</div>
               <div class="meth-card-desc">{{ m.desc }}</div>
-              <span *ngIf="m.value === 'ebios_rm'" class="meth-badge-future">
-                Ateliers disponibles prochainement
-              </span>
+            
             </div>
           </label>
         </div>
@@ -962,7 +953,6 @@
               <li>Scénarios opérationnels</li>
               <li>Traitement du risque</li>
             </ol>
-            <span class="coming-soon">Développement des ateliers — prochainement</span>
           </div>
         </div>
       </div>

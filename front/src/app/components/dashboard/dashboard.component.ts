@@ -36,63 +36,62 @@ isRiskAnalysisEnabled = false;
       clause: 'Administration',
       roles:  ['super_admin', 'admin_organism']
     },
-    {
-      label:  'Contexte',
-      icon:   'context',
-      route:  '/dashboard/clause4',
-      clause: 'Clause 4',
-      roles:  ['super_admin', 'rssi']
-    },
- 
+   
+ {
+  label:'fiche processus',
+  icon: 'process',
+  route: '/dashboard/fiche-processus',
+  roles: ['pilote_processus', 'rssi']
+},
     {
   label:  'Protection des données',
   icon:   'shield',
   route:  '/dpo',
   clause: 'DPO',
-  roles:  ['dpo', 'super_admin']
+  roles:  ['dpo']
 },
 {
   label: 'Fiche technique',
   icon:  'tool',
   route: '/dashboard/fiche-technique',
-  roles: ['membre_equipe_technique', 'super_admin']
+  roles: ['membre_equipe_technique']
 },
 {
   label: 'Tableau de bord RSSI',
   icon:  'shield',
   route: '/dashboard/rssi',
-  roles: ['rssi', 'super_admin']
+  roles: ['rssi']
 },
 {
   label: 'Direction — Clause 5',
   icon:  'briefcase',
   route: '/dashboard/direction',
-  roles: ['direction', 'comite_securite', 'super_admin']
+  roles: ['direction', 'comite_securite']
 },
 {
   label: 'Clause 6 — Planification',
   icon:  'target',
   route: '/dashboard/clause6',
-  roles: ['rssi', 'super_admin']
+  roles: ['rssi']
 },
 {
   label: 'Clause 6 — Planification',
   icon: 'target',
   route: '/dashboard/direction/clause6',
-  roles: ['direction', 'comite_securite', 'super_admin']
+  roles: ['direction', 'comite_securite']
 },
 {
   label: 'Analyse de risque',
   icon: 'risk',
   route: '/dashboard/ebios',
-  roles: ['rssi', 'super_admin'],
+  roles: ['rssi'],
   disabled: true // sera dynamique
 },
 {
   label: 'Registre des traitements',
   icon: 'database',
   route: '/dashboard/dpo/registre',  // ✅ CORRECT
-  roles: ['dpo', 'super_admin']
+  roles: ['dpo']
 },
 {
   label:  'Clause 7 — Support',
@@ -102,12 +101,17 @@ isRiskAnalysisEnabled = false;
   roles:  [
     'rssi',
     'admin_organism',
-    'super_admin',
     'direction',
     'employe',
     'pilote_processus',
     'dpo'
   ]
+},
+{
+  label: 'Tableau de bord KPI',
+  icon:  'dashboard',
+  route: '/dashboard/kpi',
+  roles: ['rssi', 'direction', 'dpo']
 }
   ];
 

@@ -22,7 +22,8 @@ public class Clause4Controller {
     private final UserRepository       userRepository;
     private final ObjectMapper         objectMapper = new ObjectMapper();
 
-    private static final List<String> ROLES_RSSI = List.of("rssi", "super_admin");
+    private static final List<String> ROLES_READ = List.of("rssi", "super_admin", "direction");
+private static final List<String> ROLES_WRITE = List.of("rssi", "super_admin");
 
     private User getCurrentUser(UserDetails ud) {
         return userRepository.findById(Long.parseLong(ud.getUsername())).orElseThrow();
@@ -81,28 +82,30 @@ public class Clause4Controller {
     }
 
     // ── GET /api/clause4 ──────────────────────────────────────────────────────
-    @GetMapping
-    public ResponseEntity<?> get(@AuthenticationPrincipal UserDetails ud) {
-        User user = getCurrentUser(ud);
-        if (!ROLES_RSSI.contains(user.getRole()))
-            return ResponseEntity.status(403).body(Map.of("error", "Réservé au RSSI"));
+@GetMapping
+public ResponseEntity<?> get(@AuthenticationPrincipal UserDetails ud) {
+    User user = getCurrentUser(ud);
 
-        Long orgId = user.getOrganism() != null ? user.getOrganism().getId() : null;
-        if (orgId == null)
-            return ResponseEntity.ok(Map.of());
+    if (!ROLES_READ.contains(user.getRole()))
+        return ResponseEntity.status(403).body(Map.of("error", "Accès refusé"));
 
-        Clause4 c = clause4Repository.findByOrganismId(orgId).orElse(null);
-        if (c == null) return ResponseEntity.ok(Map.of());
-        return ResponseEntity.ok(toMap(c));
-    }
+    Long orgId = user.getOrganism() != null ? user.getOrganism().getId() : null;
+    if (orgId == null)
+        return ResponseEntity.ok(Map.of());
 
+    Clause4 c = clause4Repository.findByOrganismId(orgId).orElse(null);
+    if (c == null) return ResponseEntity.ok(Map.of());
+
+    return ResponseEntity.ok(toMap(c));
+}
     // ── POST /api/clause4 ─────────────────────────────────────────────────────
-    @PostMapping
-    public ResponseEntity<?> save(@RequestBody Map<String, Object> data,
-                                  @AuthenticationPrincipal UserDetails ud) {
-        User user = getCurrentUser(ud);
-        if (!ROLES_RSSI.contains(user.getRole()))
-            return ResponseEntity.status(403).body(Map.of("error", "Réservé au RSSI"));
+@PostMapping
+public ResponseEntity<?> save(@RequestBody Map<String, Object> data,
+                              @AuthenticationPrincipal UserDetails ud) {
+    User user = getCurrentUser(ud);
+
+    if (!ROLES_WRITE.contains(user.getRole()))
+        return ResponseEntity.status(403).body(Map.of("error", "Réservé au RSSI"));
 
         Long orgId = user.getOrganism() != null ? user.getOrganism().getId() : null;
         if (orgId == null)

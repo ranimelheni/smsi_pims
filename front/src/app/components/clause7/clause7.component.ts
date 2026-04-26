@@ -74,17 +74,14 @@ export class Clause7Component implements OnInit {
   typesDoc     = ['procedure', 'politique', 'enregistrement', 'formulaire', 'guide', 'autre'];
 
   // ── Onglets dynamiques ─────────────────────────────────────────────────
-  get tabs() {
-    const all = [
-      { key: 'competences',   icon: '🎓', label: 'Compétences'             },
-      { key: 'formations',    icon: '📚', label: 'Sensibilisation'          },
-      { key: 'communication', icon: '📢', label: 'Communication'            },
-      { key: 'documents',     icon: '📄', label: 'Informations documentées' }
-    ];
-    // pilote_processus n'a pas accès
-    if (this.currentUser?.role === 'pilote_processus') return [];
-    return all;
-  }
+get tabs() {
+  return [
+    { key: 'competences',   icon: '🎓', label: 'Compétences' },
+    { key: 'formations',    icon: '📚', label: 'Sensibilisation' },
+    { key: 'communication', icon: '📢', label: 'Communication' },
+    { key: 'documents',     icon: '📄', label: 'Informations documentées' }
+  ];
+}
 
   constructor(
     private svc:    Clause7Service,
@@ -101,13 +98,13 @@ export class Clause7Component implements OnInit {
   get canPublish():         boolean { return ['rssi','direction','admin_organism','super_admin'].includes(this.currentUser?.role); }
   get canEvaluerPresence(): boolean { return ['rssi','super_admin'].includes(this.currentUser?.role); }
   get canApprouverDoc():    boolean { return ['rssi','super_admin'].includes(this.currentUser?.role); }
-  get canVoirDocuments():   boolean { return ['rssi','direction','dpo','admin_organism','employe','super_admin'].includes(this.currentUser?.role); }
-  get canDeposerDoc():      boolean { return ['rssi','direction','dpo','admin_organism','employe','super_admin'].includes(this.currentUser?.role); }
+  get canVoirDocuments():   boolean { return ['rssi','direction','dpo','admin_organism','employe','super_admin','pilote_processus'].includes(this.currentUser?.role); }
+  get canDeposerDoc():      boolean { return ['rssi','direction','dpo','admin_organism','employe','super_admin','pilote_processus'].includes(this.currentUser?.role); }
   get isRssi():             boolean { return ['rssi','super_admin'].includes(this.currentUser?.role); }
 
   get canVoirProfils():    boolean { return ['rssi','admin_organism','super_admin','direction'].includes(this.currentUser?.role); }
 get canEvaluerEmploye(): boolean { return ['rssi','admin_organism','super_admin'].includes(this.currentUser?.role); }
-get isEmploye():         boolean { return ['employe','dpo'].includes(this.currentUser?.role); }
+get isEmploye():         boolean { return ['employe','dpo', 'pilote_processus'].includes(this.currentUser?.role); }
 get isDirection():       boolean { return this.currentUser?.role === 'direction'; }
   // ── Navigation ─────────────────────────────────────────────────────────
   setTab(key: string): void { this.activeTab = key; this.loadTab(key); }

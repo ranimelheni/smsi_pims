@@ -20,19 +20,12 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab" [class.active]="activeTab === 'validation'"      (click)="activeTab = 'validation'">      📋 Validation Clause 4</button>
+    <button class="tab" [class.active]="activeTab === 'validation'"      (click)="activeTab = 'validation'">      📋 Validation Contexte</button>
     <button class="tab" [class.active]="activeTab === 'organigramme'"    (click)="activeTab = 'organigramme'">    🏢 Organigramme</button>
     <button class="tab" [class.active]="activeTab === 'politique'"       (click)="activeTab = 'politique'">       🔐 Politique de sécurité</button>
     <button class="tab" [class.active]="activeTab === 'roles'"           (click)="activeTab = 'roles'">           👥 Rôles & Ressources</button>
-    <button class="tab" [class.active]="activeTab === 'sensibilisation'" (click)="activeTab = 'sensibilisation'"> 📚 Sensibilisation</button>
     <button class="tab" [class.active]="activeTab === 'indicateurs'"     (click)="activeTab = 'indicateurs'">     📊 Indicateurs SMSI</button>
-    <button class="tab" [class.active]="activeTab === 'soa'"             (click)="activeTab = 'soa'">             📄 SoA-validation <span class="tab-count" *ngIf="soaData?.statut === 'soumis_direction'">!</span></button>
- <button class="tab" [class.active]="activeTab === 'methodologie'"
-  (click)="activeTab = 'methodologie'; loadMethodologie()">
-  ⚙️ Méthodologie de risque
-  <span class="tab-count badge-amber"
-    *ngIf="methodo?.statut === 'soumis_direction'">!</span>
-</button>
+    
   </div>
 
   <!-- ══ VALIDATION CLAUSE 4 ══ -->
