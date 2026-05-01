@@ -91,50 +91,10 @@
         <h2 class="dash-title">Tableau de bord — {{ analyse.titre }}</h2>
 
         <!-- Stats -->
-        <div class="stats-grid">
-          <div class="stat-tile">
-            <div class="stat-val">{{ analyse.stats?.valeurs_metier || 0 }}</div>
-            <div class="stat-lbl">Valeurs métier</div>
-            <div class="stat-ico">🎯</div>
-          </div>
-          <div class="stat-tile">
-            <div class="stat-val">{{ analyse.stats?.biens_support || 0 }}</div>
-            <div class="stat-lbl">Biens supports</div>
-            <div class="stat-ico">🔧</div>
-          </div>
-          <div class="stat-tile">
-            <div class="stat-val">{{ analyse.stats?.evenements_redoutes || 0 }}</div>
-            <div class="stat-lbl">Événements redoutés</div>
-            <div class="stat-ico">⚠️</div>
-          </div>
-          <div class="stat-tile">
-            <div class="stat-val">{{ analyse.stats?.sources_risque || 0 }}</div>
-            <div class="stat-lbl">Sources de risque</div>
-            <div class="stat-ico">⚡</div>
-          </div>
-          <div class="stat-tile">
-            <div class="stat-val">{{ analyse.stats?.scenarios_strategiques || 0 }}</div>
-            <div class="stat-lbl">Scénarios stratégiques</div>
-            <div class="stat-ico">🗺️</div>
-          </div>
-          <div class="stat-tile">
-            <div class="stat-val">{{ analyse.stats?.scenarios_operationnels || 0 }}</div>
-            <div class="stat-lbl">Scénarios opérationnels</div>
-            <div class="stat-ico">🔬</div>
-          </div>
-          <div class="stat-tile">
-            <div class="stat-val">{{ analyse.stats?.mesures_securite || 0 }}</div>
-            <div class="stat-lbl">Mesures de sécurité</div>
-            <div class="stat-ico">🛡️</div>
-          </div>
-          <div class="stat-tile completion">
-            <div class="stat-val">{{ completionPercent }}%</div>
-            <div class="stat-lbl">Complété</div>
-            <div class="progress-mini">
-              <div class="progress-mini-fill" [style.width.%]="completionPercent"></div>
-            </div>
-          </div>
-        </div>
+    <app-ebios-kpi-dashboard
+  *ngIf="activeAtelier === 0 && analyse"
+  [analyseId]="analyse!.id">
+</app-ebios-kpi-dashboard>
 
         <!-- Matrice de risque -->
         <div class="matrice-panel">
@@ -177,18 +137,7 @@
         </div>
 
         <!-- Guide ateliers -->
-        <div class="ateliers-guide">
-        <div *ngFor="let a of ateliersSansDashboard"
-     class="guide-item"
-     (click)="selectAtelier(a.n)">
-            <span class="guide-icon">{{ a.icon }}</span>
-            <div>
-              <div class="guide-label">{{ a.label }}</div>
-              <div class="guide-desc">{{ a.desc }}</div>
-            </div>
-            <span class="guide-arrow">→</span>
-          </div>
-        </div>
+     
       </div>
 
       <!-- Atelier 1 -->

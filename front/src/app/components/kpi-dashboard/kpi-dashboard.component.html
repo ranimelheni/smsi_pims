@@ -1,191 +1,308 @@
-<div class="kpi-page">
+<div class="kpi-v2-page">
 
   <!-- HEADER -->
-  <div class="kpi-header">
-    <div class="kh-left">
-      <button class="btn-back" (click)="retourDashboard()">← Dashboard</button>
+  <div class="kv-header">
+    <div class="kvh-left">
+      <button class="btn-back" (click)="retour()">← Dashboard</button>
       <div>
-        <h1>📊 Tableau de bord KPI</h1>
-        <p class="kh-sub">
-          {{ dashboard?.organismNom || '...' }} ·
-          Mis à jour : {{ lastUpdate || '—' }}
-          <span *ngIf="dashboard?.fromCache" class="cache-badge">Cache</span>
-        </p>
+        <h1>📊 Indicateurs KPI</h1>
+        <p class="kvh-sub">{{ kpi?.organism_nom || '...' }}</p>
       </div>
     </div>
-    <div class="kh-right">
-      <button *ngIf="canRefresh" class="btn-refresh"
-        [disabled]="refreshing" (click)="refresh()">
-        <span *ngIf="!refreshing">🔄 Actualiser</span>
-        <span *ngIf="refreshing">Calcul...</span>
+    <div class="kvh-right">
+      <div class="periode-filter">
+        <label>Période :</label>
+        <div class="periode-btns">
+          <button
+            *ngFor="let p of periodeOptions"
+            class="btn-periode"
+            [class.active]="periode === p"
+            (click)="periode = p; onPeriodeChange()">
+            {{ p }}m
+          </button>
+        </div>
+      </div>
+      <button class="btn-refresh" [disabled]="loading" (click)="loadKpi()">
+        {{ loading ? '...' : '🔄' }}
       </button>
     </div>
   </div>
 
   <!-- ERREUR -->
-  <div class="toast error" *ngIf="error">{{ error }}</div>
+  <div class="kv-toast error" *ngIf="error">{{ error }}</div>
 
-  <!-- LOADING -->
-  <div *ngIf="loading" class="loading-state">
-    <div class="spinner"></div>
-    <p>Calcul des indicateurs...</p>
-    <!-- Skeleton -->
-    <div class="kpi-grid skeleton-grid">
-      <div *ngFor="let i of [1,2,3,4,5]" class="kpi-card skeleton-card">
-        <div class="sk-icon"></div>
-        <div class="sk-title"></div>
-        <div class="sk-value"></div>
-        <div class="sk-bar"></div>
+  <!-- LOADING SKELETON -->
+  <div *ngIf="loading" class="kv-skeleton">
+    <div class="sk-header"></div>
+    <div class="sk-cards">
+      <div class="sk-card" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+    <div class="sk-chart-row">
+      <div class="sk-chart"></div>
+      <div class="sk-chart"></div>
+    </div>
+  </div>
+
+  <!-- PAS DE DONNÉES -->
+  <div *ngIf="!loading && (!kpi || !kpi.has_data)" class="kv-empty">
+    <div class="kve-icon">📊</div>
+    <h2>Aucun indicateur disponible</h2>
+    <p>{{ kpi?.message_vide || 'Aucune donnée KPI disponible pour votre organisme.' }}</p>
+    <div class="kve-actions">
+      <div class="kvea-item">
+        <span class="kvea-icon">🔐</span>
+        <div>
+          <div class="kvea-title">KPI Conformité SOA</div>
+          <div class="kvea-hint">Configurez et validez votre SOA ISO 27001</div>
+        </div>
+      </div>
+      <div class="kvea-item">
+        <span class="kvea-icon">📢</span>
+        <div>
+          <div class="kvea-title">KPI Publications</div>
+          <div class="kvea-hint">Publiez des communications à votre équipe</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- CONTENU -->
-  <div *ngIf="!loading && dashboard" class="kpi-body">
+  <!-- CONTENU principal -->
+  <div [class.kv-hidden]="loading || !kpi?.has_data" class="kv-body">
 
-    <!-- ── GRILLE KPI CARDS ── -->
-    <div class="kpi-grid">
-      <div *ngFor="let kpi of dashboard.kpis"
-        class="kpi-card {{ getCouleurClass(kpi.couleur) }}">
+    <!-- ════════ SECTION SOA ════════ -->
+    <section [class.kv-hidden]="!kpi?.soa?.has_data" class="kv-section">
 
-        <!-- Header carte -->
-        <div class="kc-header">
-          <span class="kc-icon">{{ kpi.icon }}</span>
-          <span class="kc-tendance {{ getTendanceClass(kpi.tendance) }}">
-            {{ getTendanceIcon(kpi.tendance) }}
-            <span *ngIf="kpi.tendanceDelta !== 0">
-              {{ kpi.tendanceDelta > 0 ? '+' : '' }}{{ kpi.tendanceDelta | number:'1.1-1' }}%
-            </span>
-          </span>
+      <div class="kvs-header">
+        <div class="kvsh-left">
+          <span class="kvsh-icon">🔐</span>
+          <div>
+            <div class="kvsh-title">Conformité SOA</div>
+            <div class="kvsh-sub">ISO 27001 — Déclaration d'applicabilité</div>
+          </div>
         </div>
-
-        <!-- Valeur principale -->
-        <div class="kc-value">{{ kpi.valeur | number:'1.1-1' }}%</div>
-
-        <!-- Label -->
-        <div class="kc-label">{{ kpi.label }}</div>
-
-        <!-- Fraction -->
-        <div class="kc-fraction" *ngIf="kpi.denominateur > 0">
-          {{ kpi.numerateur }} / {{ kpi.denominateur }}
+        <div class="kvsh-score"
+          [style.color]="getColor(kpi?.soa?.taux_global ?? 0)">
+          {{ (kpi?.soa?.taux_global ?? 0) | number:'1.1-1' }}%
         </div>
+      </div>
 
-        <!-- Barre de progression -->
-        <div class="kc-bar-bg">
-          <div class="kc-bar-fill"
-            [style.width.%]="kpi.valeur"
-            [style.background]="getProgressColor(kpi.valeur)">
+      <!-- Cards SOA -->
+      <div class="kv-cards">
+        <div class="kv-card"
+          [style.border-left-color]="getColor(kpi?.soa?.taux_global ?? 0)">
+          <div class="kvc-icon">✅</div>
+          <div class="kvc-val">{{ kpi?.soa?.nb_implemente ?? 0 }}</div>
+          <div class="kvc-lbl">Implémentés</div>
+        </div>
+        <div class="kv-card" style="border-left-color:#f59e0b">
+          <div class="kvc-icon">⏳</div>
+          <div class="kvc-val">{{ kpi?.soa?.nb_en_cours ?? 0 }}</div>
+          <div class="kvc-lbl">En cours</div>
+        </div>
+        <div class="kv-card" style="border-left-color:#9ca3af">
+          <div class="kvc-icon">📋</div>
+          <div class="kvc-val">{{ kpi?.soa?.nb_non_commence ?? 0 }}</div>
+          <div class="kvc-lbl">Non démarrés</div>
+        </div>
+        <div class="kv-card" style="border-left-color:#3b82f6">
+          <div class="kvc-icon">🔢</div>
+          <div class="kvc-val">{{ kpi?.soa?.total_controles ?? 0 }}</div>
+          <div class="kvc-lbl">Total contrôles</div>
+        </div>
+      </div>
+
+      <!-- Grille radar + table -->
+      <div class="kv-grid-2">
+
+        <!-- Radar SOA -->
+        <div class="kv-panel">
+          <div class="kvp-title">Conformité par annexe</div>
+          <div class="chart-wrap">
+            <!-- [id] lié à ids.soaRadar — jamais dans un *ngIf -->
+            <canvas [id]="ids.soaRadar"></canvas>
+          </div>
+          <div [class.kv-hidden]="kpi?.soa?.par_annexe?.length"
+            class="chart-empty">
+            Données par annexe non disponibles
           </div>
         </div>
 
-        <!-- Score qualitatif -->
-        <div class="kc-score-label">
-          {{ getScoreLabel(kpi.valeur) }}
+        <!-- Table annexes -->
+        <div class="kv-panel">
+          <div class="kvp-title">Détail par annexe</div>
+          <table class="kv-table" *ngIf="kpi?.soa?.par_annexe?.length">
+            <thead>
+              <tr>
+                <th>Annexe</th>
+                <th>Inclus</th>
+                <th>Impl.</th>
+                <th>Taux</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of kpi!.soa!.par_annexe">
+                <td>
+                  <div class="td-annexe">{{ a.annexe }}</div>
+                </td>
+                <td class="text-center">{{ a.total_inclus }}</td>
+                <td class="text-center">{{ a.nb_implemente }}</td>
+                <td>
+                  <div class="td-bar-wrap">
+                    <div class="td-bar">
+                      <div class="td-bar-fill"
+                        [style.width.%]="a.taux_annexe"
+                        [style.background]="getColor(a.taux_annexe)">
+                      </div>
+                    </div>
+                    <span class="td-pct">{{ a.taux_annexe | number:'1.0-1' }}%</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
+
+      <!-- Évolution SOA -->
+      <div class="kv-panel">
+        <div class="kvp-title">
+          Évolution de la conformité — {{ periode }} mois
+        </div>
+        <div [class.kv-hidden]="!kpi?.soa?.evolution?.length" class="chart-wrap-wide">
+          <!-- [id] lié à ids.soaLine — toujours présent dans le DOM -->
+          <canvas [id]="ids.soaLine"></canvas>
+        </div>
+        <div *ngIf="!kpi?.soa?.evolution?.length" class="kv-no-data-inline">
+          ℹ️ Pas encore d'historique d'évolution.
+          Les données apparaîtront après la première mise à jour journalière.
+        </div>
+      </div>
+    </section>
+
+    <!-- Message SOA absent -->
+    <div *ngIf="!loading && kpi?.has_data && !kpi?.soa?.has_data"
+      class="kv-partial-empty">
+      <span>🔐</span>
+      <p>KPI SOA non disponible — Configurez votre déclaration d'applicabilité ISO 27001.</p>
     </div>
 
-    <!-- ── DÉTAIL SOA ── -->
-    <div *ngIf="hasSoaDetail" class="section-card">
-      <div class="sc-title">🔐 Détail conformité SoA — ISO 27001</div>
-      <div class="soa-detail-grid">
+    <!-- ════════ SECTION PUBLICATIONS ════════ -->
+    <section [class.kv-hidden]="!kpi?.publications?.has_data" class="kv-section">
 
-        <div class="soa-annexe-card">
-          <div class="sa-label">Annexe A.5</div>
-          <div class="sa-sub">Politiques de sécurité</div>
-          <div class="sa-count">{{ dashboard!.soaDetail!.a5Inclus }} contrôles inclus</div>
+      <div class="kvs-header">
+        <div class="kvsh-left">
+          <span class="kvsh-icon">📢</span>
+          <div>
+            <div class="kvsh-title">Lecture des publications</div>
+            <div class="kvsh-sub">Taux de lecture et engagement</div>
+          </div>
         </div>
-
-        <div class="soa-annexe-card">
-          <div class="sa-label">Annexe A.6</div>
-          <div class="sa-sub">Personnes & organisation</div>
-          <div class="sa-count">{{ dashboard!.soaDetail!.a6Inclus }} contrôles inclus</div>
+        <div class="kvsh-score"
+          [style.color]="getColor(kpi?.publications?.taux_lecture_global ?? 0)">
+          {{ (kpi?.publications?.taux_lecture_global ?? 0) | number:'1.1-1' }}%
         </div>
+      </div>
 
-        <div class="soa-annexe-card">
-          <div class="sa-label">Annexe A.7</div>
-          <div class="sa-sub">Sécurité physique</div>
-          <div class="sa-count">{{ dashboard!.soaDetail!.a7Inclus }} contrôles inclus</div>
+      <!-- Cards publications -->
+      <div class="kv-cards">
+        <div class="kv-card"
+          [style.border-left-color]="getColor(kpi?.publications?.taux_lecture_global ?? 0)">
+          <div class="kvc-icon">📰</div>
+          <div class="kvc-val">{{ kpi?.publications?.total_publications ?? 0 }}</div>
+          <div class="kvc-lbl">Publications</div>
         </div>
-
-        <div class="soa-annexe-card">
-          <div class="sa-label">Annexe A.8</div>
-          <div class="sa-sub">Sécurité technologique</div>
-          <div class="sa-count">{{ dashboard!.soaDetail!.a8Inclus }} contrôles inclus</div>
+        <div class="kv-card" style="border-left-color:#10b981">
+          <div class="kvc-icon">👁️</div>
+          <div class="kvc-val">{{ kpi?.publications?.nb_lecteurs_uniques ?? 0 }}</div>
+          <div class="kvc-lbl">Lecteurs uniques</div>
         </div>
+        <div class="kv-card" style="border-left-color:#3b82f6">
+          <div class="kvc-icon">👥</div>
+          <div class="kvc-val">{{ kpi?.publications?.total_destinataires ?? 0 }}</div>
+          <div class="kvc-lbl">Destinataires</div>
+        </div>
+        <div class="kv-card" style="border-left-color:#f59e0b">
+          <div class="kvc-icon">📈</div>
+          <div class="kvc-val">
+            {{ (kpi?.publications?.taux_lecture_global ?? 0) | number:'1.0-1' }}%
+          </div>
+          <div class="kvc-lbl">Taux global</div>
+        </div>
+      </div>
 
-        <div class="soa-total-card">
-          <div class="st-label">Total implémentés</div>
-          <div class="st-value">
-            {{ dashboard!.soaDetail!.nbImplemente }}
-            / {{ dashboard!.soaDetail!.totalInclus }}
+      <!-- Grille radar + priorités -->
+      <div class="kv-grid-2">
+
+        <!-- Radar publications -->
+        <div class="kv-panel">
+          <div class="kvp-title">Lecture par type de publication</div>
+          <div class="chart-wrap">
+            <!-- [id] lié à ids.pubRadar — toujours présent dans le DOM -->
+            <canvas [id]="ids.pubRadar"></canvas>
+          </div>
+          <div [class.kv-hidden]="kpi?.publications?.par_type?.length"
+            class="chart-empty">
+            Données par type non disponibles
           </div>
         </div>
 
-        <!-- Radar -->
-        <div class="soa-radar-card">
-          <canvas #radarChart height="220"></canvas>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ── GRAPHIQUE HISTORIQUE ── -->
-    <div *ngIf="hasHistorique" class="section-card">
-      <div class="sc-title">📈 Évolution des KPI — 30 derniers jours</div>
-      <div class="chart-container">
-        <canvas #lineChart height="280"></canvas>
-      </div>
-    </div>
-
-    <!-- ── TABLEAU RÉCAPITULATIF ── -->
-    <div class="section-card">
-      <div class="sc-title">📋 Récapitulatif</div>
-      <table class="kpi-table">
-        <thead>
-          <tr>
-            <th>Indicateur</th>
-            <th>Valeur</th>
-            <th>Fraction</th>
-            <th>Tendance</th>
-            <th>Statut</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let kpi of dashboard!.kpis">
-            <td>
-              <span class="kpi-icon-sm">{{ kpi.icon }}</span>
-              {{ kpi.label }}
-            </td>
-            <td class="kpi-val-cell">
-              <strong>{{ kpi.valeur | number:'1.1-1' }}%</strong>
-            </td>
-            <td class="text-muted">
-              {{ kpi.numerateur }} / {{ kpi.denominateur }}
-            </td>
-            <td>
-              <span class="tendance-chip {{ getTendanceClass(kpi.tendance) }}">
-                {{ getTendanceIcon(kpi.tendance) }}
-                <span *ngIf="kpi.tendanceDelta !== 0">
-                  {{ kpi.tendanceDelta > 0 ? '+' : '' }}{{ kpi.tendanceDelta | number:'1.1-1' }}%
+        <!-- Priorités -->
+        <div class="kv-panel">
+          <div class="kvp-title">Lecture par priorité</div>
+          <div class="priorite-list"
+            *ngIf="kpi?.publications?.par_priorite?.length; else noPrio">
+            <div *ngFor="let p of kpi!.publications!.par_priorite"
+              class="prio-item">
+              <div class="prio-header">
+                <span class="prio-dot"
+                  [style.background]="getPrioriteColor(p.priorite)">
                 </span>
-              </span>
-            </td>
-            <td>
-              <span class="statut-chip {{ getCouleurClass(kpi.couleur) }}">
-                {{ getScoreLabel(kpi.valeur) }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <span class="prio-nom">{{ p.priorite | titlecase }}</span>
+                <span class="prio-pct"
+                  [style.color]="getColor(p.taux_lecture)">
+                  {{ p.taux_lecture | number:'1.0-1' }}%
+                </span>
+              </div>
+              <div class="prio-bar">
+                <div class="prio-bar-fill"
+                  [style.width.%]="p.taux_lecture"
+                  [style.background]="getColor(p.taux_lecture)">
+                </div>
+              </div>
+              <div class="prio-meta">
+                {{ p.nb_lecteurs }} lecteur(s) · {{ p.nb_publications }} pub(s)
+              </div>
+            </div>
+          </div>
+          <ng-template #noPrio>
+            <div class="chart-empty">Aucune donnée par priorité</div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Évolution mensuelle -->
+      <div class="kv-panel">
+        <div class="kvp-title">
+          Évolution mensuelle — {{ periode }} derniers mois
+        </div>
+        <div [class.kv-hidden]="!kpi?.publications?.evolution_mensuelle?.length"
+          class="chart-wrap-wide">
+          <!-- [id] lié à ids.pubLine — toujours présent dans le DOM -->
+          <canvas [id]="ids.pubLine"></canvas>
+        </div>
+        <div *ngIf="!kpi?.publications?.evolution_mensuelle?.length"
+          class="kv-no-data-inline">
+          ℹ️ Aucune donnée pour cette période.
+        </div>
+      </div>
+    </section>
+
+    <!-- Message publications absent -->
+    <div *ngIf="!loading && kpi?.has_data && !kpi?.publications?.has_data"
+      class="kv-partial-empty">
+      <span>📢</span>
+      <p>KPI Publications non disponible — Publiez des communications pour voir les indicateurs.</p>
     </div>
 
-    <!-- Message vide -->
-    <div *ngIf="!dashboard.kpis.length" class="empty-state">
-      <span>📊</span>
-      <p>Aucun KPI disponible pour votre rôle ({{ dashboard.roleUtilisateur }}).</p>
-    </div>
-
-  </div>
+  </div><!-- /kv-body -->
 </div>

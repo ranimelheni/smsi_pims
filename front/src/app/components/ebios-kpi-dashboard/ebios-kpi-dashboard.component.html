@@ -1,0 +1,179 @@
+<div class="ekpi-wrapper">
+
+  <!-- Loading discret — ne bloque pas le reste -->
+  <div *ngIf="loading" class="ekpi-loading">
+    <div class="ekpi-spinner"></div>
+    <span>Calcul des indicateurs...</span>
+  </div>
+
+  <!-- Erreur discrète -->
+  <div *ngIf="!loading && error" class="ekpi-error">
+    <span>ℹ️ {{ error }}</span>
+  </div>
+
+  <!-- Contenu KPI -->
+  <div *ngIf="!loading && !error && kpi" class="ekpi-content">
+
+    <!-- Bandeau niveau global -->
+    <div class="ekpi-global-banner {{ getCouleurClass(kpi.couleurGlobale) }}">
+      <div class="egb-left">
+        <div class="egb-label">Niveau de risque global</div>
+        <div class="egb-value">{{ kpi.niveauGlobal }}</div>
+      </div>
+      <div class="egb-right">
+        <div class="egb-completion">
+          <div class="egb-comp-label">Avancement analyse</div>
+          <div class="egb-comp-bar">
+            <div class="egb-comp-fill"
+              [style.width.%]="kpi.scoreCompletion"
+              [style.background]="getProgressColor(kpi.scoreCompletion)">
+            </div>
+          </div>
+          <div class="egb-comp-pct">{{ kpi.scoreCompletion }}%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tuiles comptages -->
+    <div class="ekpi-tiles">
+      <div class="ekpi-tile">
+        <span class="et-icon">🎯</span>
+        <span class="et-val">{{ kpi.nbValeursMetier }}</span>
+        <span class="et-lbl">Valeurs métier</span>
+      </div>
+      <div class="ekpi-tile">
+        <span class="et-icon">🔧</span>
+        <span class="et-val">{{ kpi.nbBiensSupport }}</span>
+        <span class="et-lbl">Biens supports</span>
+      </div>
+      <div class="ekpi-tile">
+        <span class="et-icon">⚠️</span>
+        <span class="et-val">{{ kpi.nbEvenements }}</span>
+        <span class="et-lbl">Événements redoutés</span>
+      </div>
+      <div class="ekpi-tile">
+        <span class="et-icon">⚡</span>
+        <span class="et-val">{{ kpi.nbSourcesRisque }}</span>
+        <span class="et-lbl">Sources de risque</span>
+      </div>
+      <div class="ekpi-tile">
+        <span class="et-icon">🗺️</span>
+        <span class="et-val">{{ kpi.nbScenariosStrat }}</span>
+        <span class="et-lbl">Scénarios stratégiques</span>
+      </div>
+      <div class="ekpi-tile">
+        <span class="et-icon">🔬</span>
+        <span class="et-val">{{ kpi.nbScenariosOp }}</span>
+        <span class="et-lbl">Scénarios opérationnels</span>
+      </div>
+      <div class="ekpi-tile">
+        <span class="et-icon">🛡️</span>
+        <span class="et-val">{{ kpi.nbMesures }}</span>
+        <span class="et-lbl">Mesures de sécurité</span>
+      </div>
+      <div class="ekpi-tile highlight">
+        <span class="et-icon">📊</span>
+        <span class="et-val">{{ kpi.nbResiduels }}</span>
+        <span class="et-lbl">Risques résiduels</span>
+      </div>
+    </div>
+
+    <!-- 3 KPI cards -->
+    <div class="ekpi-kpi-row">
+
+      <!-- KPI 1 — Couverture -->
+      <div class="ekpi-kpi-card">
+        <div class="ekc-header">
+          <span class="ekc-icon">🎯</span>
+          <div>
+            <div class="ekc-title">Couverture des risques</div>
+            <div class="ekc-sub">Scénarios avec plan de traitement</div>
+          </div>
+        </div>
+        <div class="ekc-value">
+          {{ kpi.kpiCouverture | number:'1.1-1' }}%
+        </div>
+        <div class="ekc-bar-bg">
+          <div class="ekc-bar-fill"
+            [style.width.%]="kpi.kpiCouverture"
+            [style.background]="getProgressColor(kpi.kpiCouverture)">
+          </div>
+        </div>
+        <div class="ekc-detail">
+          {{ kpi.couvertureNum }} traités ·
+          {{ kpi.couvertureAcceptes }} acceptés /
+          {{ kpi.couvertureDen }} total
+        </div>
+      </div>
+
+      <!-- KPI 2 — Risque résiduel -->
+      <div class="ekpi-kpi-card">
+        <div class="ekc-header">
+          <span class="ekc-icon">🔥</span>
+          <div>
+            <div class="ekc-title">Risque résiduel moyen</div>
+            <div class="ekc-sub">Après application des mesures</div>
+          </div>
+        </div>
+        <div class="ekc-value"
+          [style.color]="getNiveauResiduelColor(kpi.kpiNiveauResiduel)">
+          {{ getNiveauResiduelLabel(kpi.kpiNiveauResiduel) }}
+          <span class="ekc-value-sub">
+            ({{ kpi.kpiNiveauResiduel | number:'1.1-1' }}/4)
+          </span>
+        </div>
+
+        <!-- Doughnut chart -->
+        <div class="ekc-chart-wrapper"
+          *ngIf="kpi.residuelTotal > 0; else noResiduel">
+          <canvas #doughnutRef height="140"></canvas>
+        </div>
+        <ng-template #noResiduel>
+          <div class="ekc-empty">Aucun risque résiduel évalué</div>
+        </ng-template>
+      </div>
+
+      <!-- KPI 3 — Mesures -->
+      <div class="ekpi-kpi-card">
+        <div class="ekc-header">
+          <span class="ekc-icon">🛡️</span>
+          <div>
+            <div class="ekc-title">Mesures implémentées</div>
+            <div class="ekc-sub">Taux de réalisation</div>
+          </div>
+        </div>
+        <div class="ekc-value">
+          {{ kpi.kpiMesures | number:'1.1-1' }}%
+        </div>
+        <div class="ekc-bar-bg">
+          <div class="ekc-bar-fill"
+            [style.width.%]="kpi.kpiMesures"
+            [style.background]="getProgressColor(kpi.kpiMesures)">
+          </div>
+        </div>
+
+        <!-- Bar chart -->
+        <div class="ekc-chart-wrapper" *ngIf="kpi.mesuresDen > 0; else noMesures">
+          <canvas #barRef height="100"></canvas>
+        </div>
+        <ng-template #noMesures>
+          <div class="ekc-empty">Aucune mesure définie</div>
+        </ng-template>
+
+        <div class="ekc-detail">
+          {{ kpi.mesuresNum }} réalisées ·
+          {{ kpi.mesuresEnCours }} en cours ·
+          {{ kpi.mesuresPlanifiees }} planifiées
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Aucune donnée -->
+  <div *ngIf="!loading && !error && !kpi" class="ekpi-empty">
+    <span>📊</span>
+    <p>Commencez à remplir les ateliers pour voir apparaître les indicateurs.</p>
+  </div>
+
+</div>

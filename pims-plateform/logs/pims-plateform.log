@@ -1,3 +1,1277 @@
-2026-04-26T09:48:05.929+01:00  INFO 15480 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 15480 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-04-26T09:48:05.955+01:00  INFO 15480 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-04-26T09:48:11.923+01:00  WARN 15480 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-01T08:23:20.563+01:00  INFO 17684 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 17684 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-01T08:23:20.597+01:00  INFO 17684 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-01T08:23:29.130+01:00  WARN 17684 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-01T08:23:38.142+01:00  INFO 17684 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 19.279 seconds (process running for 19.708)
+2026-05-01T08:37:48.389+01:00  WARN 17684 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=8m49s185ms302µs900ns).
+2026-05-01T08:40:38.637+01:00  WARN 17684 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=1m50s227ms885µs400ns).
+2026-05-01T08:52:31.846+01:00  WARN 17684 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=52s972ms975µs200ns).
+2026-05-01T08:57:49.379+01:00  INFO 20756 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 20756 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-01T08:57:49.383+01:00  INFO 20756 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-01T08:57:51.228+01:00  WARN 20756 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-01T08:57:54.542+01:00  INFO 20756 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 5.641 seconds (process running for 5.933)
+2026-05-01T08:57:54.577+01:00 ERROR 20756 --- [pims-plateform] [scheduling-1] o.s.s.s.TaskUtils$LoggingErrorHandler    : Unexpected error occurred in scheduled task
+
+org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT id FROM organism]
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:134) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:408) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:476) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:486) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.queryForList(JdbcTemplate.java:531) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoaForAllOrganisms(KpiSnapshotService.java:27) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "organism" does not exist
+  Position: 16
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:358) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:343) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:319) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeQuery(PgStatement.java:269) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyStatement.executeQuery(ProxyStatement.java:111) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.executeQuery(HikariProxyStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:463) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:393) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 18 common frames omitted
+
+2026-05-01T08:58:54.542+01:00 ERROR 20756 --- [pims-plateform] [scheduling-1] o.s.s.s.TaskUtils$LoggingErrorHandler    : Unexpected error occurred in scheduled task
+
+org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT id FROM organism]
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:134) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:408) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:476) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:486) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.queryForList(JdbcTemplate.java:531) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoaForAllOrganisms(KpiSnapshotService.java:27) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "organism" does not exist
+  Position: 16
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:358) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:343) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:319) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeQuery(PgStatement.java:269) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyStatement.executeQuery(ProxyStatement.java:111) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.executeQuery(HikariProxyStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:463) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:393) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 18 common frames omitted
+
+2026-05-01T08:59:20.744+01:00  INFO 14780 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 14780 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-01T08:59:20.746+01:00  INFO 14780 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-01T08:59:22.536+01:00  WARN 14780 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-01T08:59:25.753+01:00  INFO 14780 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 5.4 seconds (process running for 5.648)
+2026-05-01T08:59:25.802+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=4 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T08:59:25.804+01:00  WARN 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T08:59:25.806+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=3 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T08:59:25.807+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=1 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T08:59:25.809+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=5 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T08:59:25.815+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=6 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:00:25.759+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=4 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:00:25.762+01:00  WARN 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:00:25.766+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=3 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:00:25.770+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=1 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:00:25.772+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=5 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:00:25.775+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=6 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:01:25.764+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=4 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:01:25.764+01:00  WARN 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:01:25.764+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=3 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:01:25.764+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=1 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:01:25.764+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=5 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:01:25.781+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=6 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:02:25.757+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=4 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:02:25.758+01:00  WARN 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:02:25.760+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=3 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:02:25.762+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=1 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:02:25.764+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=5 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:02:25.766+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=6 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:03:25.764+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=4 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:03:25.764+01:00  WARN 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:03:25.766+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=3 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:03:25.766+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=1 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:03:25.766+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=5 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:03:25.770+01:00 ERROR 14780 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=6 : PreparedStatementCallback; bad SQL grammar [    INSERT INTO kpi_historique
+    (organism_id, date_snapshot, taux_soa, nb_implemente, total_inclus)
+    VALUES (?, NOW(), ?, ?, ?)
+]
+2026-05-01T09:03:39.817+01:00  INFO 18536 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 18536 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-01T09:03:39.826+01:00  INFO 18536 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-01T09:03:41.505+01:00  WARN 18536 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-01T09:03:44.561+01:00  INFO 18536 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 5.166 seconds (process running for 5.422)
+2026-05-01T09:04:52.333+01:00  INFO 22760 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 22760 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-01T09:04:52.335+01:00  INFO 22760 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-01T09:04:54.025+01:00  WARN 22760 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-01T09:04:56.961+01:00  INFO 22760 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 5.037 seconds (process running for 5.293)
+2026-05-01T09:04:57.027+01:00  INFO 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:04:57.051+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:04:57.051+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:04:57.051+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:04:57.068+01:00  INFO 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:04:57.071+01:00  INFO 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:04:57.073+01:00  INFO 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:04:57.075+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:04:57.078+01:00  INFO 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:04:57.080+01:00  INFO 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:04:57.082+01:00  INFO 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:04:57.082+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:05:56.994+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=4 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(4, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(4, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(4, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:05:56.999+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:05:57.001+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:05:57.003+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=3 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(3, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(3, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(3, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:05:57.007+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=1 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(1, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(1, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(1, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:05:57.011+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=5 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(5, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(5, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(5, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:05:57.013+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=6 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(6, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(6, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(6, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:06:56.971+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=4 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(4, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(4, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(4, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:06:56.971+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:06:56.971+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:06:56.983+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=3 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(3, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(3, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(3, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:06:56.987+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=1 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(1, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(1, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(1, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:06:56.987+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=5 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(5, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(5, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(5, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:06:56.987+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=6 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(6, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(6, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(6, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:07:56.974+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=4 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(4, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(4, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(4, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:07:56.978+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:07:56.981+01:00  WARN 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:07:56.983+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=3 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(3, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(3, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(3, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:07:56.986+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=1 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(1, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(1, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(1, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:07:56.988+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=5 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(5, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(5, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(5, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:07:56.990+01:00 ERROR 22760 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Erreur snapshot org=6 : PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(6, conformite_soa, 2026-05-01) already exists.
+
+org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [    INSERT INTO kpi_historique
+    (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+    VALUES (?, ?, ?, ?, ?, NOW())
+]; ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(6, conformite_soa, 2026-05-01) already exists.
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:138) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:972) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1016) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1026) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at com.pims.plateform.service.KpiSnapshotService.insertKpi(KpiSnapshotService.java:100) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotSoa(KpiSnapshotService.java:67) ~[classes/:na]
+	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:41) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "kpi_historique_organism_id_kpi_code_snapshot_date_key"
+  Detail: Key (organism_id, kpi_code, snapshot_date)=(6, conformite_soa, 2026-05-01) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:196) ~[postgresql-42.7.10.jar:42.7.10]
+	at org.postgresql.jdbc.PgPreparedStatement.executeUpdate(PgPreparedStatement.java:157) ~[postgresql-42.7.10.jar:42.7.10]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.3.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:977) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.17.jar:6.2.17]
+	... 20 common frames omitted
+
+2026-05-01T09:08:37.290+01:00  INFO 1856 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 1856 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-01T09:08:37.292+01:00  INFO 1856 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-01T09:08:39.153+01:00  WARN 1856 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-01T09:08:42.329+01:00  INFO 1856 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 5.472 seconds (process running for 5.726)
+2026-05-01T09:08:42.356+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:08:42.356+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:08:42.367+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:08:42.368+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:08:42.372+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:08:42.375+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:08:42.379+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:08:42.381+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:08:42.383+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:08:42.385+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:08:42.387+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:08:42.388+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:09:42.329+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:09:42.329+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:09:42.329+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:09:42.329+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:09:42.329+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:09:42.340+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:09:42.342+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:09:42.344+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:09:42.348+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:09:42.353+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:09:42.354+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:09:42.354+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:10:42.338+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:10:42.338+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:10:42.338+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:10:42.338+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:10:42.351+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:10:42.353+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:10:42.356+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:10:42.356+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:10:42.358+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:10:42.361+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:10:42.362+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:10:42.362+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:11:42.333+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:11:42.333+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:11:42.333+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:11:42.333+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:11:42.333+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:11:42.333+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:11:42.346+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:11:42.346+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:11:42.347+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:11:42.349+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:11:42.350+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:11:42.351+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:12:42.343+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:12:42.343+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:12:42.343+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:12:42.343+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:12:42.343+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:12:42.343+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:12:42.343+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:12:42.343+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:12:42.361+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:12:42.365+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:12:42.365+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:12:42.365+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:13:42.336+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:13:42.337+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:13:42.337+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:13:42.339+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:13:42.340+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:13:42.340+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:13:42.351+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:13:42.354+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:13:42.356+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:13:42.357+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:13:42.357+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:13:42.357+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:14:42.345+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:14:42.345+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:14:42.345+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:14:42.345+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:14:42.345+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:14:42.359+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:14:42.362+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:14:42.363+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:14:42.365+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:14:42.368+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:14:42.371+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:14:42.373+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:15:42.336+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:15:42.336+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:15:42.336+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:15:42.336+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:15:42.336+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:15:42.351+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:15:42.355+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:15:42.356+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:15:42.360+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:15:42.362+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:15:42.365+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:15:42.366+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:16:42.330+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:16:42.331+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:16:42.333+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:16:42.334+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:16:42.336+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:16:42.337+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:16:42.340+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:16:42.340+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:16:42.342+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:16:42.346+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:16:42.347+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:16:42.350+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:17:42.338+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:17:42.338+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:17:42.344+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:17:42.344+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:17:42.344+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:17:42.344+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:17:42.356+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:17:42.356+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:17:42.359+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:17:42.359+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:17:42.359+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:17:42.359+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:18:42.329+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:18:42.329+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:18:42.329+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:18:42.329+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:18:42.335+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:18:42.335+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:18:42.335+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:18:42.335+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:18:42.335+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:18:42.345+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:18:42.351+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:18:42.351+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:19:42.340+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:19:42.340+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:19:42.340+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:19:42.340+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:19:42.340+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:19:42.340+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:19:42.351+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:19:42.351+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:19:42.357+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:19:42.357+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:19:42.357+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:19:42.357+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:20:42.331+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:20:42.331+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:20:42.331+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:20:42.331+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:20:42.331+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:20:42.331+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:20:42.346+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:20:42.347+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:20:42.347+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:20:42.347+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:20:42.347+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:20:42.347+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:21:42.341+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:21:42.341+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:21:42.341+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:21:42.341+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:21:42.341+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:21:42.354+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:21:42.355+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:21:42.356+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:21:42.357+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:21:42.358+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:21:42.360+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:21:42.360+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:22:42.333+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:22:42.333+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:22:42.333+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:22:42.333+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:22:42.342+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:22:42.342+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:22:42.348+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:22:42.350+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:22:42.352+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:22:42.354+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:22:42.356+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:22:42.357+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:23:42.343+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:23:42.345+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:23:42.345+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:23:42.346+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:23:42.346+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:23:42.349+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:23:42.350+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:23:42.351+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:23:42.352+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:23:42.371+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:23:42.377+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:23:42.378+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:24:42.333+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:24:42.333+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:24:42.333+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:24:42.333+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:24:42.333+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:24:42.333+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:24:42.349+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:24:42.349+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:24:42.349+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:24:42.349+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:24:42.349+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:24:42.349+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:25:42.343+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:25:42.343+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:25:42.343+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:25:42.343+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:25:42.343+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:25:42.343+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:25:42.343+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:25:42.343+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:25:42.359+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:25:42.361+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:25:42.363+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:25:42.364+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:26:42.335+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:26:42.335+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:26:42.335+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:26:42.335+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:26:42.335+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:26:42.335+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:26:42.335+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:26:42.350+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:26:42.351+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:26:42.351+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:26:42.357+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:26:42.357+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:27:42.343+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:27:42.343+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:27:42.347+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:27:42.347+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:27:42.347+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:27:42.347+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:27:42.347+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:27:42.347+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:27:42.359+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:27:42.360+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:27:42.360+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:27:42.360+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:28:42.337+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:28:42.338+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:28:42.339+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:28:42.340+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:28:42.342+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:28:42.344+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:28:42.346+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:28:42.347+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:28:42.349+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:28:42.353+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:28:42.355+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:28:42.355+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:29:42.347+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:29:42.349+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:29:42.349+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:29:42.352+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:29:42.352+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:29:42.352+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:29:42.360+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:29:42.361+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:29:42.364+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:29:42.366+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:29:42.366+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:29:42.366+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6
+2026-05-01T09:30:42.337+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=4 taux=0.0
+2026-05-01T09:30:42.337+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=4
+2026-05-01T09:30:42.340+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données SOA pour org=2
+2026-05-01T09:30:42.340+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=2
+2026-05-01T09:30:42.344+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=3 taux=41.76
+2026-05-01T09:30:42.346+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=3 taux=40.0
+2026-05-01T09:30:42.352+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=1 taux=51.61
+2026-05-01T09:30:42.355+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=1
+2026-05-01T09:30:42.358+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=5 taux=0.0
+2026-05-01T09:30:42.362+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot publication enregistré org=5 taux=42.86
+2026-05-01T09:30:42.362+01:00  INFO 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Snapshot SOA enregistré org=6 taux=18.28
+2026-05-01T09:30:42.362+01:00  WARN 1856 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Pas de données publication pour org=6

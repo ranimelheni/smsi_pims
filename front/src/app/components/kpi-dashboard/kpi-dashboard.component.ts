@@ -1,260 +1,417 @@
 import {
-  Component, OnInit, OnDestroy,
-  AfterViewInit, ViewChild, ElementRef
+  Component,
+  OnInit,
+  OnDestroy,
+  NgZone,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { CommonModule }   from '@angular/common';
-import { Router }         from '@angular/router';
-import { Chart, registerables } from 'chart.js';
-import { KpiService, KpiDashboard, KpiDto, HistoriquePoint } from '../../services/kpi.service';
-import { AuthService }    from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule }  from '@angular/forms';
+import { Router }       from '@angular/router';
+import { KpiService } from '../../services/kpi.service';
+import { AuthService }  from '../../services/auth.service';
+import { KpiResponse }  from '../../models/kpi.models';
 
-Chart.register(...registerables);
+// ────────────────────────────────────────────────────────────
+// IMPORT MINIMAL Chart.js — jamais registerables complet
+// registerables complet inclut des plugins qui déclenchent des
+// boucles d'animation infinies sur les canvas vides → crash.
+// ────────────────────────────────────────────────────────────
+import {
+  Chart,
+  RadarController,
+  LineController,
+  RadialLinearScale,
+  LinearScale,
+  CategoryScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+Chart.register(
+  RadarController,
+  LineController,
+  RadialLinearScale,
+  LinearScale,
+  CategoryScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend
+);
+
+// ────────────────────────────────────────────────────────────
+// Désactiver les animations globalement — cause principale du
+// blocage UI quand les données sont partielles ou nulles.
+// ────────────────────────────────────────────────────────────
+Chart.defaults.animation = false as any;
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
 
 @Component({
-  selector:    'app-kpi-dashboard',
-  standalone:  true,
-  imports:     [CommonModule],
-  templateUrl: './kpi-dashboard.component.html',
-  styleUrls:   ['./kpi-dashboard.component.scss']
+  selector:        'app-kpi-dashboard',
+  standalone:      true,
+  imports:         [CommonModule, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl:     './kpi-dashboard.component.html',
+  styleUrls:       ['./kpi-dashboard.component.scss']
 })
-export class KpiDashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class KpiDashboardComponent implements OnInit, OnDestroy {
 
-  @ViewChild('lineChart')  lineChartRef!: ElementRef;
-  @ViewChild('radarChart') radarChartRef!: ElementRef;
+  currentUser:   any           = null;
+  kpi:           KpiResponse | null = null;
+  loading        = true;
+  error          = '';
+  periode        = 6;
+  periodeOptions = [3, 6, 12];
 
-  currentUser:    any           = null;
-  dashboard:      KpiDashboard | null = null;
-  loading         = true;
-  refreshing      = false;
-  error           = '';
-  lastUpdate      = '';
+  // IDs uniques par instance — évite les conflits si le
+  // composant est instancié plusieurs fois ou après navigation.
+  private readonly uid = Date.now().toString(36);
+  readonly ids = {
+    soaRadar: `kpi-soa-radar-${this.uid}`,
+    soaLine:  `kpi-soa-line-${this.uid}`,
+    pubRadar: `kpi-pub-radar-${this.uid}`,
+    pubLine:  `kpi-pub-line-${this.uid}`
+  };
 
-  private lineChart?:  Chart;
-  private radarChart?: Chart;
+  // Registre des charts créés — pour les détruire proprement
+  private readonly charts = new Map<string, Chart>();
+
+  // setTimeout handles — pour les annuler à destroy
+  private timers: ReturnType<typeof setTimeout>[] = [];
 
   constructor(
     private svc:    KpiService,
     private auth:   AuthService,
-    private router: Router
+    private router: Router,
+    private zone:   NgZone,
+    private cdr:    ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.auth.getCurrentUser();
-    this.load();
-  }
-
-  ngAfterViewInit(): void {
-    // Les graphiques sont initialisés après le chargement des données
+    this.loadKpi();
   }
 
   ngOnDestroy(): void {
-    this.lineChart?.destroy();
-    this.radarChart?.destroy();
+    // Annuler tous les timers en attente
+    this.timers.forEach(t => clearTimeout(t));
+    // Détruire tous les charts — évite les memory leaks
+    // et les erreurs "canvas already in use"
+    this.destroyAll();
   }
 
-  // ── Chargement ─────────────────────────────────────────────────────────
-  load(forceRefresh = false): void {
-    this.loading = !forceRefresh;
-    this.refreshing = forceRefresh;
+  // ── Chargement ────────────────────────────────────────────
+  loadKpi(): void {
+    this.loading = true;
+    this.destroyAll();
+    this.cdr.markForCheck();
 
-    this.svc.getDashboard(!forceRefresh).subscribe({
-      next: (d) => {
-        this.dashboard   = d;
-        this.loading     = false;
-        this.refreshing  = false;
-        this.lastUpdate  = new Date().toLocaleTimeString('fr-FR');
+    this.svc.getDashboard(this.periode).subscribe({
+      next: (data) => {
+        this.kpi     = data;
+        this.loading = false;
+        this.error   = '';
+        this.cdr.markForCheck();
 
-        // Initialiser les charts après le rendu
-        setTimeout(() => {
-          this.initLineChart();
-          this.initRadarChart();
-        }, 100);
+        // Exécuter hors de la zone Angular pour ne pas
+        // déclencher de cycle de détection pendant le rendu
+        // des charts (cause d'un autre type de blocage).
+        this.zone.runOutsideAngular(() => {
+          // Double setTimeout : 1er pour laisser Angular
+          // finir son rendu, 2e pour que le DOM soit peint.
+          const t1 = setTimeout(() => {
+            const t2 = setTimeout(() => {
+              this.initCharts();
+              // Revenir dans la zone pour la détection finale
+              this.zone.run(() => this.cdr.markForCheck());
+            }, 80);
+            this.timers.push(t2);
+          }, 0);
+          this.timers.push(t1);
+        });
       },
-      error: (err) => {
-        this.loading    = false;
-        this.refreshing = false;
-        this.error = err.error?.error || 'Erreur de chargement des KPIs';
-        setTimeout(() => this.error = '', 5000);
+      error: () => {
+        this.kpi     = null;
+        this.loading = false;
+        this.error   = 'Erreur de connexion au serveur KPI.';
+        this.cdr.markForCheck();
+
+        const t = setTimeout(() => {
+          this.error = '';
+          this.cdr.markForCheck();
+        }, 6000);
+        this.timers.push(t);
       }
     });
   }
 
-  refresh(): void { this.load(true); }
+  onPeriodeChange(): void {
+    this.loadKpi();
+  }
 
-  // ── Graphique ligne — historique 30 jours ──────────────────────────────
-  private initLineChart(): void {
-    if (!this.lineChartRef || !this.dashboard?.historique?.length) return;
+  // ── Init charts ───────────────────────────────────────────
+  private initCharts(): void {
+    if (!this.kpi?.has_data) return;
 
-    this.lineChart?.destroy();
+    if (this.kpi.soa?.has_data && this.kpi.soa.par_annexe?.length) {
+      this.makeRadar(
+        this.ids.soaRadar,
+        this.kpi.soa.par_annexe.map(a => a.annexe),
+        this.kpi.soa.par_annexe.map(a => this.safe(a.taux_annexe)),
+        '#3b82f6'
+      );
+    }
 
-    const hist = this.dashboard.historique;
-    const labels = hist.map(h => h.date.slice(5)); // MM-DD
+    if (this.kpi.soa?.evolution?.length) {
+      this.makeLine(
+        this.ids.soaLine,
+        this.kpi.soa.evolution.map(p => p.date.slice(0, 10)),
+        [{ label: 'Conformité SOA (%)', data: this.kpi.soa.evolution.map(p => this.safe(p.taux_soa)), color: '#3b82f6' }]
+      );
+    }
 
-    // Couleurs par KPI
-    const datasets = [
-      {
-        label:       'Employés évalués',
-        data:        hist.map(h => h.employe_evalue),
-        borderColor: '#3b82f6',
-        tension:     0.4,
-        fill:        false,
-        pointRadius: 3
-      },
-      {
-        label:       'Participation',
-        data:        hist.map(h => h.participation_formation),
-        borderColor: '#10b981',
-        tension:     0.4,
-        fill:        false,
-        pointRadius: 3
-      },
-      {
-        label:       'Lecture pubs',
-        data:        hist.map(h => h.lecture_publication),
-        borderColor: '#f59e0b',
-        tension:     0.4,
-        fill:        false,
-        pointRadius: 3
-      },
-      {
-        label:       'Documents validés',
-        data:        hist.map(h => h.documents_valides),
-        borderColor: '#8b5cf6',
-        tension:     0.4,
-        fill:        false,
-        pointRadius: 3
-      },
-      {
-        label:       'Conformité SoA',
-        data:        hist.map(h => h.conformite_soa),
-        borderColor: '#ef4444',
-        tension:     0.4,
-        fill:        false,
-        pointRadius: 3
-      }
-    ].filter(ds => ds.data.some(v => v > 0)); // Masquer les KPI vides
+    if (this.kpi.publications?.has_data && this.kpi.publications.par_type?.length) {
+      this.makeRadar(
+        this.ids.pubRadar,
+        this.kpi.publications.par_type.map(t => this.labelType(t.type_publication)),
+        this.kpi.publications.par_type.map(t => this.safe(t.taux_lecture)),
+        '#f59e0b'
+      );
+    }
 
-    this.lineChart = new Chart(this.lineChartRef.nativeElement, {
-      type: 'line',
-      data: { labels, datasets },
-      options: {
-        responsive:          true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels:   { boxWidth: 12, font: { size: 11 } }
-          },
-          tooltip: {
-            callbacks: {
-label: (ctx) => ` ${ctx.parsed?.y?.toFixed(1) ?? ''} %`            }
-          }
+    if (this.kpi.publications?.evolution_mensuelle?.length) {
+      this.makeLine(
+        this.ids.pubLine,
+        this.kpi.publications.evolution_mensuelle.map(p => p.mois),
+        [
+          { label: 'Publications', data: this.kpi.publications.evolution_mensuelle.map(p => p.nb_publications), color: '#f59e0b' },
+          { label: 'Lecteurs uniques', data: this.kpi.publications.evolution_mensuelle.map(p => p.nb_lecteurs_uniques), color: '#8b5cf6' }
+        ]
+      );
+    }
+  }
+
+  // ── Factory radar ─────────────────────────────────────────
+  private makeRadar(
+    id: string,
+    labels: string[],
+    data: number[],
+    color: string
+  ): void {
+    // Ne rien faire si toutes les valeurs sont 0 — évite
+    // un canvas "vide" qui consomme du CPU pour rien.
+    if (data.every(v => v === 0)) return;
+
+    const el = this.getCanvas(id);
+    if (!el) return;
+
+    this.destroyChart(id);
+
+    try {
+      const chart = new Chart(el, {
+        type: 'radar',
+        data: {
+          labels,
+          datasets: [{
+            label:                'Taux (%)',
+            data,
+            backgroundColor:      `${color}22`,
+            borderColor:          color,
+            pointBackgroundColor: color,
+            pointRadius:          5,
+            pointHoverRadius:     7,
+            borderWidth:          2
+          }]
         },
-        scales: {
-          y: {
-            min: 0, max: 100,
-            ticks: { callback: (v) => v + '%' },
-            grid:  { color: 'rgba(0,0,0,0.05)' }
+        options: {
+          animation:           false,
+          responsive:          true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              min: 0, max: 100,
+              ticks: {
+                stepSize: 25,
+                callback: (v) => v + '%',
+                font: { size: 10 },
+                color: '#9ca3af'
+              },
+              pointLabels: {
+                font:  { size: 12, weight: 600 },
+                color: '#374151'
+              },
+              grid: { color: 'rgba(0,0,0,0.07)' }
+            }
           },
-          x: { grid: { display: false } }
-        }
-      }
-    });
-  }
-
-  // ── Graphique radar — SOA par annexe ───────────────────────────────────
-  private initRadarChart(): void {
-    if (!this.radarChartRef || !this.dashboard?.soaDetail) return;
-
-    this.radarChart?.destroy();
-
-    const soa    = this.dashboard.soaDetail;
-    const kpi    = this.dashboard.kpis.find(k => k.code === 'conformite_soa');
-    const taux   = kpi?.valeur ?? 0;
-
-    // Calculer le taux par annexe (approximation)
-    const a5Taux = soa.a5Inclus > 0 ? Math.min(taux * 1.05, 100) : 0;
-    const a6Taux = soa.a6Inclus > 0 ? Math.min(taux * 0.95, 100) : 0;
-    const a7Taux = soa.a7Inclus > 0 ? Math.min(taux * 1.0,  100) : 0;
-    const a8Taux = soa.a8Inclus > 0 ? Math.min(taux * 0.90, 100) : 0;
-
-    this.radarChart = new Chart(this.radarChartRef.nativeElement, {
-      type: 'radar',
-      data: {
-        labels: ['A.5 Politiques', 'A.6 Personnes', 'A.7 Physique', 'A.8 Tech'],
-        datasets: [{
-          label:           'Conformité SoA (%)',
-          data:            [a5Taux, a6Taux, a7Taux, a8Taux],
-          backgroundColor: 'rgba(59,130,246,0.15)',
-          borderColor:     '#3b82f6',
-          pointBackgroundColor: '#3b82f6',
-          pointRadius:     4
-        }]
-      },
-      options: {
-        responsive:          true,
-        maintainAspectRatio: false,
-        scales: {
-          r: {
-            min: 0, max: 100,
-            ticks: { stepSize: 25, font: { size: 10 } },
-            pointLabels: { font: { size: 11 } }
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` ${(ctx.parsed.r as number).toFixed(1)}%`
+              }
+            }
           }
-        },
-        plugins: {
-          legend: { display: false }
         }
+      });
+      this.charts.set(id, chart);
+    } catch (e) {
+      console.warn(`Chart radar [${id}] init error:`, e);
+    }
+  }
+
+  // ── Factory line ──────────────────────────────────────────
+  private makeLine(
+    id: string,
+    labels: string[],
+    series: { label: string; data: number[]; color: string }[]
+  ): void {
+    if (!labels.length) return;
+
+    const el = this.getCanvas(id);
+    if (!el) return;
+
+    this.destroyChart(id);
+
+    try {
+      const chart = new Chart(el, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: series.map(s => ({
+            label:           s.label,
+            data:            s.data,
+            borderColor:     s.color,
+            backgroundColor: `${s.color}14`,
+            tension:         0.35,
+            fill:            true,
+            pointRadius:     4,
+            pointHoverRadius:6,
+            borderWidth:     2
+          }))
+        },
+        options: {
+          animation:           false,
+          responsive:          true,
+          maintainAspectRatio: false,
+          interaction:         { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels:   { boxWidth: 10, font: { size: 11 } }
+            },
+            tooltip: {
+              callbacks: {
+             label: (ctx) => {
+  const v = ctx.parsed.y;
+
+  if (typeof v !== 'number' || !isFinite(v)) {
+    return '';
+  }
+
+  return ` ${ctx.dataset.label}: ${v.toFixed(1)}`;
+}
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0,0,0,0.04)' },
+              ticks: { font: { size: 11 } }
+            },
+            x: {
+              grid:  { display: false },
+              ticks: { font: { size: 11 }, maxTicksLimit: 8 }
+            }
+          }
+        }
+      });
+      this.charts.set(id, chart);
+    } catch (e) {
+      console.warn(`Chart line [${id}] init error:`, e);
+    }
+  }
+
+  // ── Destruction ───────────────────────────────────────────
+  private destroyChart(id: string): void {
+    // 1. Détruire via notre registre
+    const c = this.charts.get(id);
+    if (c) {
+      try { c.destroy(); } catch (_) {}
+      this.charts.delete(id);
+    }
+    // 2. Sécurité : détruire aussi via le registre Chart.js
+    //    (au cas où le canvas serait réutilisé)
+    const el = document.getElementById(id) as HTMLCanvasElement | null;
+    if (el) {
+      const existing = Chart.getChart(el);
+      if (existing) {
+        try { existing.destroy(); } catch (_) {}
       }
-    });
+    }
   }
 
-  // ── Helpers ─────────────────────────────────────────────────────────────
-  getCouleurClass(couleur: string): string {
-    return ({ green: 'kpi-green', amber: 'kpi-amber', red: 'kpi-red' })[couleur] || '';
+  private destroyAll(): void {
+    Object.values(this.ids).forEach(id => this.destroyChart(id));
   }
 
-  getTendanceIcon(t: string): string {
-    return ({ hausse: '↑', baisse: '↓', stable: '→' })[t] || '→';
+  // ── Helpers DOM ───────────────────────────────────────────
+  private getCanvas(id: string): HTMLCanvasElement | null {
+    const el = document.getElementById(id);
+    if (!el) {
+      console.warn(`[KPI] Canvas #${id} non trouvé`);
+      return null;
+    }
+    if (!(el instanceof HTMLCanvasElement)) {
+      console.warn(`[KPI] #${id} n'est pas un canvas`);
+      return null;
+    }
+    return el;
   }
 
-  getTendanceClass(t: string): string {
-    return ({ hausse: 'tend-up', baisse: 'tend-down', stable: 'tend-stable' })[t] || '';
+  // ── Helpers affichage ─────────────────────────────────────
+  private safe(v: unknown): number {
+    const n = Number(v);
+    return isFinite(n) ? Math.max(0, Math.min(100, n)) : 0;
   }
 
-  getProgressColor(valeur: number): string {
-    return valeur >= 80 ? '#10b981' : valeur >= 50 ? '#f59e0b' : '#ef4444';
+  labelType(t: string): string {
+    return ({
+      information: 'Info',
+      alerte:      'Alerte',
+      procedure:   'Procédure',
+      politique:   'Politique',
+      note:        'Note'
+    } as Record<string, string>)[t] ?? t;
   }
 
-  getScoreLabel(valeur: number): string {
-    return valeur >= 80 ? 'Satisfaisant'
-         : valeur >= 50 ? 'À améliorer'
-         : 'Insuffisant';
+  getColor(v: number): string {
+    const n = Number(v) || 0;
+    return n >= 80 ? '#10b981' : n >= 50 ? '#f59e0b' : '#ef4444';
   }
 
-  get canRefresh(): boolean {
-    return ['rssi','super_admin','admin_organism'].includes(this.currentUser?.role);
+  getLabel(v: number): string {
+    const n = Number(v) || 0;
+    return n >= 80 ? 'Satisfaisant' : n >= 50 ? 'À améliorer' : 'Insuffisant';
   }
 
-  get hasHistorique(): boolean {
-    return !!this.dashboard?.historique?.length &&
-           ['rssi','direction','auditeur','super_admin'].includes(this.currentUser?.role);
+  getPrioriteColor(p: string): string {
+    return ({ urgente: '#ef4444', haute: '#f59e0b', normale: '#3b82f6', basse: '#9ca3af' } as Record<string, string>)[p] ?? '#6b7280';
   }
 
-  get hasSoaDetail(): boolean {
-    return !!this.dashboard?.soaDetail;
-  }
-
-  retourDashboard(): void {
-    const role = this.currentUser?.role;
+  retour(): void {
     const map: Record<string, string> = {
       rssi:           '/dashboard/rssi',
       direction:      '/dashboard/direction',
-      dpo:            '/dashboard/dpo',
-      employe:        '/dashboard/employe',
-      admin_organism: '/dashboard/admin',
       auditeur:       '/dashboard/rssi',
+      admin_organism: '/dashboard/admin',
       super_admin:    '/dashboard/super-admin'
     };
-    this.router.navigate([map[role] || '/']);
+    this.router.navigate([map[this.currentUser?.role] ?? '/']);
   }
 }

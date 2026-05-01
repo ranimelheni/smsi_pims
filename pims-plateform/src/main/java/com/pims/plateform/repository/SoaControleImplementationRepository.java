@@ -18,8 +18,11 @@ public interface SoaControleImplementationRepository
 
     long countByOrganismIdAndStatutDetail(Long orgId, String statut);
 
-    @Query("SELECT i FROM SoaControleImplementation i " +
-           "JOIN i.soaControle c " +
-           "WHERE c.soa.id = :soaId")
-    List<SoaControleImplementation> findBySoaId(@org.springframework.data.repository.query.Param("soaId") Long soaId);
+    @Query("""
+SELECT i 
+FROM SoaControleImplementation i
+JOIN FETCH i.soaControle c
+WHERE c.soa.id = :soaId
+""")
+List<SoaControleImplementation> findBySoaId(@org.springframework.data.repository.query.Param("soaId") Long soaId);
 }

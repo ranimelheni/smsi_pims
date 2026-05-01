@@ -524,17 +524,12 @@ newPreuve()  { return this.fb.group({ type_preuve:['document'], description:['',
         this.soa = data;
         this.controles = data.controles || [];
         console.log('>>> SoA chargée — audit_type:', data.audit_type);
-        this.loadDomaines();
+       // this.loadDomaines();
       },
       error: () => { this.loadingSoa = false; }
     });
   }
 
-  loadDomaines(): void {
-    this.http.get<any[]>(`${this.api}/soa/domaines`).subscribe({
-      next: (d) => { this.domaines = d || []; }
-    });
-  }
 
   initSoa(): void {
     console.log('>>> initSoa — isIso27701:', this.isIso27701);
@@ -620,7 +615,6 @@ newPreuve()  { return this.fb.group({ type_preuve:['document'], description:['',
           const idx = this.controles.findIndex(c => c.id === updated.id);
           if (idx >= 0) this.controles[idx] = updated;
           this.editingControle = null;
-          this.loadDomaines();
           this.updateSoaStats();
         },
         error: (err) => { this.error = err.error?.error || 'Erreur mise à jour'; }

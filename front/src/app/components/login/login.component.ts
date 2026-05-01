@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
     'ISO 27001 — Sécurité de l\'information',
     'ISO 27701 — Protection de la vie privée',
     'RGPD — Conformité réglementaire',
-    'ISO 27005 / EBIOS RM — Gestion des risques'
+    'PIA / EBIOS RM — Gestion des risques'
   ];
 
   constructor(

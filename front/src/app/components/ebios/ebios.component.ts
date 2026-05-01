@@ -9,11 +9,13 @@ import { EbiosAtelier2Component } from '../ebios-atelier2/ebios-atelier2.compone
 import { EbiosAtelier3Component } from '../ebios-atelier3/ebios-atelier3.component';
 import { EbiosAtelier4Component } from '../ebios-atelier4/ebios-atelier4.component';
 import { EbiosAtelier5Component } from '../ebios-atelier5/ebios-atelier5.component';
+import { EbiosKpiDashboardComponent } from '../ebios-kpi-dashboard/ebios-kpi-dashboard.component';
 
 @Component({
   selector: 'app-ebios',
   standalone: true,
-  imports: [CommonModule, FormsModule, EbiosAtelier1Component, EbiosAtelier2Component, EbiosAtelier3Component, EbiosAtelier4Component, EbiosAtelier5Component],
+  imports: [CommonModule, FormsModule, EbiosAtelier1Component, EbiosAtelier2Component, 
+    EbiosAtelier3Component, EbiosAtelier4Component, EbiosAtelier5Component,EbiosKpiDashboardComponent],
   templateUrl: './ebios.component.html',
   styleUrls:  ['./ebios.component.scss']
 })
@@ -26,8 +28,8 @@ export class EbiosComponent implements OnInit {
   initialising = false;
   success      = '';
   error        = '';
-
-  activeAtelier: 0 | 1 | 2 | 3 | 4 | 5 = 0;
+  auditType: string = 'iso27001';
+activeAtelier: 0 | 1 | 2 | 3 | 4 | 5 = 0;
   titreAnalyse = 'Analyse EBIOS RM';
 
   private api = 'http://localhost:8080/api';

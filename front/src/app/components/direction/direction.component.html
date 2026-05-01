@@ -4,7 +4,7 @@
     <div class="header-left">
       <div class="dir-badge">Direction</div>
       <div>
-        <h1 class="page-title">Interface Direction — Clause 5</h1>
+        <h1 class="page-title">Interface Direction</h1>
         <p class="page-sub">{{ currentUser?.prenom }} {{ currentUser?.nom }}</p>
       </div>
     </div>
@@ -82,9 +82,7 @@
             <strong>Politique :</strong> {{ clause4.politique_securite | slice:0:200 }}...
           </div>
         </ng-container>
-        <div class="preview-empty" *ngIf="!clause4[sec.key === 'enjeux_externes' ? 'enjeux_externes' : '']?.length && sec.key !== 'perimetre' && sec.key !== 'ressources'">
-          Section non encore remplie par le RSSI
-        </div>
+        
       </div>
 
       <!-- Formulaire de validation -->

@@ -41,7 +41,7 @@ isRiskAnalysisEnabled = false;
   label:'fiche processus',
   icon: 'process',
   route: '/dashboard/fiche-processus',
-  roles: ['pilote_processus', 'rssi']
+  roles: ['pilote_processus']
 },
     {
   label:  'Protection des données',
@@ -57,25 +57,25 @@ isRiskAnalysisEnabled = false;
   roles: ['membre_equipe_technique']
 },
 {
-  label: 'Tableau de bord RSSI',
+  label: 'Contexte de l\'organisme',
   icon:  'shield',
   route: '/dashboard/rssi',
   roles: ['rssi']
 },
 {
-  label: 'Direction — Clause 5',
+  label: 'Engagement de la Direction ',
   icon:  'briefcase',
   route: '/dashboard/direction',
   roles: ['direction', 'comite_securite']
 },
 {
-  label: 'Clause 6 — Planification',
+  label: 'Planification',
   icon:  'target',
   route: '/dashboard/clause6',
   roles: ['rssi']
 },
 {
-  label: 'Clause 6 — Planification',
+  label: 'Planification',
   icon: 'target',
   route: '/dashboard/direction/clause6',
   roles: ['direction', 'comite_securite']
@@ -90,14 +90,13 @@ isRiskAnalysisEnabled = false;
 {
   label: 'Registre des traitements',
   icon: 'database',
-  route: '/dashboard/dpo/registre',  // ✅ CORRECT
+  route: '/dashboard/dpo/registre',  
   roles: ['dpo']
 },
 {
-  label:  'Clause 7 — Support',
+  label:  'Support',
   icon:   'support',
   route:  '/dashboard/clause7',
-  clause: 'Clause 7',
   roles:  [
     'rssi',
     'admin_organism',
@@ -108,11 +107,12 @@ isRiskAnalysisEnabled = false;
   ]
 },
 {
-  label: 'Tableau de bord KPI',
-  icon:  'dashboard',
-  route: '/dashboard/kpi',
-  roles: ['rssi', 'direction', 'dpo']
+  label:  'KPI & Tableau de bord',
+  icon:   'chart',
+  route:  '/dashboard/kpi-dashboard',
+  roles:  ['rssi', 'direction']
 }
+
   ];
 
   constructor(private auth: AuthService, private router: Router) {}

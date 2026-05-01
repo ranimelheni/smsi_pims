@@ -38,6 +38,10 @@ spring:
       fail-on-unknown-properties: false
     default-property-inclusion: non_null
 
+  task:
+    scheduling:
+      enabled: true
+      
 server:
   port: 8080
   error:
@@ -70,3 +74,5 @@ jwt:
 app:
   upload:
     base-dir: C:/uploads
+  cors:
+    allowed-origins: "http://localhost:4200"

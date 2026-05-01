@@ -277,3 +277,9 @@
   overflow-y: auto;
   padding: 1.5rem;
 }
+.company-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  margin-right: 8px;
+}
