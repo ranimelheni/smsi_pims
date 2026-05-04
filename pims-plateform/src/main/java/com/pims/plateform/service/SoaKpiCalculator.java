@@ -17,7 +17,7 @@ public class SoaKpiCalculator {
 
     private final KpiQueryRepository repo;
 
-    public SoaKpiDto calculate(Long orgId, int periodeEvolutionMois) {
+    public SoaKpiDto calculate(Long orgId, int periodeEvolutionJours) {
 
         // Vérifier l'existence de données
         if (!repo.hasSoaData(orgId)) {
@@ -61,7 +61,7 @@ public class SoaKpiCalculator {
 
         // Évolution → line chart
         List<SoaKpiDto.EvolutionPointDto> evolution = repo
-            .getSoaEvolution(orgId, periodeEvolutionMois)
+            .getSoaEvolution(orgId, periodeEvolutionJours)
             .stream()
             .map(row -> SoaKpiDto.EvolutionPointDto.builder()
                 .date(str(row.get("date")))
@@ -80,7 +80,8 @@ public class SoaKpiCalculator {
             .nbEnCours(enCours)
             .nbNonCommence(nonComm)
             .parAnnexe(parAnnexe)
-            .evolution(evolution)
+// Remplacez la ligne evolution dans le return final :
+.evolution(fillToToday(evolution))
             .build();
     }
 
@@ -101,4 +102,29 @@ public class SoaKpiCalculator {
         catch (Exception e) { return 0; }
     }
     private String str(Object v) { return v != null ? v.toString() : ""; }
+    // Ajoutez cette méthode helper dans SoaKpiCalculator
+
+private List<SoaKpiDto.EvolutionPointDto> fillToToday(
+        List<SoaKpiDto.EvolutionPointDto> evolution) {
+
+    if (evolution.isEmpty()) return evolution;
+
+    SoaKpiDto.EvolutionPointDto last = evolution.get(evolution.size() - 1);
+    String today = java.time.LocalDate.now().toString(); // "YYYY-MM-DD"
+
+    // Déjà à jour → rien à faire
+    if (today.equals(last.getDate())) return evolution;
+
+    // Synthétiser un point "aujourd'hui" avec la valeur inchangée
+    SoaKpiDto.EvolutionPointDto syntheticPoint = SoaKpiDto.EvolutionPointDto.builder()
+        .date(today)
+        .tauxSoa(last.getTauxSoa())
+        .nbImplemente(last.getNbImplemente())
+        .totalInclus(last.getTotalInclus())
+        .build();
+
+    List<SoaKpiDto.EvolutionPointDto> result = new ArrayList<>(evolution);
+    result.add(syntheticPoint);
+    return result;
+}
 }

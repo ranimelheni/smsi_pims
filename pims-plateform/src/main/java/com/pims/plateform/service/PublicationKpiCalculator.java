@@ -1,4 +1,5 @@
 package com.pims.plateform.service;
+
 import com.pims.plateform.dto.PublicationKpiDto;
 import com.pims.plateform.repository.KpiQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,82 +16,60 @@ public class PublicationKpiCalculator {
 
     private final KpiQueryRepository repo;
 
-    public PublicationKpiDto calculate(Long orgId, int periodeEvolutionMois) {
+    public PublicationKpiDto calculate(Long orgId, int periodeJours) {
 
         if (!repo.hasPublicationData(orgId)) {
             return PublicationKpiDto.builder()
                 .hasData(false)
-                .totalPublications(0)
-                .parType(List.of())
-                .parPriorite(List.of())
-                .evolutionMensuelle(List.of())
+                .parPublication(List.of())
                 .build();
         }
 
-        // Global
         Optional<Map<String, Object>> globalOpt = repo.getPublicationGlobal(orgId);
         if (globalOpt.isEmpty()) {
             return PublicationKpiDto.builder()
                 .hasData(false)
-                .parType(List.of())
-                .parPriorite(List.of())
-                .evolutionMensuelle(List.of())
+                .parPublication(List.of())
                 .build();
         }
 
         Map<String, Object> g = globalOpt.get();
-        int total        = toInt(g.get("total_publications"));
-        int destinataires= toInt(g.get("total_destinataires"));
-        int lecteurs     = toInt(g.get("nb_lecteurs_uniques"));
-        double taux      = safe(toDouble(g.get("taux_lecture_utilisateurs")));
+        int    total         = toInt(g.get("total_publications"));
+        int    totalPubliees = toInt(g.get("total_publiees"));
+        int    usersActifs   = toInt(g.get("total_users_actifs"));
+        int    lecteurs      = toInt(g.get("nb_lecteurs_uniques"));
+        int    totalLectures = toInt(g.get("total_lectures"));
+        double taux          = safe(toDouble(g.get("taux_lecture_global")));
 
-        // Par type → radar
-        List<PublicationKpiDto.ParTypeDto> parType = repo
-            .getPublicationParType(orgId).stream()
-            .map(row -> PublicationKpiDto.ParTypeDto.builder()
-                .typePublication(str(row.get("type_publication")))
-                .nbPublications(toInt(row.get("nb_publications")))
-                .nbLectures(toInt(row.get("nb_lectures")))
-                .tauxLecture(safe(toDouble(row.get("taux_lecture"))))
-                .build()
-            ).collect(Collectors.toList());
-
-        // Par priorité → radar
-        List<PublicationKpiDto.ParPrioriteDto> parPriorite = repo
-            .getPublicationParPriorite(orgId).stream()
-            .map(row -> PublicationKpiDto.ParPrioriteDto.builder()
+        // Une entrée par publication
+        List<PublicationKpiDto.ParPublicationDto> parPublication = repo
+            .getPublicationParPub(orgId, periodeJours).stream()
+            .map(row -> PublicationKpiDto.ParPublicationDto.builder()
+                .publicationId(toLong(row.get("publication_id")))
+                .titre(str(row.get("titre")))
+                .type(str(row.get("type")))
                 .priorite(str(row.get("priorite")))
-                .nbPublications(toInt(row.get("nb_publications")))
+                .publieLe(str(row.get("publie_le")))
                 .nbLecteurs(toInt(row.get("nb_lecteurs")))
+                .totalUsersActifs(toInt(row.get("total_users_actifs")))
                 .tauxLecture(safe(toDouble(row.get("taux_lecture"))))
-                .build()
-            ).collect(Collectors.toList());
-
-        // Évolution mensuelle → line chart
-        List<PublicationKpiDto.EvolutionMensuelleDto> evolution = repo
-            .getPublicationEvolutionMensuelle(orgId, periodeEvolutionMois).stream()
-            .map(row -> PublicationKpiDto.EvolutionMensuelleDto.builder()
-                .mois(str(row.get("mois")))
-                .nbPublications(toInt(row.get("nb_publications")))
-                .nbLectures(toInt(row.get("nb_lectures")))
-                .nbLecteursUniques(toInt(row.get("nb_lecteurs_uniques")))
                 .build()
             ).collect(Collectors.toList());
 
         return PublicationKpiDto.builder()
             .hasData(total > 0)
             .totalPublications(total)
-            .totalDestinataires(destinataires)
+            .totalPubliees(totalPubliees)
+            .totalUsersActifs(usersActifs)
             .nbLecteursUniques(lecteurs)
+            .totalLectures(totalLectures)
             .tauxLectureGlobal(taux)
-            .parType(parType)
-            .parPriorite(parPriorite)
-            .evolutionMensuelle(evolution)
+            .parPublication(parPublication)
             .build();
     }
 
     private double safe(double v) {
-        return (Double.isNaN(v) || Double.isInfinite(v)) ? 0.0 : v;
+        return (Double.isNaN(v) || Double.isInfinite(v)) ? 0.0 : Math.min(v, 100.0);
     }
     private double toDouble(Object v) {
         if (v == null) return 0.0;
@@ -103,6 +82,12 @@ public class PublicationKpiCalculator {
         if (v instanceof Number n) return n.intValue();
         try { return Integer.parseInt(v.toString()); }
         catch (Exception e) { return 0; }
+    }
+    private Long toLong(Object v) {
+        if (v == null) return null;
+        if (v instanceof Number n) return n.longValue();
+        try { return Long.parseLong(v.toString()); }
+        catch (Exception e) { return null; }
     }
     private String str(Object v) { return v != null ? v.toString() : ""; }
 }

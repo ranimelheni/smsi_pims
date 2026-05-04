@@ -1,12 +1,11 @@
 package com.pims.plateform.service;
 
+import com.pims.plateform.repository.KpiQueryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import com.pims.plateform.repository.KpiQueryRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -20,43 +19,33 @@ public class KpiSnapshotService {
     private final KpiQueryRepository repo;
     private final JdbcTemplate jdbc;
 
-    /**
-     * Snapshot automatique tous les jours
-     */
-@Scheduled(fixedRate = 60000) // toutes les 60 secondes (TEMPORAIRE)
+    // ⛔ PAS chaque minute → toutes les 10 minutes (démo)
+    @Scheduled(fixedRate = 10 * 60 * 1000)
     public void snapshotAllOrganisms() {
 
         List<Long> orgIds = jdbc.queryForList(
-            "SELECT id FROM organisms", // ⚠️ adapte si nom différent
-            Long.class
+                "SELECT id FROM organisms",
+                Long.class
         );
-
-        if (orgIds.isEmpty()) {
-            log.warn("Aucun organisme trouvé pour snapshot KPI");
-            return;
-        }
 
         for (Long orgId : orgIds) {
             try {
                 snapshotSoa(orgId);
-                snapshotPublication(orgId); // optionnel (tu peux commenter si pas prêt)
+                snapshotFormation(orgId);
+
             } catch (Exception e) {
-                log.error("Erreur snapshot org={} : {}", orgId, e.getMessage(), e);
+                log.error("Snapshot error org={} : {}", orgId, e.getMessage(), e);
             }
         }
     }
 
-    // ─────────────────────────────────────────────
-    // 📊 KPI SOA
-    // ─────────────────────────────────────────────
+    // ═══════════════════════════════════════
+    // SOA SNAPSHOT
+    // ═══════════════════════════════════════
     private void snapshotSoa(Long orgId) {
 
         Optional<Map<String, Object>> globalOpt = repo.getSoaGlobal(orgId);
-
-        if (globalOpt.isEmpty()) {
-            log.warn("Pas de données SOA pour org={}", orgId);
-            return;
-        }
+        if (globalOpt.isEmpty()) return;
 
         Map<String, Object> g = globalOpt.get();
 
@@ -64,60 +53,80 @@ public class KpiSnapshotService {
         int nbImpl = toInt(g.get("nb_implemente"));
         int total = toInt(g.get("total_controles_inclus"));
 
-        insertKpi(orgId, "conformite_soa", taux, nbImpl, total);
-
-        log.info("Snapshot SOA enregistré org={} taux={}", orgId, taux);
-    }
-
-    // ─────────────────────────────────────────────
-    // 📢 KPI Publication (optionnel mais prêt)
-    // ─────────────────────────────────────────────
-    private void snapshotPublication(Long orgId) {
-
-        Optional<Map<String, Object>> globalOpt = repo.getPublicationGlobal(orgId);
-
-        if (globalOpt.isEmpty()) {
-            log.warn("Pas de données publication pour org={}", orgId);
+        // ⛔ éviter doublon
+        if (!hasChanged(orgId, "conformite_soa", taux)) {
             return;
         }
 
-        Map<String, Object> g = globalOpt.get();
+        insertKpi(orgId, "conformite_soa", taux, nbImpl, total);
 
-        double taux = toDouble(g.get("taux_lecture_utilisateurs"));
-        int lecteurs = toInt(g.get("nb_lecteurs_uniques"));
-        int destinataires = toInt(g.get("total_destinataires"));
-
-        insertKpi(orgId, "lecture_publication", taux, lecteurs, destinataires);
-
-        log.info("Snapshot publication enregistré org={} taux={}", orgId, taux);
+        log.info("SOA snapshot OK org={} taux={}", orgId, taux);
     }
 
-    // ─────────────────────────────────────────────
-    // 🧠 INSERT GÉNÉRIQUE KPI
-    // ─────────────────────────────────────────────
-private void insertKpi(Long orgId,
-                       String code,
-                       double valeur,
-                       int numerateur,
-                       int denominateur) {
+ private void snapshotFormation(Long orgId) {
+    Optional<Map<String, Object>> globalOpt = repo.getFormationGlobal(orgId);
+    if (globalOpt.isEmpty()) return;
 
-    String sql = """
-        INSERT INTO kpi_historique
-        (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
-        VALUES (?, ?, ?, ?, ?, CURRENT_DATE)
-        ON CONFLICT (organism_id, kpi_code, snapshot_date)
-        DO UPDATE SET
-            valeur = EXCLUDED.valeur,
-            numerateur = EXCLUDED.numerateur,
-            denominateur = EXCLUDED.denominateur
-    """;
+    Map<String, Object> g = globalOpt.get();
+    double taux      = toDouble(g.get("taux_participation_global"));
+    int    presents  = toInt(g.get("total_presents"));
+    int    inscrits  = toInt(g.get("total_inscriptions"));
 
-    jdbc.update(sql, orgId, code, valeur, numerateur, denominateur);
+    if (!hasChanged(orgId, "participation_formation", taux)) return;
+
+    insertKpi(orgId, "participation_formation", taux, presents, inscrits);
+    log.info("Formation snapshot OK org={} taux={}", orgId, taux);
 }
 
-    // ─────────────────────────────────────────────
-    // 🔧 Helpers safe
-    // ─────────────────────────────────────────────
+    // ═══════════════════════════════════════
+    // INSERT KPI
+    // ═══════════════════════════════════════
+    private void insertKpi(Long orgId,
+                           String code,
+                           double valeur,
+                           int numerateur,
+                           int denominateur) {
+
+        String sql = """
+            INSERT INTO kpi_historique
+            (organism_id, kpi_code, valeur, numerateur, denominateur, snapshot_date)
+            VALUES (?, ?, ?, ?, ?, CURRENT_DATE)
+            ON CONFLICT (organism_id, kpi_code, snapshot_date)
+            DO UPDATE SET
+                valeur = EXCLUDED.valeur,
+                numerateur = EXCLUDED.numerateur,
+                denominateur = EXCLUDED.denominateur
+        """;
+
+        jdbc.update(sql, orgId, code, valeur, numerateur, denominateur);
+    }
+
+    // ═══════════════════════════════════════
+    // CHECK CHANGEMENT
+    // ═══════════════════════════════════════
+    private boolean hasChanged(Long orgId, String code, double newValue) {
+
+        String sql = """
+            SELECT valeur
+            FROM kpi_historique
+            WHERE organism_id = ? AND kpi_code = ?
+            ORDER BY snapshot_date DESC
+            LIMIT 1
+        """;
+
+        List<Double> last = jdbc.query(sql,
+                (rs, rowNum) -> rs.getDouble("valeur"),
+                orgId, code
+        );
+
+        if (last.isEmpty()) return true;
+
+        return Math.abs(last.get(0) - newValue) > 0.0001;
+    }
+
+    // ═══════════════════════════════════════
+    // HELPERS
+    // ═══════════════════════════════════════
     private double toDouble(Object v) {
         if (v == null) return 0.0;
         if (v instanceof Number n) return n.doubleValue();

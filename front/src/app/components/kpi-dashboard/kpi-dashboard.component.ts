@@ -22,11 +22,14 @@ import {
   Chart,
   RadarController,
   LineController,
+  BarController,       // ← ajout
   RadialLinearScale,
   LinearScale,
   CategoryScale,
   PointElement,
   LineElement,
+  BarElement,          // ← ajout
+
   Tooltip,
   Legend
 } from 'chart.js';
@@ -34,11 +37,13 @@ import {
 Chart.register(
   RadarController,
   LineController,
+  BarController,       // ← ajout
   RadialLinearScale,
   LinearScale,
   CategoryScale,
   PointElement,
   LineElement,
+  BarElement,          // ← ajout
   Tooltip,
   Legend
 );
@@ -74,8 +79,9 @@ export class KpiDashboardComponent implements OnInit, OnDestroy {
   readonly ids = {
     soaRadar: `kpi-soa-radar-${this.uid}`,
     soaLine:  `kpi-soa-line-${this.uid}`,
-    pubRadar: `kpi-pub-radar-${this.uid}`,
-    pubLine:  `kpi-pub-line-${this.uid}`
+  pubBar:   `kpi-pub-bar-${this.uid}`,
+    formBar:   `kpi-form-bar-${this.uid}`   // ← ajout
+
   };
 
   // Registre des charts créés — pour les détruire proprement
@@ -175,26 +181,126 @@ export class KpiDashboardComponent implements OnInit, OnDestroy {
       );
     }
 
-    if (this.kpi.publications?.has_data && this.kpi.publications.par_type?.length) {
-      this.makeRadar(
-        this.ids.pubRadar,
-        this.kpi.publications.par_type.map(t => this.labelType(t.type_publication)),
-        this.kpi.publications.par_type.map(t => this.safe(t.taux_lecture)),
-        '#f59e0b'
-      );
-    }
-
-    if (this.kpi.publications?.evolution_mensuelle?.length) {
-      this.makeLine(
-        this.ids.pubLine,
-        this.kpi.publications.evolution_mensuelle.map(p => p.mois),
-        [
-          { label: 'Publications', data: this.kpi.publications.evolution_mensuelle.map(p => p.nb_publications), color: '#f59e0b' },
-          { label: 'Lecteurs uniques', data: this.kpi.publications.evolution_mensuelle.map(p => p.nb_lecteurs_uniques), color: '#8b5cf6' }
-        ]
-      );
-    }
+ // ── Publication — une seule ligne journalière ────────────────────────
+// ── Publication — bar chart par publication ──────────────────────────
+if (this.kpi.publications?.has_data && this.kpi.publications.par_publication?.length) {
+  this.makeBar(
+    this.ids.pubBar,
+    this.kpi.publications.par_publication
+  );
+}
+// ── Formation — bar chart par session ────────────────────────────────
+if (this.kpi.formation?.has_data && this.kpi.formation.par_session?.length) {
+  this.makeFormationBar(
+    this.ids.formBar,
+    this.kpi.formation.par_session
+  );
+}
   }
+  private makeFormationBar(
+  id: string,
+  sessions: { titre: string; statut: string; taux_participation: number;
+              nb_inscrits: number; nb_presents: number;
+              max_participants: number | null }[]
+): void {
+  if (!sessions.length) return;
+
+  const el = this.getCanvas(id);
+  if (!el) return;
+
+  this.destroyChart(id);
+
+  const colorMap: Record<string, string> = {
+    planifie: '#3b82f6',
+    en_cours: '#f59e0b',
+    termine:  '#10b981',
+    annule:   '#ef4444'
+  };
+
+  const colors = sessions.map(s => colorMap[s.statut] ?? '#6b7280');
+  const labels = sessions.map(s =>
+    s.titre.length > 22 ? s.titre.slice(0, 20) + '…' : s.titre
+  );
+
+  try {
+    const chart = new Chart(el, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label:           'Taux de participation (%)',
+          data:            sessions.map(s => this.safe(s.taux_participation)),
+          backgroundColor: colors,
+          borderRadius:    6,
+          borderSkipped:   false
+        }]
+      },
+      options: {
+        animation:           false,
+        responsive:          true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => sessions[items[0].dataIndex].titre,
+              label: (ctx) => {
+                const s = sessions[ctx.dataIndex];
+                const denom = s.max_participants ?? s.nb_inscrits;
+                return [
+                  ` Participation : ${(ctx.parsed.y as number).toFixed(1)}%`,
+                  ` Présents : ${s.nb_presents} / ${denom}`
+                ];
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            min:  0,
+            max:  100,
+            grid: { color: 'rgba(0,0,0,0.04)' },
+            ticks: {
+              font:     { size: 11 },
+              stepSize: 25,
+              callback: (v) => v + '%'
+            }
+          },
+          x: {
+            grid:  { display: false },
+            ticks: {
+              font:        { size: 10 },
+              maxRotation: 35,
+              minRotation: 35
+            }
+          }
+        }
+      }
+    });
+    this.charts.set(id, chart);
+  } catch (e) {
+    console.warn(`Chart bar formation [${id}] init error:`, e);
+  }
+}
+
+// Helper label statut (utilisé dans le template)
+getStatutFormationColor(statut: string): string {
+  return ({
+    planifie: '#3b82f6',
+    en_cours: '#f59e0b',
+    termine:  '#10b981',
+    annule:   '#ef4444'
+  } as Record<string, string>)[statut] ?? '#6b7280';
+}
+
+getStatutFormationLabel(statut: string): string {
+  return ({
+    planifie: 'Planifiée',
+    en_cours: 'En cours',
+    termine:  'Terminée',
+    annule:   'Annulée'
+  } as Record<string, string>)[statut] ?? statut;
+}
 
   // ── Factory radar ─────────────────────────────────────────
   private makeRadar(
@@ -319,11 +425,16 @@ export class KpiDashboardComponent implements OnInit, OnDestroy {
             }
           },
           scales: {
-            y: {
-              beginAtZero: true,
-              grid: { color: 'rgba(0,0,0,0.04)' },
-              ticks: { font: { size: 11 } }
-            },
+           y: {
+  min: 0,
+  max: 100,
+  grid: { color: 'rgba(0,0,0,0.04)' },
+  ticks: {
+    font: { size: 11 },
+    stepSize: 25,
+    callback: (v) => v + '%'
+  }
+},
             x: {
               grid:  { display: false },
               ticks: { font: { size: 11 }, maxTicksLimit: 8 }
@@ -336,7 +447,86 @@ export class KpiDashboardComponent implements OnInit, OnDestroy {
       console.warn(`Chart line [${id}] init error:`, e);
     }
   }
+private makeBar(
+  id: string,
+  pubs: { titre: string; taux_lecture: number; priorite: string }[]
+): void {
+  if (!pubs.length) return;
 
+  const el = this.getCanvas(id);
+  if (!el) return;
+
+  this.destroyChart(id);
+
+  // Couleur selon priorité
+  const colors = pubs.map(p => {
+    switch (p.priorite) {
+      case 'urgente': return '#ef4444';
+      case 'haute':   return '#f59e0b';
+      case 'normale': return '#3b82f6';
+      case 'basse':   return '#9ca3af';
+      default:        return '#6b7280';
+    }
+  });
+
+  // Tronquer les titres longs pour l'axe X
+  const labels = pubs.map(p =>
+    p.titre.length > 22 ? p.titre.slice(0, 20) + '…' : p.titre
+  );
+
+  try {
+    const chart = new Chart(el, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label:           'Taux de lecture (%)',
+          data:            pubs.map(p => this.safe(p.taux_lecture)),
+          backgroundColor: colors,
+          borderRadius:    6,
+          borderSkipped:   false
+        }]
+      },
+      options: {
+        animation:           false,
+        responsive:          true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => pubs[items[0].dataIndex].titre,
+              label: (ctx)  => ` ${(ctx.parsed.y as number).toFixed(1)}%`
+            }
+          }
+        },
+        scales: {
+          y: {
+            min:  0,
+            max:  100,
+            grid: { color: 'rgba(0,0,0,0.04)' },
+            ticks: {
+              font:      { size: 11 },
+              stepSize:  25,
+              callback:  (v) => v + '%'
+            }
+          },
+          x: {
+            grid:  { display: false },
+            ticks: {
+              font:          { size: 10 },
+              maxRotation:   35,
+              minRotation:   35
+            }
+          }
+        }
+      }
+    });
+    this.charts.set(id, chart);
+  } catch (e) {
+    console.warn(`Chart bar [${id}] init error:`, e);
+  }
+}
   // ── Destruction ───────────────────────────────────────────
   private destroyChart(id: string): void {
     // 1. Détruire via notre registre

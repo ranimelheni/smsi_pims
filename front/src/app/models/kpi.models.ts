@@ -6,6 +6,8 @@ export interface KpiResponse {
   message_vide:   string | null;
   soa:            SoaKpi | null;
   publications:   PublicationKpi | null;
+  formation: FormationKpi | null;
+
 }
 
 export interface SoaKpi {
@@ -34,34 +36,51 @@ export interface SoaEvolutionPoint {
   total_inclus:  number;
 }
 
+// ── Publication — nouveau modèle simplifié ───────────────────────────
 export interface PublicationKpi {
-  has_data:              boolean;
-  total_publications:    number;
-  total_destinataires:   number;
-  nb_lecteurs_uniques:   number;
-  taux_lecture_global:   number;
-  par_type:              PubParType[];
-  par_priorite:          PubParPriorite[];
-  evolution_mensuelle:   PubEvolutionMensuelle[];
-}
-
-export interface PubParType {
-  type_publication: string;
-  nb_publications:  number;
-  nb_lectures:      number;
-  taux_lecture:     number;
-}
-
-export interface PubParPriorite {
-  priorite:        string;
-  nb_publications: number;
-  nb_lecteurs:     number;
-  taux_lecture:    number;
-}
-
-export interface PubEvolutionMensuelle {
-  mois:                string;
-  nb_publications:     number;
-  nb_lectures:         number;
+  has_data:            boolean;
+  total_publications:  number;
+  total_publiees:      number;
+  total_users_actifs:  number;
   nb_lecteurs_uniques: number;
+  total_lectures:      number;
+  taux_lecture_global: number;
+  par_publication:     PubParPublication[];
+}
+
+export interface PubParPublication {
+  publication_id:    number;
+  titre:             string;
+  type:              string;
+  priorite:          string;
+  publie_le:         string;   // "YYYY-MM-DD"
+  nb_lecteurs:       number;
+  total_users_actifs:number;
+  taux_lecture:      number;   // 0–100
+}
+// Dans KpiResponse ajouter :
+
+// Nouveaux interfaces :
+export interface FormationKpi {
+  has_data:                  boolean;
+  total_sessions:            number;
+  sessions_terminees:        number;
+  sessions_planifiees:       number;
+  sessions_annulees:         number;
+  total_inscriptions:        number;
+  total_presents:            number;
+  taux_participation_global: number;
+  par_session:               FormationParSession[];
+}
+
+export interface FormationParSession {
+  session_id:        number;
+  titre:             string;
+  type:              string;
+  statut:            string;
+  date_session:      string;
+  max_participants:  number | null;
+  nb_inscrits:       number;
+  nb_presents:       number;
+  taux_participation:number;
 }

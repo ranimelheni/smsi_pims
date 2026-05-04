@@ -14,7 +14,9 @@ import java.time.LocalDateTime;
 public class KpiOrchestrator {
 
     private final SoaKpiCalculator         soaCalculator;
-    private final PublicationKpiCalculator  pubCalculator;
+    private final PublicationKpiCalculator publicationCalculator;  // ← ajouté
+
+private final FormationKpiCalculator formationCalculator;
 
     private static final int DEFAULT_PERIODE_MOIS = 6;
 
@@ -30,9 +32,12 @@ public class KpiOrchestrator {
         log.info("Calcul KPI pour organisme {} ({}), période {}m", orgId, orgNom, periode);
 
         var soaKpi = soaCalculator.calculate(orgId, periode);
-        var pubKpi = pubCalculator.calculate(orgId, periode);
+        var publicationKpi = publicationCalculator.calculate(orgId, periode); // ← ajouté
 
-        boolean hasData = soaKpi.isHasData() || pubKpi.isHasData();
+var formationKpi   = formationCalculator.calculate(orgId, periode);
+boolean hasData    = soaKpi.isHasData()
+                  || publicationKpi.isHasData()
+                  || formationKpi.isHasData();
 
         return KpiResponseDto.builder()
             .organismId(orgId)
@@ -43,7 +48,8 @@ public class KpiOrchestrator {
                 "Aucun KPI disponible pour votre organisme. " +
                 "Les indicateurs apparaîtront dès que des données SOA et publications seront disponibles.")
             .soa(soaKpi)
-            .publications(pubKpi)
+            .publications(publicationKpi)   // ← ajouté
+            .formation(formationKpi)     // ← ajouté
             .build();
     }
 }

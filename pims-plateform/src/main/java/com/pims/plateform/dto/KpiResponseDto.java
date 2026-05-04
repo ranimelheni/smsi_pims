@@ -25,7 +25,10 @@ public class KpiResponseDto {
 
     @JsonProperty("soa")
     private SoaKpiDto soa;
-
+    
     @JsonProperty("publications")
     private PublicationKpiDto publications;
+
+private FormationKpiDto formation;
+  
 }
