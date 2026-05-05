@@ -59,7 +59,8 @@ export class AuthService {
       membre_equipe_technique: '/dashboard/fiche-technique', // ← AJOUT
       direction:  '/dashboard/direction',
       comite_securite: '/dashboard/direction',
-      employe: '/dashboard/clause7'
+      employe: '/dashboard/clause7',
+      auditeur: '/dashboard/auditeur-dashboard', // ← AJOUT
     
 
     };

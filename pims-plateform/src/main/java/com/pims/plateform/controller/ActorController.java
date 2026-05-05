@@ -27,7 +27,7 @@ public class ActorController {
 
     private static final List<String> ROLES_ALLOWED = List.of(
         "admin_organism", "rssi", "dpo", "iso",
-        "auditeur_interne", "auditeur_externe", "pilote_processus",
+        "auditeur_interne", "auditeur_externe", "pilote_processus","auditeur",
         "proprietaire_risque", "proprietaire_actif", "responsable_conformite",
          "responsable_qualite", "utilisateur_metier","employe",
         "direction", "comite_securite","membre_equipe_technique"
@@ -40,6 +40,7 @@ public class ActorController {
         Map.entry("iso",                    "ISO / Responsable SI"),
         Map.entry("auditeur_interne",       "Auditeur interne"),
         Map.entry("auditeur_externe",       "Auditeur externe"),
+            Map.entry("auditeur",               "Auditeur"),
         Map.entry("pilote_processus",       "Pilote de processus"),
         Map.entry("membre_equipe_technique", "Membre de l'équipe technique"),
         Map.entry("proprietaire_risque",    "Propriétaire des risques"),

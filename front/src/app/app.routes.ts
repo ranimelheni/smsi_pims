@@ -102,9 +102,19 @@ loadComponent: () =>
   loadComponent: () =>
     import('./components/kpi-dashboard/kpi-dashboard.component')
       .then(m => m.KpiDashboardComponent)
+},
+{
+  path: 'auditeur-dashboard',
+  canActivate: [AuthGuard],
+  data: { roles: ['auditeur', 'super_admin'] },
+  loadComponent: () =>
+    import('./components/auditeur-dashboard/auditeur-dashboard.component')
+      .then(m => m.AuditeurDashboardComponent)
 }
+
     ]
   },
- 
+ // Dans app.routes.ts
+
   { path: '**', redirectTo: '/login' }
 ];

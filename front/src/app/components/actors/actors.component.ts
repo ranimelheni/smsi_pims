@@ -5,6 +5,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ActorService } from '../../services/actor.service';
 import { OrganismService } from '../../services/organism.service';
 import { User, Role, Organism } from '../../models/models';
+import { audit } from 'rxjs';
 
 @Component({
   selector: 'app-actors',
@@ -41,6 +42,7 @@ export class ActorsComponent implements OnInit {
     iso:                    'teal',
     auditeur_interne:       'amber',
     auditeur_externe:       'amber',
+    auditeur:               'amber',
     pilote_processus:       'green',
     proprietaire_risque:    'coral',
     proprietaire_actif:     'coral',

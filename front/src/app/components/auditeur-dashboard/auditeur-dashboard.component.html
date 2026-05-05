@@ -1,0 +1,609 @@
+<div class="aud-page">
+
+  <!-- HEADER -->
+  <div class="aud-header">
+    <div class="ah-left">
+      <div class="ah-avatar">🔍</div>
+      <div>
+        <h1>Tableau de bord Auditeur</h1>
+        <p class="ah-sub">
+          {{ currentUser?.prenom }} {{ currentUser?.nom }}
+          <span *ngIf="selectedSession"> · {{ selectedSession.titre }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="ah-right" *ngIf="sessions.length">
+      <select class="session-select" (change)="selectSession(sessions[$any($event.target).selectedIndex])">
+        <option *ngFor="let s of sessions; let i = index" [value]="i" [selected]="selectedSession?.id === s.id">
+          {{ s.titre }} ({{ s.statut }})
+        </option>
+      </select>
+      <button class="btn-new" (click)="showNewSession = !showNewSession">
+        {{ showNewSession ? '✕ Annuler' : '+ Nouvelle session' }}
+      </button>
+      <button class="btn-finaliser" *ngIf="selectedSession?.statut === 'en_cours'" (click)="finaliserSession()">
+        ✅ Finaliser
+      </button>
+    </div>
+    <!-- Si aucune session : afficher uniquement le bouton nouvelle session -->
+    <div class="ah-right" *ngIf="!sessions.length">
+      <button class="btn-new" (click)="showNewSession = !showNewSession">
+        {{ showNewSession ? '✕ Annuler' : '+ Nouvelle session' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="aud-toast success" *ngIf="success">{{ success }}</div>
+  <div class="aud-toast error" *ngIf="error">{{ error }}</div>
+
+  <!-- FORMULAIRE NOUVELLE SESSION (avant les tabs) -->
+  <div *ngIf="showNewSession" class="form-card form-card-top">
+    <div class="fc-title">Créer une session d'audit</div>
+    <div class="fc-grid">
+      <div class="field full">
+        <label>Titre</label>
+        <input [(ngModel)]="newSessionForm.titre" placeholder="Ex: Audit ISO 27001 — 2025" />
+      </div>
+      <div class="field">
+        <label>Norme</label>
+        <select [(ngModel)]="newSessionForm.norme">
+          <option value="iso27001">ISO 27001</option>
+          <option value="iso27701">ISO 27701</option>
+        </select>
+      </div>
+    </div>
+    <div class="fc-actions">
+      <button class="btn-primary" [disabled]="creatingSess" (click)="createSession()">
+        {{ creatingSess ? 'Création...' : '💾 Créer' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- NAVIGATION TABS -->
+  <div class="aud-tabs"> 
+    <button *ngFor="let t of tabs" class="aud-tab" [class.active]="activeTab === t.key"
+      (click)="setTab($any(t.key))"> <span class="at-icon">{{ t.icon }}</span> 
+      <span class="at-label">{{ t.label
+        }}</span> </button> </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB : CONTEXTE
+  ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'contexte'" class="aud-body">
+
+    <div *ngIf="loadingCtx" class="loading-row">
+      <div class="spinner"></div><span>Chargement du contexte...</span>
+    </div>
+
+    <div *ngIf="!loadingCtx && !contexte" class="empty-state">
+      <span>🏢</span>
+      <p>Contexte non disponible pour cet organisme.</p>
+    </div>
+
+    <div *ngIf="!loadingCtx && contexte" class="ctx-grid">
+
+      <!-- Organisme & périmètre -->
+      <div class="info-card">
+        <div class="ic-title">🏢 Organisme & Périmètre SMSI</div>
+        <div class="ic-field"><label>Organisme</label><span>{{ contexte.organism_nom }}</span></div>
+        <div class="ic-field"><label>Périmètre SMSI</label><span>{{ contexte.perimetre_smsi || '—' }}</span></div>
+        <div class="ic-field" *ngIf="contexte.enjeux_externes?.length">
+          <label>Enjeux externes</label>
+          <span class="badge-count">{{ contexte.enjeux_externes.length }} enjeux</span>
+        </div>
+        <div class="ic-field" *ngIf="contexte.enjeux_internes?.length">
+          <label>Enjeux internes</label>
+          <span class="badge-count">{{ contexte.enjeux_internes.length }} enjeux</span>
+        </div>
+        <div class="ic-field" *ngIf="contexte.parties_interessees?.length">
+          <label>Parties intéressées</label>
+          <span class="badge-count">{{ contexte.parties_interessees.length }} parties</span>
+        </div>
+      </div>
+
+      <!-- Méthodologie risque -->
+      <div class="info-card">
+        <div class="ic-title">⚠️ Méthodologie de gestion des risques</div>
+        <div class="ic-field">
+          <label>Méthode</label>
+          <span class="method-badge">{{ contexte.methode_risque || '—' }}</span>
+        </div>
+        <div class="ic-field">
+          <label>Statut validation</label>
+          <span class="statut-badge statut-{{ contexte.methode_statut }}">
+            {{ contexte.methode_statut || '—' }}
+          </span>
+        </div>
+        <div class="ic-field" *ngIf="contexte.echelle_probabilite">
+          <label>Échelle</label>
+          <span>{{ contexte.echelle_probabilite }}×{{ contexte.echelle_impact }}</span>
+        </div>
+        <div class="ic-field" *ngIf="contexte.seuil_acceptable">
+          <label>Seuil acceptable</label>
+          <span>≤ {{ contexte.seuil_acceptable }}</span>
+        </div>
+        <div class="ic-field" *ngIf="contexte.seuil_eleve">
+          <label>Seuil élevé</label>
+          <span>&gt; {{ contexte.seuil_eleve }}</span>
+        </div>
+        <div class="ic-field" *ngIf="contexte.labels_probabilite?.length">
+          <label>Niveaux probabilité</label>
+          <div class="labels-row">
+            <span *ngFor="let l of contexte.labels_probabilite" class="label-chip">{{ l }}</span>
+          </div>
+        </div>
+        <div class="ic-field" *ngIf="contexte.labels_impact?.length">
+          <label>Niveaux impact</label>
+          <div class="labels-row">
+            <span *ngFor="let l of contexte.labels_impact" class="label-chip">{{ l }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOA -->
+      <div class="info-card soa-card">
+        <div class="ic-title">🔐 Déclaration d'applicabilité (SOA)</div>
+        <div class="ic-field">
+          <label>Statut</label>
+          <span class="statut-badge statut-{{ contexte.soa_statut }}">
+            {{ contexte.soa_statut || '—' }}
+          </span>
+        </div>
+        <div class="ic-field">
+          <label>Version</label><span>{{ contexte.soa_version || '—' }}</span>
+        </div>
+        <div class="ic-field">
+          <label>Contrôles inclus</label><span>{{ contexte.soa_nb_controles }}</span>
+        </div>
+        <div class="ic-field">
+          <label>Implémentés</label><span>{{ contexte.soa_nb_implemente }}</span>
+        </div>
+        <div class="ic-field">
+          <label>Taux</label>
+          <div class="taux-bar-wrap">
+            <div class="taux-bar">
+              <div class="taux-fill" [style.width.%]="contexte.soa_taux"
+                [style.background]="getProgressColor(contexte.soa_taux)">
+              </div>
+            </div>
+            <strong [style.color]="getProgressColor(contexte.soa_taux)">
+              {{ contexte.soa_taux | number:'1.1-1' }}%
+            </strong>
+          </div>
+        </div>
+        <div class="lecture-info">
+          ℹ️ Données en lecture seule — fournies par le RSSI
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB : KPI RSSI
+  ══════════════════════════════════════════════════════════ -->
+ <!-- ══════════════════════════════════════════════════════════
+     TAB : KPI RSSI
+══════════════════════════════════════════════════════════ -->
+<div *ngIf="activeTab === 'kpi-rssi'" class="aud-body">
+
+  <div *ngIf="loadingKpiRssi" class="loading-row">
+    <div class="spinner"></div><span>Chargement des KPI...</span>
+  </div>
+
+  <div *ngIf="!loadingKpiRssi && !kpiRssi?.has_data" class="empty-state">
+    <span>📊</span>
+    <p>Aucun KPI disponible pour cet organisme.</p>
+  </div>
+
+  <div *ngIf="!loadingKpiRssi && kpiRssi?.has_data">
+
+    <!-- ── SOA ── -->
+    <div *ngIf="kpiRssi!.soa?.has_data" class="kpi-section">
+      <div class="ks-header">
+        <div class="ks-title">🔐 Conformité SOA</div>
+        <div class="ks-score" [style.color]="getProgressColor(kpiRssi!.soa!.taux_global)">
+          {{ kpiRssi!.soa!.taux_global | number:'1.1-1' }}%
+        </div>
+      </div>
+
+      <div class="kpi-cards-row">
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.soa!.nb_implemente }}</div>
+          <div class="kcm-lbl">Implémentés</div>
+        </div>
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.soa!.nb_en_cours }}</div>
+          <div class="kcm-lbl">En cours</div>
+        </div>
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.soa!.nb_non_commence }}</div>
+          <div class="kcm-lbl">Non démarrés</div>
+        </div>
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.soa!.total_controles }}</div>
+          <div class="kcm-lbl">Total contrôles</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid-2">
+        <div class="kpi-chart-panel">
+          <div class="kcp-title">Radar par annexe</div>
+          <div class="chart-wrap">
+            <canvas [id]="chartIds.rssiSoaRadar"></canvas>
+          </div>
+        </div>
+        <div class="kpi-detail-panel">
+          <div *ngFor="let a of kpiRssi!.soa!.par_annexe" class="annexe-row">
+            <div class="ar-label">{{ a.annexe }}</div>
+            <div class="ar-bar">
+              <div class="ar-fill"
+                [style.width.%]="a.taux_annexe"
+                [style.background]="getProgressColor(a.taux_annexe)">
+              </div>
+            </div>
+            <div class="ar-pct" [style.color]="getProgressColor(a.taux_annexe)">
+              {{ a.taux_annexe | number:'1.0-1' }}%
+            </div>
+            <div class="ar-count">{{ a.nb_implemente }}/{{ a.total_inclus }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!kpiRssi!.soa?.has_data" class="empty-inline">
+      🔐 KPI SOA non disponible.
+    </div>
+
+    <!-- ── Publications ── -->
+    <div *ngIf="kpiRssi!.publications?.has_data" class="kpi-section">
+      <div class="ks-header">
+        <div class="ks-title">📢 Lecture des publications</div>
+        <div class="ks-score"
+          [style.color]="getProgressColor(kpiRssi!.publications!.taux_lecture_global)">
+          {{ kpiRssi!.publications!.taux_lecture_global | number:'1.1-1' }}%
+        </div>
+      </div>
+
+      <div class="kpi-cards-row">
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.publications!.total_publiees }}</div>
+          <div class="kcm-lbl">Publiées</div>
+        </div>
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.publications!.nb_lecteurs_uniques }}</div>
+          <div class="kcm-lbl">Lecteurs uniques</div>
+        </div>
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.publications!.total_users_actifs }}</div>
+          <div class="kcm-lbl">Utilisateurs actifs</div>
+        </div>
+        <div class="kc-mini">
+          <div class="kcm-val">
+            {{ kpiRssi!.publications!.taux_lecture_global | number:'1.0-1' }}%
+          </div>
+          <div class="kcm-lbl">Taux global</div>
+        </div>
+      </div>
+
+      <div class="kpi-chart-panel">
+        <div class="kcp-title">
+          Taux de lecture par publication
+          <span class="kvp-legend">
+            <span class="leg-dot" style="background:#ef4444"></span> Urgente
+            <span class="leg-dot" style="background:#f59e0b"></span> Haute
+            <span class="leg-dot" style="background:#3b82f6"></span> Normale
+            <span class="leg-dot" style="background:#9ca3af"></span> Basse
+          </span>
+        </div>
+        <div class="chart-wrap-wide">
+          <canvas [id]="chartIds.rssiPubBar"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!kpiRssi!.publications?.has_data" class="empty-inline">
+      📢 KPI Publications non disponible.
+    </div>
+
+    <!-- ── Formation ── -->
+    <div *ngIf="kpiRssi!.formation?.has_data" class="kpi-section">
+      <div class="ks-header">
+        <div class="ks-title">🎓 Participation aux formations</div>
+        <div class="ks-score"
+          [style.color]="getProgressColor(kpiRssi!.formation!.taux_participation_global)">
+          {{ kpiRssi!.formation!.taux_participation_global | number:'1.1-1' }}%
+        </div>
+      </div>
+
+      <div class="kpi-cards-row">
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.formation!.total_sessions }}</div>
+          <div class="kcm-lbl">Sessions</div>
+        </div>
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.formation!.sessions_terminees }}</div>
+          <div class="kcm-lbl">Terminées</div>
+        </div>
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.formation!.total_presents }}</div>
+          <div class="kcm-lbl">Présents confirmés</div>
+        </div>
+        <div class="kc-mini">
+          <div class="kcm-val">{{ kpiRssi!.formation!.sessions_planifiees }}</div>
+          <div class="kcm-lbl">Planifiées</div>
+        </div>
+      </div>
+
+      <div class="kpi-chart-panel">
+        <div class="kcp-title">
+          Taux de participation par session
+          <span class="kvp-legend">
+            <span class="leg-dot" style="background:#10b981"></span> Terminée
+            <span class="leg-dot" style="background:#f59e0b"></span> En cours
+            <span class="leg-dot" style="background:#3b82f6"></span> Planifiée
+            <span class="leg-dot" style="background:#ef4444"></span> Annulée
+          </span>
+        </div>
+        <div class="chart-wrap-wide">
+          <canvas [id]="chartIds.rssiFormBar"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!kpiRssi!.formation?.has_data" class="empty-inline">
+      🎓 KPI Formation non disponible.
+    </div>
+
+  </div>
+</div>
+  <!-- ══════════════════════════════════════════════════════════
+       TAB : TABLEAU DE CONFORMITÉ
+  ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'evaluation'" class="aud-body">
+
+    <div *ngIf="!selectedSession" class="empty-state">
+      <span>📋</span>
+      <p>Sélectionnez une session d'audit.</p>
+    </div>
+
+    <div *ngIf="selectedSession">
+      <!-- Filtres -->
+      <div class="eval-toolbar">
+        <div class="et-title">
+          ✅ Tableau de conformité — {{ selectedSession.titre }}
+        </div>
+        <div class="et-filters">
+          <select [(ngModel)]="filtreClause" class="filter-select">
+            <option value="">Toutes clauses</option>
+            <option *ngFor="let c of clausesPrincipales" [value]="c">Clause {{ c }}</option>
+          </select>
+          <select [(ngModel)]="filtreStatutEval" class="filter-select">
+            <option value="">Tous statuts</option>
+            <option *ngFor="let s of STATUTS" [value]="s.value">{{ s.label }}</option>
+          </select>
+          <span class="filter-count">
+            {{ evaluationsFiltrees.length }} / {{ evaluations.length }} clauses
+          </span>
+        </div>
+      </div>
+
+      <div *ngIf="loadingEval" class="loading-row">
+        <div class="spinner"></div><span>Chargement des clauses...</span>
+      </div>
+
+      <div *ngIf="!loadingEval && evaluationsFiltrees.length === 0" class="empty-state">
+        <span>✅</span>
+        <p>Aucune clause correspondante.</p>
+      </div>
+
+      <!-- Tableau -->
+      <div *ngIf="!loadingEval && evaluationsFiltrees.length" class="eval-table-wrap">
+        <table class="eval-table">
+          <thead>
+            <tr>
+              <th class="col-code">Code</th>
+              <th class="col-titre">Clause</th>
+              <th class="col-statut">Statut</th>
+              <th class="col-justif">Justification / Écart</th>
+              <th class="col-action">Action planifiée</th>
+              <th class="col-prio">Priorité</th>
+              <th class="col-ech">Échéance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let ev of evaluationsFiltrees">
+              <!-- Ligne parent (clause principale) -->
+              <tr *ngIf="isParent(ev)" class="row-parent">
+                <td class="col-code code-parent">{{ ev.clause_code }}</td>
+                <td class="col-titre" colspan="6">
+                  <strong>{{ ev.clause_titre }}</strong>
+                </td>
+              </tr>
+              <!-- Ligne sous-clause -->
+              <tr *ngIf="!isParent(ev)" class="row-child" [class.row-nc]="ev.statut === 'non_conforme'"
+                [class.row-partial]="ev.statut === 'partiel'">
+
+                <td class="col-code code-child">{{ ev.clause_code }}</td>
+
+                <td class="col-titre">
+                  <div class="clause-titre">{{ ev.clause_titre }}</div>
+                  <div class="clause-desc" *ngIf="ev.clause_desc">{{ ev.clause_desc | slice:0:80 }}...</div>
+                </td>
+
+                <td class="col-statut">
+                  <select [(ngModel)]="ev.statut" class="statut-select" [style.border-color]="getStatutColor(ev.statut)"
+                    (change)="onStatutChange(ev)">
+                    <option *ngFor="let s of STATUTS" [value]="s.value">
+                      {{ s.label }}
+                    </option>
+                  </select>
+                  <div *ngIf="isSaving(ev.clause_code)" class="saving-dot">💾</div>
+                </td>
+
+                <td class="col-justif">
+                  <textarea [(ngModel)]="ev.justification" class="textarea-inline"
+                    placeholder="Justification / écart constaté..." rows="2" (blur)="saveEvaluation(ev)">
+                  </textarea>
+                </td>
+
+                <td class="col-action">
+                  <textarea [(ngModel)]="ev.action_planifiee" class="textarea-inline"
+                    placeholder="Action corrective planifiée..." rows="2" (blur)="saveEvaluation(ev)">
+                  </textarea>
+                </td>
+
+                <td class="col-prio">
+                  <select [(ngModel)]="ev.priorite" class="prio-select" (change)="saveEvaluation(ev)">
+                    <option *ngFor="let p of PRIORITES" [value]="p">{{ p }}</option>
+                  </select>
+                </td>
+
+                <td class="col-ech">
+                  <input type="date" [(ngModel)]="ev.echeance" class="date-input" (change)="saveEvaluation(ev)" />
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB : KPI AUDIT
+  ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'kpi-audit'" class="aud-body">
+
+    <div *ngIf="!selectedSession" class="empty-state">
+      <span>🎯</span>
+      <p>Sélectionnez une session d'audit.</p>
+    </div>
+
+    <div *ngIf="selectedSession">
+
+      <div *ngIf="loadingKpiAudit" class="loading-row">
+        <div class="spinner"></div><span>Calcul des KPI...</span>
+      </div>
+
+      <div *ngIf="!loadingKpiAudit && kpiAudit">
+
+        <div *ngIf="kpiAudit.total_clauses_evaluees === 0 || kpiAudit.nb_non_evalue === kpiAudit.total_clauses_evaluees"
+          class="empty-state">
+          <span>🎯</span>
+          <p>Aucune clause évaluée pour le moment. Remplissez le tableau de conformité pour voir les KPI.</p>
+        </div>
+
+        <div *ngIf="kpiAudit.total_clauses_evaluees > 0 && kpiAudit.nb_non_evalue < kpiAudit.total_clauses_evaluees">
+
+          <!-- Bandeau global -->
+          <div class="kpi-global-banner" [style.border-left-color]="getProgressColor(kpiAudit.taux_conformite_globale)">
+            <div class="kgb-left">
+              <div class="kgb-label">Taux de conformité globale</div>
+              <div class="kgb-value" [style.color]="getProgressColor(kpiAudit.taux_conformite_globale)">
+                {{ kpiAudit.taux_conformite_globale | number:'1.1-1' }}%
+              </div>
+              <div class="kgb-bar">
+                <div class="kgb-fill" [style.width.%]="kpiAudit.taux_conformite_globale"
+                  [style.background]="getProgressColor(kpiAudit.taux_conformite_globale)">
+                </div>
+              </div>
+            </div>
+            <div class="kgb-right">
+              <div class="kgb-stat">
+                <span class="kgb-n" style="color:#ef4444">{{ kpiAudit.nb_non_conforme }}</span>
+                <span class="kgb-l">Non-conformités</span>
+              </div>
+              <div class="kgb-stat">
+                <span class="kgb-n" style="color:#f59e0b">{{ kpiAudit.nb_partiel }}</span>
+                <span class="kgb-l">Partielles</span>
+              </div>
+              <div class="kgb-stat">
+                <span class="kgb-n" style="color:#10b981">{{ kpiAudit.nb_conforme }}</span>
+                <span class="kgb-l">Conformes</span>
+              </div>
+              <div class="kgb-stat">
+                <span class="kgb-n" style="color:#3b82f6">{{ kpiAudit.nb_planifie + kpiAudit.nb_en_cours }}</span>
+                <span class="kgb-l">En cours/planifié</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grille charts -->
+          <div class="audit-charts-grid">
+            <div class="ac-panel">
+              <div class="acp-title">Répartition des évaluations</div>
+              <div class="chart-wrap">
+                <canvas [id]="chartIds.auditDoughnut"></canvas>
+              </div>
+            </div>
+            <div class="ac-panel">
+              <div class="acp-title">Conformité par clause</div>
+              <div class="chart-wrap">
+                <canvas [id]="chartIds.auditRadar"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tableau KPI par clause -->
+          <div class="clause-kpi-table">
+            <div class="ckt-title">Détail par clause principale</div>
+            <table class="kpi-mini-table">
+              <thead>
+                <tr>
+                  <th>Clause</th>
+                  <th>Total</th>
+                  <th>Conformes</th>
+                  <th>Non conformes</th>
+                  <th>Partiels</th>
+                  <th>Taux</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let c of kpiAudit.par_clause">
+                  <td class="clause-cell">Clause {{ c.clause_principale }}</td>
+                  <td class="text-center">{{ c.total }}</td>
+                  <td class="text-center text-green">{{ c.nb_conforme }}</td>
+                  <td class="text-center text-red">{{ c.nb_non_conforme }}</td>
+                  <td class="text-center text-amber">{{ c.nb_partiel }}</td>
+                  <td>
+                    <div class="mini-bar-wrap">
+                      <div class="mini-bar">
+                        <div class="mini-fill" [style.width.%]="c.taux_clause"
+                          [style.background]="getProgressColor(c.taux_clause)">
+                        </div>
+                      </div>
+                      <span [style.color]="getProgressColor(c.taux_clause)">
+                        {{ c.taux_clause | number:'1.0-1' }}%
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="statut-chip" [style.background]="getProgressColor(c.taux_clause) + '22'"
+                      [style.color]="getProgressColor(c.taux_clause)">
+                      {{ c.taux_clause >= 80 ? 'Satisfaisant' : c.taux_clause >= 50 ? 'À améliorer' : 'Insuffisant' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Non-conformités -->
+          <div *ngIf="kpiAudit.nb_non_conforme > 0" class="nc-alert">
+            <div class="nca-icon">⚠️</div>
+            <div>
+              <strong>{{ kpiAudit.nb_non_conforme }} non-conformité(s) identifiée(s)</strong>
+              <p>Consultez le tableau de conformité pour les détails et planifiez les actions correctives.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

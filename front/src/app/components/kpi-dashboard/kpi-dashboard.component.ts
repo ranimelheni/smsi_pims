@@ -598,7 +598,7 @@ private makeBar(
     const map: Record<string, string> = {
       rssi:           '/dashboard/rssi',
       direction:      '/dashboard/direction',
-      auditeur:       '/dashboard/rssi',
+      auditeur:       '/dashboard/auditeur',
       admin_organism: '/dashboard/admin',
       super_admin:    '/dashboard/super-admin'
     };

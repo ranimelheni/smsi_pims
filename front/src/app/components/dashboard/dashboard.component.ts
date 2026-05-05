@@ -111,6 +111,13 @@ isRiskAnalysisEnabled = false;
   icon:   'chart',
   route:  '/dashboard/kpi-dashboard',
   roles:  ['rssi', 'direction']
+},
+// Ajouter dans allNavItems
+{
+  label: 'Tableau de bord Auditeur',
+  icon:  'audit',
+  route: '/dashboard/auditeur-dashboard',
+  roles: ['auditeur']
 }
 
   ];

@@ -1,362 +1,80 @@
-2026-05-04T09:10:44.979+01:00  INFO 10480 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 10480 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-05-04T09:10:44.979+01:00  INFO 10480 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-05-04T09:10:47.818+01:00  WARN 10480 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-04T09:11:03.545+01:00  INFO 10480 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 19.216 seconds (process running for 19.591)
-2026-05-04T09:17:26.187+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T09:17:26.188+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T09:21:32.293+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T09:21:32.294+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T09:21:39.545+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T09:21:39.545+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T09:27:51.338+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T09:27:51.339+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T09:35:45.365+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T09:35:45.365+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T09:37:17.281+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T09:37:17.281+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T09:37:22.663+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T09:37:22.663+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T09:41:25.477+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T09:41:25.478+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T09:44:14.947+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T09:44:14.949+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T09:44:43.722+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T09:44:43.725+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T09:45:08.566+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T09:45:08.566+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T09:46:03.263+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T09:46:03.264+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T09:47:30.559+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T09:47:30.559+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T09:48:55.723+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T09:48:55.723+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T09:51:03.585+01:00  INFO 10480 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : SOA snapshot OK org=6 taux=23.66
-2026-05-04T09:52:58.237+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T09:52:58.238+01:00  INFO 10480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T10:03:39.587+01:00  INFO 10416 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 10416 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-05-04T10:03:39.590+01:00  INFO 10416 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-05-04T10:03:44.323+01:00  WARN 10416 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-04T10:03:57.671+01:00  INFO 10416 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 18.832 seconds (process running for 19.255)
-2026-05-04T10:04:05.395+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T10:04:05.396+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T10:04:53.413+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=17, role=rssi, orgId=4
-2026-05-04T10:04:53.413+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 4 (test audit 27701), période 6m
-2026-05-04T10:05:01.720+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=17, role=rssi, orgId=4
-2026-05-04T10:05:01.721+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 4 (test audit 27701), période 6m
-2026-05-04T10:07:11.600+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=17, role=rssi, orgId=4
-2026-05-04T10:07:11.608+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 4 (test audit 27701), période 6m
-2026-05-04T10:08:27.451+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=17, role=rssi, orgId=4
-2026-05-04T10:08:27.451+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 4 (test audit 27701), période 6m
-2026-05-04T10:10:47.701+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=17, role=rssi, orgId=4
-2026-05-04T10:10:47.701+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 4 (test audit 27701), période 6m
-2026-05-04T10:13:57.681+01:00  INFO 10416 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : SOA snapshot OK org=4 taux=16.67
-2026-05-04T10:14:03.857+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=17, role=rssi, orgId=4
-2026-05-04T10:14:03.857+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 4 (test audit 27701), période 6m
-2026-05-04T10:14:42.640+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-6] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T10:14:42.641+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-6] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T10:14:55.431+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T10:14:55.431+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 3m
-2026-05-04T10:14:58.734+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T10:14:58.734+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T10:15:50.785+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T10:15:50.786+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T10:16:38.362+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T10:16:38.362+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T10:18:59.727+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-3] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T10:18:59.728+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-3] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T10:25:02.452+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T10:25:02.457+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T11:03:06.449+01:00  WARN 10416 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=1m50s505ms733µs500ns).
-2026-05-04T11:03:07.724+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T11:03:07.724+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T11:03:47.337+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T11:03:47.338+01:00  INFO 10416 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T11:04:09.279+01:00  WARN 10416 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=1m2s847ms13µs700ns).
-2026-05-04T11:33:57.773+01:00  WARN 10416 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=4 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:33:57.788+01:00  WARN 10416 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=2 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:33:57.790+01:00  WARN 10416 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=3 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:33:57.790+01:00  WARN 10416 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=1 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:33:57.790+01:00  WARN 10416 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=5 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:33:57.790+01:00  WARN 10416 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=6 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:37:39.719+01:00  INFO 21820 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 21820 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-05-04T11:37:39.719+01:00  INFO 21820 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-05-04T11:37:41.757+01:00  WARN 21820 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-04T11:37:45.393+01:00  INFO 21820 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 6.475 seconds (process running for 6.761)
-2026-05-04T11:37:45.428+01:00  WARN 21820 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=4 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:37:45.430+01:00  WARN 21820 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=2 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:37:45.432+01:00  WARN 21820 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=3 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:37:45.438+01:00  WARN 21820 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=1 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:37:45.441+01:00  WARN 21820 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=5 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:37:45.444+01:00  WARN 21820 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=6 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:39:13.208+01:00  INFO 19288 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 19288 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-05-04T11:39:13.210+01:00  INFO 19288 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-05-04T11:39:14.963+01:00  WARN 19288 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-04T11:39:17.976+01:00  INFO 19288 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 5.17 seconds (process running for 5.428)
-2026-05-04T11:39:17.999+01:00  WARN 19288 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=4 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:39:17.999+01:00  WARN 19288 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=2 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:39:17.999+01:00  WARN 19288 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=3 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:39:18.016+01:00  WARN 19288 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=1 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:39:18.018+01:00  WARN 19288 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=5 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:39:18.022+01:00  WARN 19288 --- [pims-plateform] [scheduling-1] c.p.p.repository.KpiQueryRepository      : Publication global KPI indisponible org=6 : PreparedStatementCallback; bad SQL grammar [SELECT total_publications, total_destinataires,
-       nb_lecteurs_uniques, total_lectures,
-       taux_lecture_utilisateurs
-FROM v_kpi_publication_global
-WHERE organism_id = ?
-]
-2026-05-04T11:39:44.965+01:00  INFO 19288 --- [pims-plateform] [http-nio-8080-exec-6] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T11:39:44.965+01:00  INFO 19288 --- [pims-plateform] [http-nio-8080-exec-6] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T11:41:45.862+01:00  INFO 25160 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 25160 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-05-04T11:41:45.865+01:00  INFO 25160 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-05-04T11:41:47.605+01:00  WARN 25160 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-04T11:41:50.799+01:00  INFO 25160 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 5.412 seconds (process running for 5.762)
-2026-05-04T11:41:50.829+01:00 ERROR 25160 --- [pims-plateform] [scheduling-1] o.s.s.s.TaskUtils$LoggingErrorHandler    : Unexpected error occurred in scheduled task
+2026-05-05T08:04:05.699+01:00  INFO 20736 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 20736 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-05T08:04:05.728+01:00  INFO 20736 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-05T08:04:11.055+01:00  WARN 20736 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-05T08:04:21.190+01:00  INFO 20736 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 16.431 seconds (process running for 17.01)
+2026-05-05T08:20:25.476+01:00  WARN 20736 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=2m44s141ms18µs900ns).
+2026-05-05T09:30:05.696+01:00  INFO 14880 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 14880 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-05T09:30:05.698+01:00  INFO 14880 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-05T09:30:09.574+01:00  WARN 14880 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-05T09:30:16.041+01:00  INFO 14880 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 11.126 seconds (process running for 11.536)
+2026-05-05T09:50:01.977+01:00  INFO 20928 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 20928 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-05T09:50:01.979+01:00  INFO 20928 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-05T09:50:04.896+01:00  WARN 20928 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-05T09:50:08.707+01:00  INFO 20928 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 7.409 seconds (process running for 7.682)
+2026-05-05T09:58:43.136+01:00  WARN 20928 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=1m8s33ms446µs500ns).
+2026-05-05T10:13:31.835+01:00  INFO 1632 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 1632 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-05T10:13:31.839+01:00  INFO 1632 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-05T10:13:33.769+01:00  WARN 1632 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-05T10:13:37.126+01:00  INFO 1632 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 5.808 seconds (process running for 6.098)
+2026-05-05T10:38:39.466+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T10:38:39.466+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T10:39:12.827+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-6] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T10:39:12.827+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-6] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T10:58:20.303+01:00  WARN 1632 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=10m45s898ms482µs900ns).
+2026-05-05T10:58:33.919+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T10:58:33.919+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T11:14:10.799+01:00  WARN 1632 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=9m50s403ms303µs500ns).
+2026-05-05T11:15:59.745+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T11:15:59.745+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T11:22:11.604+01:00  WARN 1632 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=2m716ms133µs600ns).
+2026-05-05T11:23:02.617+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T11:23:02.617+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T11:57:32.164+01:00  WARN 1632 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=30m50s498ms878µs).
+2026-05-05T11:57:34.579+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T11:57:34.580+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T12:42:51.827+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
+2026-05-05T12:42:51.834+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
+2026-05-05T12:52:24.221+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T12:52:24.222+01:00  INFO 1632 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T14:30:00.386+01:00  INFO 9108 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 9108 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-05T14:30:00.389+01:00  INFO 9108 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-05T14:30:03.071+01:00  WARN 9108 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-05T14:30:06.848+01:00  INFO 9108 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 7.035 seconds (process running for 7.294)
+2026-05-05T14:33:47.311+01:00  INFO 9108 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T14:33:47.312+01:00  INFO 9108 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T14:34:29.810+01:00  INFO 9108 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T14:34:29.811+01:00  INFO 9108 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T14:40:32.081+01:00  INFO 9108 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T14:40:32.082+01:00  INFO 9108 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T14:40:39.738+01:00  WARN 9108 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=3m6s479ms191µs700ns).
+2026-05-05T14:45:33.150+01:00  INFO 9108 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T14:45:33.150+01:00  INFO 9108 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T16:01:50.806+01:00  INFO 9108 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T16:01:50.849+01:00  INFO 9108 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T16:04:28.192+01:00  INFO 26564 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 26564 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-05T16:04:28.197+01:00  INFO 26564 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-05T16:04:33.081+01:00  WARN 26564 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-05T16:04:43.545+01:00  INFO 26564 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 16.454 seconds (process running for 17.036)
+2026-05-05T16:19:06.629+01:00  INFO 26564 --- [pims-plateform] [http-nio-8080-exec-4] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T16:19:06.632+01:00  INFO 26564 --- [pims-plateform] [http-nio-8080-exec-4] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T16:19:07.759+01:00 ERROR 26564 --- [pims-plateform] [http-nio-8080-exec-5] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Handler dispatch failed: java.lang.Error: Unresolved compilation problem: 
+	The method auditType(((user.getOrganism().getAuditType() != null) ? user.getOrganism().getAuditType().name() : null)) is undefined for the type AuditContexteDto.AuditContexteDtoBuilder
+] with root cause
 
 java.lang.Error: Unresolved compilation problem: 
-	The method getPublicationGlobal(Long) is undefined for the type KpiQueryRepository
+	The method auditType(((user.getOrganism().getAuditType() != null) ? user.getOrganism().getAuditType().name() : null)) is undefined for the type AuditContexteDto.AuditContexteDtoBuilder
 
-	at com.pims.plateform.service.KpiSnapshotService.snapshotPublication(KpiSnapshotService.java:70) ~[classes/:na]
-	at com.pims.plateform.service.KpiSnapshotService.snapshotAllOrganisms(KpiSnapshotService.java:34) ~[classes/:na]
+	at com.pims.plateform.controller.AuditController.getContexte(AuditController.java:147) ~[classes/:na]
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.17.jar:6.2.17]
-	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
-	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.10.jar:1.15.10]
-	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.17.jar:6.2.17]
-	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.17.jar:6.2.17]
-	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.17.jar:6.2.17]
-	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
-	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
-	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
-	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
-
-2026-05-04T11:42:39.494+01:00  INFO 10920 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 10920 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-05-04T11:42:39.496+01:00  INFO 10920 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-05-04T11:42:41.244+01:00  WARN 10920 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-04T11:42:44.341+01:00  INFO 10920 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 5.264 seconds (process running for 5.523)
-2026-05-04T12:03:05.321+01:00  INFO 3480 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 3480 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-05-04T12:03:05.321+01:00  INFO 3480 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-05-04T12:03:07.834+01:00  WARN 3480 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-04T12:03:12.895+01:00  INFO 3480 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 8.06 seconds (process running for 8.693)
-2026-05-04T12:03:27.517+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T12:03:27.522+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T12:04:20.097+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-6] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T12:04:20.099+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-6] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T12:04:30.680+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T12:04:30.680+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T12:05:08.757+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T12:05:08.757+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T12:05:22.941+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T12:05:22.941+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T12:07:02.352+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T12:07:02.353+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T12:16:50.301+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T12:16:50.302+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T12:19:01.683+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T12:19:01.683+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T12:19:32.412+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T12:19:32.412+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T12:20:07.930+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-6] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T12:20:07.930+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-6] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T12:22:16.587+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T12:22:16.588+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T12:22:49.973+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=33, role=direction, orgId=6
-2026-05-04T12:22:49.974+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T12:23:19.171+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T12:23:19.172+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T12:47:24.172+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T12:47:24.172+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T14:15:07.319+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T14:15:07.328+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T14:15:09.964+01:00  WARN 3480 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=1h30m38s763ms643µs200ns).
-2026-05-04T14:15:41.775+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T14:15:41.775+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T14:31:22.017+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T14:31:22.018+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T14:31:50.497+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T14:31:50.497+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T15:06:55.695+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T15:06:55.698+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T15:07:09.679+01:00  WARN 3480 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=4m58s964ms255µs200ns).
-2026-05-04T15:08:08.448+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T15:08:08.449+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T15:09:03.971+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=25, role=direction, orgId=3
-2026-05-04T15:09:03.972+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T15:09:14.659+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=25, role=direction, orgId=3
-2026-05-04T15:09:14.659+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T15:10:13.357+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T15:10:13.359+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T15:10:17.533+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T15:10:17.534+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T15:59:36.492+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T15:59:36.493+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T15:59:44.526+01:00  WARN 3480 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=41m34s690ms553µs800ns).
-2026-05-04T16:31:44.449+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T16:31:44.450+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T16:37:58.719+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T16:37:58.720+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:08:15.990+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-4] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T17:08:15.991+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-4] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:08:16.267+01:00  WARN 3480 --- [pims-plateform] [http-nio-8080-exec-4] c.p.p.repository.KpiQueryRepository      : Publication évolution KPI indisponible org=3 : PreparedStatementCallback; bad SQL grammar [SELECT jour::text AS jour,
-       nb_publications_jour,
-       nb_lecteurs_uniques,
-       nb_lectures,
-       taux_lecture_jour
-FROM v_kpi_publication_evolution
-WHERE organism_id = ?
-  AND jour >= CURRENT_DATE - (? * INTERVAL '1 day')
-ORDER BY jour
-]
-2026-05-04T17:08:22.076+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T17:08:22.076+01:00  INFO 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:08:22.085+01:00  WARN 3480 --- [pims-plateform] [http-nio-8080-exec-8] c.p.p.repository.KpiQueryRepository      : Publication évolution KPI indisponible org=3 : PreparedStatementCallback; bad SQL grammar [SELECT jour::text AS jour,
-       nb_publications_jour,
-       nb_lecteurs_uniques,
-       nb_lectures,
-       taux_lecture_jour
-FROM v_kpi_publication_evolution
-WHERE organism_id = ?
-  AND jour >= CURRENT_DATE - (? * INTERVAL '1 day')
-ORDER BY jour
-]
-2026-05-04T17:08:53.566+01:00  INFO 18256 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 18256 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-05-04T17:08:53.569+01:00  INFO 18256 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-05-04T17:08:55.709+01:00  WARN 18256 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-04T17:08:59.346+01:00  INFO 18256 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 6.301 seconds (process running for 6.585)
-2026-05-04T17:09:03.789+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T17:09:03.790+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:09:30.457+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=32, role=rssi, orgId=6
-2026-05-04T17:09:30.458+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 6 (Agence Nationale de Sécurité des Systèmes d'Information), période 6m
-2026-05-04T17:10:01.337+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T17:10:01.337+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T17:10:09.763+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-3] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
-2026-05-04T17:10:09.763+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-3] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
-2026-05-04T17:11:11.353+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T17:11:11.353+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:11:19.339+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T17:11:19.340+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:11:47.438+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T17:11:47.439+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:12:12.849+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=25, role=direction, orgId=3
-2026-05-04T17:12:12.850+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:12:22.628+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=25, role=direction, orgId=3
-2026-05-04T17:12:22.629+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:13:42.076+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=25, role=direction, orgId=3
-2026-05-04T17:13:42.076+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:13:53.064+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-3] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=25, role=direction, orgId=3
-2026-05-04T17:13:53.064+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-3] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:14:16.008+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=25, role=direction, orgId=3
-2026-05-04T17:14:16.009+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:22:30.118+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=25, role=direction, orgId=3
-2026-05-04T17:22:30.118+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:28:52.569+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-4] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=25, role=direction, orgId=3
-2026-05-04T17:28:52.574+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-4] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:29:00.343+01:00  WARN 18256 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=2m3s333ms404µs400ns).
-2026-05-04T17:33:56.333+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-3] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T17:33:56.334+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-3] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:34:32.858+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-4] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T17:34:32.859+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-4] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T17:38:59.405+01:00  INFO 18256 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : SOA snapshot OK org=3 taux=56.04
-2026-05-04T17:57:59.446+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T17:57:59.447+01:00  INFO 18256 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T22:41:44.666+01:00  INFO 2084 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 2084 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-05-04T22:41:44.670+01:00  INFO 2084 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-05-04T22:41:56.445+01:00  WARN 2084 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-04T22:42:02.702+01:00  INFO 2084 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 19.062 seconds (process running for 19.589)
-2026-05-04T23:03:39.151+01:00  INFO 2084 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T23:03:39.157+01:00  INFO 2084 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T23:03:39.220+01:00 ERROR 2084 --- [pims-plateform] [http-nio-8080-exec-2] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Handler dispatch failed: java.lang.NoSuchMethodError: 'void com.pims.plateform.dto.KpiResponseDto.<init>(java.lang.Long, java.lang.String, java.time.LocalDateTime, boolean, java.lang.String, com.pims.plateform.dto.SoaKpiDto, com.pims.plateform.dto.PublicationKpiDto, com.pims.plateform.dto.FormationKpiDto)'] with root cause
-
-java.lang.NoSuchMethodError: 'void com.pims.plateform.dto.KpiResponseDto.<init>(java.lang.Long, java.lang.String, java.time.LocalDateTime, boolean, java.lang.String, com.pims.plateform.dto.SoaKpiDto, com.pims.plateform.dto.PublicationKpiDto, com.pims.plateform.dto.FormationKpiDto)'
-	at com.pims.plateform.dto.KpiResponseDto$KpiResponseDtoBuilder.build(KpiResponseDto.java:8) ~[classes/:na]
-	at com.pims.plateform.service.KpiOrchestrator.buildForUser(KpiOrchestrator.java:50) ~[classes/:na]
-	at com.pims.plateform.controller.KpiController.getDashboard(KpiController.java:81) ~[classes/:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380) ~[spring-tx-6.2.17.jar:6.2.17]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.17.jar:6.2.17]
+	at com.pims.plateform.controller.AuditController$$SpringCGLIB$$0.getContexte(<generated>) ~[classes/:na]
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
 	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.17.jar:6.2.17]
@@ -465,26 +183,539 @@ java.lang.NoSuchMethodError: 'void com.pims.plateform.dto.KpiResponseDto.<init>(
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
 	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
 
-2026-05-04T23:04:13.251+01:00  INFO 15208 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 15208 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
-2026-05-04T23:04:13.251+01:00  INFO 15208 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
-2026-05-04T23:04:15.323+01:00  WARN 15208 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-04T23:04:18.727+01:00  INFO 15208 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 5.946 seconds (process running for 6.249)
-2026-05-04T23:04:18.799+01:00  INFO 15208 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Formation snapshot OK org=3 taux=0.0
-2026-05-04T23:04:18.805+01:00  INFO 15208 --- [pims-plateform] [scheduling-1] c.p.p.service.KpiSnapshotService         : Formation snapshot OK org=5 taux=0.0
-2026-05-04T23:04:23.420+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T23:04:23.420+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T23:05:11.847+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-3] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T23:05:11.847+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-3] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T23:05:34.625+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-4] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T23:05:34.625+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-4] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T23:12:56.046+01:00  WARN 15208 --- [pims-plateform] [PimsHikariPool:housekeeper] com.zaxxer.hikari.pool.HikariPool        : PimsHikariPool - Thread starvation or clock leap detected (housekeeper delta=3m10s562ms215µs200ns).
-2026-05-04T23:13:00.651+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T23:13:00.652+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T23:15:02.752+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T23:15:02.752+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T23:16:41.801+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T23:16:41.803+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T23:18:15.848+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T23:18:15.848+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
-2026-05-04T23:18:40.705+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
-2026-05-04T23:18:40.706+01:00  INFO 15208 --- [pims-plateform] [http-nio-8080-exec-2] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
+2026-05-05T16:19:10.384+01:00 ERROR 26564 --- [pims-plateform] [http-nio-8080-exec-8] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Handler dispatch failed: java.lang.Error: Unresolved compilation problem: 
+	The method auditType(((user.getOrganism().getAuditType() != null) ? user.getOrganism().getAuditType().name() : null)) is undefined for the type AuditContexteDto.AuditContexteDtoBuilder
+] with root cause
+
+java.lang.Error: Unresolved compilation problem: 
+	The method auditType(((user.getOrganism().getAuditType() != null) ? user.getOrganism().getAuditType().name() : null)) is undefined for the type AuditContexteDto.AuditContexteDtoBuilder
+
+	at com.pims.plateform.controller.AuditController.getContexte(AuditController.java:147) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380) ~[spring-tx-6.2.17.jar:6.2.17]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.17.jar:6.2.17]
+	at com.pims.plateform.controller.AuditController$$SpringCGLIB$$0.getContexte(<generated>) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:991) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:896) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564) ~[tomcat-embed-core-10.1.53.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.53.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:125) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:119) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at com.pims.plateform.security.JwtFilter.doFilterInternal(JwtFilter.java:54) ~[classes/:na]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:319) ~[spring-security-config-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$4(HandlerMappingIntrospector.java:267) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:240) ~[spring-security-config-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1775) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-05-05T16:19:21.186+01:00 ERROR 26564 --- [pims-plateform] [http-nio-8080-exec-2] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Handler dispatch failed: java.lang.Error: Unresolved compilation problem: 
+	The method auditType(((user.getOrganism().getAuditType() != null) ? user.getOrganism().getAuditType().name() : null)) is undefined for the type AuditContexteDto.AuditContexteDtoBuilder
+] with root cause
+
+java.lang.Error: Unresolved compilation problem: 
+	The method auditType(((user.getOrganism().getAuditType() != null) ? user.getOrganism().getAuditType().name() : null)) is undefined for the type AuditContexteDto.AuditContexteDtoBuilder
+
+	at com.pims.plateform.controller.AuditController.getContexte(AuditController.java:147) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380) ~[spring-tx-6.2.17.jar:6.2.17]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.17.jar:6.2.17]
+	at com.pims.plateform.controller.AuditController$$SpringCGLIB$$0.getContexte(<generated>) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:991) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:896) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564) ~[tomcat-embed-core-10.1.53.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.53.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:125) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:119) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at com.pims.plateform.security.JwtFilter.doFilterInternal(JwtFilter.java:54) ~[classes/:na]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:319) ~[spring-security-config-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$4(HandlerMappingIntrospector.java:267) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:240) ~[spring-security-config-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1775) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-05-05T16:19:36.076+01:00 ERROR 26564 --- [pims-plateform] [http-nio-8080-exec-10] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Handler dispatch failed: java.lang.Error: Unresolved compilation problem: 
+	The method auditType(((user.getOrganism().getAuditType() != null) ? user.getOrganism().getAuditType().name() : null)) is undefined for the type AuditContexteDto.AuditContexteDtoBuilder
+] with root cause
+
+java.lang.Error: Unresolved compilation problem: 
+	The method auditType(((user.getOrganism().getAuditType() != null) ? user.getOrganism().getAuditType().name() : null)) is undefined for the type AuditContexteDto.AuditContexteDtoBuilder
+
+	at com.pims.plateform.controller.AuditController.getContexte(AuditController.java:147) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380) ~[spring-tx-6.2.17.jar:6.2.17]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.17.jar:6.2.17]
+	at com.pims.plateform.controller.AuditController$$SpringCGLIB$$0.getContexte(<generated>) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:991) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:896) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564) ~[tomcat-embed-core-10.1.53.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.53.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:125) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:119) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at com.pims.plateform.security.JwtFilter.doFilterInternal(JwtFilter.java:54) ~[classes/:na]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:319) ~[spring-security-config-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$4(HandlerMappingIntrospector.java:267) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:240) ~[spring-security-config-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1775) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-05-05T16:21:21.411+01:00  INFO 6408 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 6408 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-05T16:21:21.414+01:00  INFO 6408 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-05T16:21:27.349+01:00  WARN 6408 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-05T16:21:37.260+01:00  INFO 6408 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 17.019 seconds (process running for 20.854)
+2026-05-05T16:26:23.930+01:00 ERROR 6408 --- [pims-plateform] [http-nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Handler dispatch failed: java.lang.Error: Unresolved compilation problem: 
+	The method auditType(((user.getOrganism().getAuditType() != null) ? user.getOrganism().getAuditType().name() : null)) is undefined for the type AuditContexteDto.AuditContexteDtoBuilder
+] with root cause
+
+java.lang.Error: Unresolved compilation problem: 
+	The method auditType(((user.getOrganism().getAuditType() != null) ? user.getOrganism().getAuditType().name() : null)) is undefined for the type AuditContexteDto.AuditContexteDtoBuilder
+
+	at com.pims.plateform.controller.AuditController.getContexte(AuditController.java:147) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380) ~[spring-tx-6.2.17.jar:6.2.17]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.17.jar:6.2.17]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.17.jar:6.2.17]
+	at com.pims.plateform.controller.AuditController$$SpringCGLIB$$0.getContexte(<generated>) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:991) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:896) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564) ~[tomcat-embed-core-10.1.53.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.53.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:125) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:119) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at com.pims.plateform.security.JwtFilter.doFilterInternal(JwtFilter.java:54) ~[classes/:na]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:319) ~[spring-security-config-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$4(HandlerMappingIntrospector.java:267) ~[spring-webmvc-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:240) ~[spring-security-config-6.5.9.jar:6.5.9]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.17.jar:6.2.17]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1775) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.53.jar:10.1.53]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-05-05T16:27:55.010+01:00  INFO 17600 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 17600 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-05T16:27:55.010+01:00  INFO 17600 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-05T16:27:57.188+01:00  WARN 17600 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-05T16:28:01.317+01:00  INFO 17600 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 6.995 seconds (process running for 7.372)
+2026-05-05T16:56:15.934+01:00  INFO 17600 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T16:56:15.934+01:00  INFO 17600 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T21:40:06.865+01:00  INFO 15888 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 15888 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-05T21:40:06.870+01:00  INFO 15888 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-05T21:40:12.203+01:00  WARN 15888 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-05T21:40:19.135+01:00  INFO 15888 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 13.321 seconds (process running for 14.164)
+2026-05-05T21:46:27.449+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T21:46:27.450+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-10] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T21:52:43.045+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=43, role=auditeur, orgId=5
+2026-05-05T21:52:43.045+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T22:09:04.566+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
+2026-05-05T22:09:04.567+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-5] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T22:09:23.054+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
+2026-05-05T22:09:23.055+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-7] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T22:09:46.578+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=23, role=rssi, orgId=5
+2026-05-05T22:09:46.580+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-9] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 5 (test pims soa), période 6m
+2026-05-05T22:10:16.415+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=21, role=rssi, orgId=3
+2026-05-05T22:10:16.416+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-8] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
+2026-05-05T22:12:09.940+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.controller.KpiController   : KPI ACCESS - userId=44, role=auditeur, orgId=3
+2026-05-05T22:12:09.940+01:00  INFO 15888 --- [pims-plateform] [http-nio-8080-exec-1] c.p.plateform.service.KpiOrchestrator    : Calcul KPI pour organisme 3 (tt), période 6m
+2026-05-05T23:26:16.068+01:00  INFO 700 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Starting PimsPlateformApplication using Java 21.0.7 with PID 700 (C:\Users\Ranim\Desktop\smsi_pims\pims-plateform\target\classes started by Ranim in C:\Users\Ranim\Desktop\smsi_pims\pims-plateform)
+2026-05-05T23:26:16.071+01:00  INFO 700 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-05T23:26:18.926+01:00  WARN 700 --- [pims-plateform] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-05T23:26:23.189+01:00  INFO 700 --- [pims-plateform] [main] c.p.plateform.PimsPlateformApplication   : Started PimsPlateformApplication in 8.008 seconds (process running for 8.507)
