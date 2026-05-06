@@ -311,3 +311,233 @@
   strong { color: #92400e; display: block; margin-bottom: 4px; font-size: 13px; }
   p { font-size: 12px; color: #78350f; margin: 0; }
 }
+
+.ctx-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 860px;
+}
+
+.ctx-block {
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: 10px;
+  padding: 20px 24px;
+}
+
+.cb-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-tertiary);
+}
+
+.cb-sub-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin: 10px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cb-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border-tertiary);
+
+  &:last-child { border-bottom: none; }
+}
+
+.cb-label {
+  flex: 0 0 200px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  padding-top: 2px;
+}
+
+.cb-val {
+  flex: 1;
+  font-size: 13px;
+  color: var(--color-text-primary);
+
+  &.pre {
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+}
+
+.cb-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+
+  &.method        { background: #e0e7ff; color: #3730a3; }
+  &.valid-approuve{ background: #d1fae5; color: #065f46; }
+  &.valid-rejete  { background: #fee2e2; color: #991b1b; }
+  &.valid-en_attente { background: #fef3c7; color: #92400e; }
+  &.statut-brouillon { background: #f3f4f6; color: #374151; }
+  &.statut-valide    { background: #d1fae5; color: #065f46; }
+  &.statut-en_cours  { background: #dbeafe; color: #1e40af; }
+}
+
+.cb-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.cb-list-item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.cli-cat {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  min-width: 120px;
+}
+
+.cli-desc {
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+
+.cli-impact {
+  color: var(--color-text-tertiary);
+  font-size: 11px;
+}
+
+.cb-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 2px 10px;
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.cb-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.cb-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--color-border-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cb-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.cb-empty {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  font-style: italic;
+  padding: 4px 0;
+}
+
+.ctx-note {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #eff6ff;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #1e40af;
+}
+
+/* ── Direction Banner ── */
+.ctx-direction-banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 16px 20px; border-radius: 10px; border: 1px solid; margin-bottom: 20px;
+}
+.banner-approuve { background: #f0fdf4; border-color: #bbf7d0; }
+.banner-attente { background: #fffbeb; border-color: #fde68a; }
+.banner-rejete { background: #fef2f2; border-color: #fecaca; }
+.cdb-icon { font-size: 24px; flex-shrink: 0; }
+.cdb-info { flex: 1; }
+.cdb-title { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 2px; }
+.cdb-status { font-size: 12px; color: #4b5563; }
+.cdb-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+.cdb-badge-valide { background: #dcfce7; color: #166534; }
+.cdb-badge-attente { background: #fef3c7; color: #92400e; }
+.cdb-badge-rejete { background: #fee2e2; color: #991b1b; }
+
+/* ── Objectifs RSSI ── */
+.ctx-obj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.ctx-obj-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; }
+.coc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.coc-titre { font-size: 13px; font-weight: 600; color: #111827; }
+.coc-statut { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.coc-s-atteint { background: #d1fae5; color: #065f46; }
+.coc-s-en_cours { background: #dbeafe; color: #1e40af; }
+.coc-s-planifie { background: #f3f4f6; color: #374151; }
+.coc-s-non_atteint { background: #fee2e2; color: #991b1b; }
+.coc-desc { font-size: 12px; color: #6b7280; margin-bottom: 12px; line-height: 1.4; }
+.coc-meta { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #4b5563; margin-bottom: 10px; }
+.coc-progress { display: flex; align-items: center; gap: 8px; }
+.coc-prog-bar { flex: 1; height: 6px; background: #f3f4f6; border-radius: 3px; overflow: hidden; }
+.coc-prog-fill { height: 100%; border-radius: 3px; }
+.coc-prog-pct { font-size: 11px; font-weight: 600; width: 32px; text-align: right; }
+
+/* ── Modifications SMSI ── */
+.ctx-modif-list { display: flex; flex-direction: column; gap: 10px; }
+.ctx-modif-item { background: #fff; border: 1px solid #e5e7eb; border-left: 3px solid #3b82f6; border-radius: 6px; padding: 12px 16px; }
+.cmi-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.cmi-titre { font-size: 13px; font-weight: 600; color: #111827; }
+.cmi-type { font-size: 10px; background: #f3f4f6; color: #4b5563; padding: 2px 6px; border-radius: 4px; }
+.cmi-statut { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-left: auto; }
+.cmi-s-en_analyse { background: #fef3c7; color: #92400e; }
+.cmi-s-approuve { background: #d1fae5; color: #065f46; }
+.cmi-s-rejete { background: #fee2e2; color: #991b1b; }
+.cmi-s-implemente { background: #dbeafe; color: #1e40af; }
+.cmi-desc { font-size: 12px; color: #4b5563; margin-bottom: 6px; }
+.cmi-impacts { font-size: 12px; color: #111827; margin-bottom: 6px; background: #f9fafb; padding: 6px; border-radius: 4px; }
+.cmi-date { font-size: 11px; color: #9ca3af; text-align: right; }
+
+/* ── Methodologie Card ── */
+.methodo-card { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 16px; flex-wrap: wrap; gap: 16px; }
+.mc-left { display: flex; align-items: center; gap: 16px; }
+.mc-icon { font-size: 32px; }
+.mc-method-name { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+.mc-method-sub { font-size: 12px; color: #64748b; }
+.mc-right { display: flex; align-items: center; }
+.mc-statut-badge { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; }
+.mcs-valide { background: #dcfce7; color: #166534; }
+.mcs-soumis_direction { background: #fef3c7; color: #92400e; }
+.mcs-rejete { background: #fee2e2; color: #991b1b; }
+
+.methodo-validation { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+.mv-row { display: flex; font-size: 12px; }
+.mv-label { color: #6b7280; width: 140px; font-weight: 500; }
+.mv-val { color: #111827; flex: 1; }
+
+.chip-blue { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }

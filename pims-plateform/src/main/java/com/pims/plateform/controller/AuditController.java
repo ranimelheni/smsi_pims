@@ -102,70 +102,160 @@ public class AuditController {
     // CONTEXTE RSSI — lecture seule pour l'auditeur
     // ════════════════════════════════════════════════════════════
 
-    @GetMapping("/contexte")
-    @Transactional
-    public ResponseEntity<?> getContexte(@AuthenticationPrincipal UserDetails ud) {
-        User user = getCurrentUser(ud);
-        if (!ROLES_AUDIT.contains(user.getRole()))
-            return ResponseEntity.status(403).body(Map.of("error", "Accès non autorisé"));
+@GetMapping("/contexte")
+@Transactional
+public ResponseEntity<?> getContexte(@AuthenticationPrincipal UserDetails ud) {
+    User user = getCurrentUser(ud);
+    if (!ROLES_AUDIT.contains(user.getRole()))
+        return ResponseEntity.status(403).body(Map.of("error", "Accès non autorisé"));
 
-        Long orgId = user.getOrganism().getId();
+    Long orgId = user.getOrganism().getId();
 
-        // Clause 4 — contexte
-        Map<String, Object> clause4 = queryFirst(
-            "SELECT perimetre_smsi, enjeux_externes, enjeux_internes, parties_interessees FROM clause4 WHERE organism_id = ?",
-            orgId
-        );
+    // ── Clause 4 ──────────────────────────────────────────────────────────
+    Map<String, Object> clause4 = queryFirst("""
+        SELECT perimetre_smsi, perimetre_pims, enjeux_externes, enjeux_internes,
+               parties_interessees, sites_concernes, activites_exclues,
+               justification_exclusions, interfaces_dependances,
+               engagement_direction, politique_securite, objectifs_smsi,
+               ressources_humaines, ressources_logicielles, ressources_materielles,
+               procedures, outils_protection, version, statut,
+               date_revue
+        FROM clause4 WHERE organism_id = ?
+        """, orgId);
 
-        // Méthodologie risque
-        Map<String, Object> methodo = queryFirst(
-            """
-            SELECT methode, statut, echelle_probabilite, echelle_impact,
-                   seuil_acceptable, seuil_eleve, labels_probabilite, labels_impact
-            FROM methodologie_risque WHERE organism_id = ?
-            """, orgId
-        );
+    // ── Clause 5 ──────────────────────────────────────────────────────────
+    Map<String, Object> clause5 = queryFirst("""
+        SELECT validation_enjeux_externes, validation_enjeux_internes,
+               validation_parties, validation_perimetre, validation_ressources,
+               politique_securite_contenu, politique_diffusion,
+               objectifs_securite_metier, statut
+        FROM clause5 WHERE organism_id = ?
+        """, orgId);
+
+    // ── Méthodologie risque ───────────────────────────────────────────────
+    Map<String, Object> methodo = queryFirst("""
+        SELECT mr.methode, mr.statut, mr.echelle_probabilite, mr.echelle_impact,
+               mr.seuil_acceptable, mr.seuil_eleve,
+               mr.labels_probabilite, mr.labels_impact,
+               mr.commentaire_direction, mr.justification,
+               mr.valide_at,
+               CASE WHEN mr.valide_by IS NOT NULL
+                    THEN (SELECT u.prenom || ' ' || u.nom FROM users u WHERE u.id = mr.valide_by)
+                    ELSE NULL END AS valide_by_name
+        FROM methodologie_risque mr WHERE mr.organism_id = ?
+        """, orgId);
+
+    // ── Objectifs de sécurité RSSI ────────────────────────────────────────
+    List<Map<String, Object>> objectifsRssi = jdbc.queryForList("""
+        SELECT titre, description, statut, avancement,
+               echeance, responsable, lien_politique, moyen_evaluation
+        FROM objectifs_securite WHERE organism_id = ?
+        ORDER BY echeance ASC NULLS LAST
+        """, orgId);
+
+    // ── Gestion des modifications SMSI ────────────────────────────────────
+    List<Map<String, Object>> modifications = jdbc.queryForList("""
+        SELECT titre, description, type_modification,
+               impacts, statut, created_at
+        FROM modifications_smsi WHERE organism_id = ?
+        ORDER BY created_at DESC
+        LIMIT 10
+        """, orgId);
+
+    // ── Type d'audit (norme de l'organisme) ──────────────────────────────
+    String typeAudit = user.getOrganism().getAuditType() != null
+        ? user.getOrganism().getAuditType().name().toLowerCase().replace("_", "")
+        : "iso27001";
+
+    // ── SOA ───────────────────────────────────────────────────────────────
+    Map<String, Object> soa = queryFirst("""
+        SELECT s.statut, s.version,
+               COUNT(sc.id) AS nb_controles,
+               COUNT(sc.id) FILTER (WHERE sc.statut_impl = 'implemente') AS nb_implemente,
+               CASE WHEN COUNT(sc.id) = 0 THEN 0
+                    ELSE ROUND(COUNT(sc.id) FILTER (WHERE sc.statut_impl = 'implemente')
+                         * 100.0 / COUNT(sc.id), 2)
+               END AS taux
+        FROM soa s
+        LEFT JOIN soa_controles sc ON sc.soa_id = s.id AND sc.inclus = TRUE
+        WHERE s.organism_id = ?
+        GROUP BY s.statut, s.version
+        """, orgId);
+
+    AuditContexteDto dto = AuditContexteDto.builder()
+        // Organisme
+        .organismNom(user.getOrganism().getNom())
+        .typeAudit(typeAudit)
+
+        // Statut global direction (clause5)
+        .statutDirection(clause5 != null ? str(clause5.get("statut")) : null)
+        .politiqueDiffusion(clause5 != null ? parseJson(clause5.get("politique_diffusion")) : null)
+
+        // Clause 4.1 & 4.3
+        .perimetreSmsi(clause4 != null ? str(clause4.get("perimetre_smsi")) : null)
+        .perimetrePims(clause4 != null ? str(clause4.get("perimetre_pims")) : null)
+        .enjeuxExternes(clause4 != null ? parseJson(clause4.get("enjeux_externes")) : null)
+        .enjeuxInternes(clause4 != null ? parseJson(clause4.get("enjeux_internes")) : null)
+        .partiesInteressees(clause4 != null ? parseJson(clause4.get("parties_interessees")) : null)
+        .sitesConcernes(clause4 != null ? str(clause4.get("sites_concernes")) : null)
+        .activitesExclues(clause4 != null ? str(clause4.get("activites_exclues")) : null)
+        .justificationExclusions(clause4 != null ? str(clause4.get("justification_exclusions")) : null)
+        .interfacesDependances(clause4 != null ? str(clause4.get("interfaces_dependances")) : null)
+
+        // Clause 4.4
+        .engagementDirection(clause4 != null ? str(clause4.get("engagement_direction")) : null)
+        .politiqueSecurite(clause4 != null ? str(clause4.get("politique_securite")) : null)
+        .objectifsSmsi(clause4 != null ? parseJson(clause4.get("objectifs_smsi")) : null)
+        .ressourcesHumaines(clause4 != null ? parseJson(clause4.get("ressources_humaines")) : null)
+        .ressourcesLogicielles(clause4 != null ? parseJson(clause4.get("ressources_logicielles")) : null)
+        .ressourcesMaterielles(clause4 != null ? parseJson(clause4.get("ressources_materielles")) : null)
+        .procedures(clause4 != null ? parseJson(clause4.get("procedures")) : null)
+        .outilsProtection(clause4 != null ? parseJson(clause4.get("outils_protection")) : null)
+        .versionClause4(clause4 != null ? str(clause4.get("version")) : null)
+        .statutClause4(clause4 != null ? str(clause4.get("statut")) : null)
+        .dateRevue(clause4 != null && clause4.get("date_revue") != null
+            ? clause4.get("date_revue").toString() : null)
+
+        // Clause 5
+        .validationEnjeuxExternes(clause5 != null ? str(clause5.get("validation_enjeux_externes")) : null)
+        .validationEnjeuxInternes(clause5 != null ? str(clause5.get("validation_enjeux_internes")) : null)
+        .validationParties(clause5 != null ? str(clause5.get("validation_parties")) : null)
+        .validationPerimetre(clause5 != null ? str(clause5.get("validation_perimetre")) : null)
+        .validationRessources(clause5 != null ? str(clause5.get("validation_ressources")) : null)
+        .politiqueSecuriteContenu(clause5 != null ? str(clause5.get("politique_securite_contenu")) : null)
+        .objectifsSecuriteMetier(clause5 != null ? parseJson(clause5.get("objectifs_securite_metier")) : null)
+
+        // Objectifs de sécurité RSSI
+        .objectifsSecuriteRssi(objectifsRssi.isEmpty() ? null : objectifsRssi)
+
+        // Modifications SMSI
+        .modificationsSmsi(modifications.isEmpty() ? null : modifications)
+
+        // Méthodologie
+        .methodeRisque(methodo != null ? str(methodo.get("methode")) : null)
+        .methodeStatut(methodo != null ? str(methodo.get("statut")) : null)
+        .methodeCommentaireDirection(methodo != null ? str(methodo.get("commentaire_direction")) : null)
+        .methodeValidePar(methodo != null ? str(methodo.get("valide_by_name")) : null)
+        .methodeValideAt(methodo != null && methodo.get("valide_at") != null
+            ? methodo.get("valide_at").toString() : null)
+        .methodeJustification(methodo != null ? str(methodo.get("justification")) : null)
+        .echelleProbabilite(methodo != null ? toInt(methodo.get("echelle_probabilite")) : null)
+        .echelleImpact(methodo != null ? toInt(methodo.get("echelle_impact")) : null)
+        .seuilAcceptable(methodo != null ? toInt(methodo.get("seuil_acceptable")) : null)
+        .seuilEleve(methodo != null ? toInt(methodo.get("seuil_eleve")) : null)
+        .labelsProbabilite(methodo != null ? parseJson(methodo.get("labels_probabilite")) : null)
+        .labelsImpact(methodo != null ? parseJson(methodo.get("labels_impact")) : null)
 
         // SOA
-        Map<String, Object> soa = queryFirst(
-            """
-            SELECT s.statut, s.version,
-                   COUNT(sc.id) AS nb_controles,
-                   COUNT(sc.id) FILTER (WHERE sc.statut_impl = 'implemente') AS nb_implemente,
-                   CASE WHEN COUNT(sc.id) = 0 THEN 0
-                        ELSE ROUND(COUNT(sc.id) FILTER (WHERE sc.statut_impl = 'implemente')
-                             * 100.0 / COUNT(sc.id), 2)
-                   END AS taux
-            FROM soa s
-            LEFT JOIN soa_controles sc ON sc.soa_id = s.id AND sc.inclus = TRUE
-            WHERE s.organism_id = ?
-            GROUP BY s.statut, s.version
-            """, orgId
-        );
+        .soaStatut(soa != null ? str(soa.get("statut")) : null)
+        .soaVersion(soa != null ? str(soa.get("version")) : null)
+        .soaNbControles(soa != null ? toInt(soa.get("nb_controles")) : 0)
+        .soaNbImplemente(soa != null ? toInt(soa.get("nb_implemente")) : 0)
+        .soaTaux(soa != null ? toDouble(soa.get("taux")) : 0.0)
+        .build();
 
-        AuditContexteDto dto = AuditContexteDto.builder()
-            .organismNom(user.getOrganism().getNom())
-            .perimetreSmsi(clause4 != null ? str(clause4.get("perimetre_smsi")) : null)
-            .enjeuxExternes(clause4 != null ? parseJson(clause4.get("enjeux_externes")) : null)
-            .enjeuxInternes(clause4 != null ? parseJson(clause4.get("enjeux_internes")) : null)
-            .partiesInteressees(clause4 != null ? parseJson(clause4.get("parties_interessees")) : null)
-            .methodeRisque(methodo != null ? str(methodo.get("methode")) : null)
-            .methodeStatut(methodo != null ? str(methodo.get("statut")) : null)
-            .echelleProbabilite(methodo != null ? toInt(methodo.get("echelle_probabilite")) : null)
-            .echelleImpact(methodo != null ? toInt(methodo.get("echelle_impact")) : null)
-            .seuilAcceptable(methodo != null ? toInt(methodo.get("seuil_acceptable")) : null)
-            .seuilEleve(methodo != null ? toInt(methodo.get("seuil_eleve")) : null)
-            .labelsProbabilite(methodo != null ? parseJson(methodo.get("labels_probabilite")) : null)
-            .labelsImpact(methodo != null ? parseJson(methodo.get("labels_impact")) : null)
-            .soaStatut(soa != null ? str(soa.get("statut")) : null)
-            .soaVersion(soa != null ? str(soa.get("version")) : null)
-            .soaNbControles(soa != null ? toInt(soa.get("nb_controles")) : 0)
-            .soaNbImplemente(soa != null ? toInt(soa.get("nb_implemente")) : 0)
-            .soaTaux(soa != null ? toDouble(soa.get("taux")) : 0.0)
-            .build();
-
-        return ResponseEntity.ok(dto);
-    }
+    return ResponseEntity.ok(dto);
+}
 
     // ════════════════════════════════════════════════════════════
     // ÉVALUATIONS

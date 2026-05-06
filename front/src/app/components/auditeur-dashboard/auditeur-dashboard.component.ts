@@ -120,6 +120,7 @@ readonly chartIds = {
   ngOnInit(): void {
     this.currentUser = this.auth.getCurrentUser();
     this.loadSessions();
+    this.loadContexte();
   }
 
   ngOnDestroy(): void {
@@ -134,10 +135,27 @@ readonly chartIds = {
     this.cdr.markForCheck();
 
     switch (tab) {
-      case 'contexte': if (!this.contexte) this.loadContexte(); break;
-      case 'kpi-rssi': if (!this.kpiRssi) this.loadKpiRssi(); break;
-      case 'evaluation': if (this.selectedSession) this.loadEvaluations(); break;
-      case 'kpi-audit': if (this.selectedSession) this.loadKpiAudit(); break;
+      case 'contexte': 
+        if (!this.contexte) this.loadContexte(); 
+        break;
+      case 'kpi-rssi': 
+        if (!this.kpiRssi) this.loadKpiRssi(); 
+        else {
+          this.zone.runOutsideAngular(() => {
+            const t = setTimeout(() => {
+              this.initRssiCharts();
+              this.zone.run(() => this.cdr.markForCheck());
+            }, 100);
+            this.timers.push(t);
+          });
+        }
+        break;
+      case 'evaluation': 
+        if (this.selectedSession) this.loadEvaluations(); 
+        break;
+      case 'kpi-audit': 
+        if (this.selectedSession) this.loadKpiAudit(); 
+        break;
     }
   }
 
