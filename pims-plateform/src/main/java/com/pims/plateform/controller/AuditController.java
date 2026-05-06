@@ -404,28 +404,62 @@ public ResponseEntity<?> getContexte(@AuthenticationPrincipal UserDetails ud) {
 
         return ResponseEntity.ok(kpi);
     }
+   // Ajouter dans les dépendances du contrôleur :
+private final SuiviNcRepository suiviNcRepo;
 
-    @PatchMapping("/sessions/{sessionId}/finaliser")
-    @Transactional
-    public ResponseEntity<?> finaliser(
-            @PathVariable Long sessionId,
-            @RequestBody(required = false) Map<String, Object> d,
-            @AuthenticationPrincipal UserDetails ud) {
+@PatchMapping("/sessions/{sessionId}/finaliser")
+@Transactional
+public ResponseEntity<?> finaliser(
+        @PathVariable Long sessionId,
+        @RequestBody(required = false) Map<String, Object> d,
+        @AuthenticationPrincipal UserDetails ud) {
 
-        User user = getCurrentUser(ud);
-        AuditSession session = sessionRepo.findById(sessionId).orElse(null);
-        if (session == null) return ResponseEntity.notFound().build();
-        if (!session.getOrganism().getId().equals(user.getOrganism().getId()))
-            return ResponseEntity.status(403).body(Map.of("error", "Accès non autorisé"));
+    User user = getCurrentUser(ud);
+    AuditSession session = sessionRepo.findById(sessionId).orElse(null);
+    if (session == null) return ResponseEntity.notFound().build();
+    if (!session.getOrganism().getId().equals(user.getOrganism().getId()))
+        return ResponseEntity.status(403).body(Map.of("error", "Accès non autorisé"));
 
-        session.setStatut("finalise");
-        session.setDateFin(LocalDate.now());
-        if (d != null && d.get("commentaire_global") != null)
-            session.setCommentaireGlobal(str(d.get("commentaire_global")));
+    session.setStatut("finalise");
+    session.setDateFin(LocalDate.now());
+    if (d != null && d.get("commentaire_global") != null)
+        session.setCommentaireGlobal(str(d.get("commentaire_global")));
+    sessionRepo.save(session);
 
-        sessionRepo.save(session);
-        return ResponseEntity.ok(Map.of("message", "Session finalisée"));
+    // ── Exporter NC et partiels vers suivi_nc ────────────────────────
+    List<AuditEvaluation> evals = evalRepo.findBySessionId(sessionId);
+    int exported = 0;
+
+    for (AuditEvaluation ev : evals) {
+        if (!List.of("non_conforme", "partiel").contains(ev.getStatut())) continue;
+        if (suiviNcRepo.existsByAuditSessionIdAndAuditEvaluationId(sessionId, ev.getId()))
+            continue;
+
+        SuiviNc nc = SuiviNc.builder()
+            .organism(session.getOrganism())
+            .auditSession(session)
+            .auditEvaluationId(ev.getId())
+            .clauseCode(ev.getClauseCode())
+            .clauseTitre(ev.getClauseTitre())
+            .statutAudit(ev.getStatut())
+            .justification(ev.getJustification())
+            .actionPlanifiee(ev.getActionPlanifiee())
+            .priorite(ev.getPriorite() != null ? ev.getPriorite() : "normale")
+            .echeanceAudit(ev.getEcheance())
+            .responsableAudit(ev.getResponsable())
+            .build();
+
+        suiviNcRepo.save(nc);
+        exported++;
     }
+
+    log.info("Session {} finalisée — {} NC/partiels exportés", sessionId, exported);
+
+    return ResponseEntity.ok(Map.of(
+        "message",       "Session finalisée",
+        "nc_exportes",   exported
+    ));
+}
 
     // ── Helpers ────────────────────────────────────────────────────────────
     private Map<String, Object> sessionToMap(AuditSession s) {

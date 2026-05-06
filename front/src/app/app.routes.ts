@@ -110,6 +110,12 @@ loadComponent: () =>
   loadComponent: () =>
     import('./components/auditeur-dashboard/auditeur-dashboard.component')
       .then(m => m.AuditeurDashboardComponent)
+},
+{
+  path: 'suivi-nc',
+  loadComponent: () =>
+    import('./components/suivi-nc/suivi-nc.component')
+      .then(m => m.SuiviNcComponent)
 }
 
     ]

@@ -1,0 +1,255 @@
+<div class="snc-page">
+
+  <!-- HEADER -->
+  <div class="snc-header">
+    <div class="sh-left">
+
+        <div>
+        <h1>Suivi des non-conformités</h1>
+      </div>
+    </div>
+    <div class="sh-right">
+      <button class="btn-tab"   style="font-size:20px; padding:12px 20px"
+ [class.active]="activeTab === 'liste'"
+        (click)="switchTab('liste')"><strong>Liste</strong></button>
+      <button class="btn-tab"   style="font-size:20px; padding:12px 20px"
+[class.active]="activeTab === 'kpi'"
+        (click)="switchTab('kpi')"> <strong>KPI</strong></button>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div class="snc-toast success" *ngIf="success">{{ success }}</div>
+  <div class="snc-toast error"   *ngIf="error">{{ error }}</div>
+
+  <!-- ══ TAB LISTE ══ -->
+  <div *ngIf="activeTab === 'liste'">
+
+    <!-- Filtres -->
+    <div class="snc-toolbar">
+      <select [(ngModel)]="filtreClause" class="f-select">
+        <option value="">Toutes clauses</option>
+        <option *ngFor="let c of clausesPrincipales" [value]="c">Clause {{ c }}</option>
+      </select>
+      <select [(ngModel)]="filtreStatut" class="f-select">
+        <option value="">Tous statuts</option>
+        <option *ngFor="let s of STATUTS_IMPL" [value]="s.value">{{ s.label }}</option>
+      </select>
+      <select [(ngModel)]="filtrePriorite" class="f-select">
+        <option value="">Toutes priorités</option>
+        <option *ngFor="let p of PRIORITES" [value]="p">{{ p }}</option>
+      </select>
+      <span class="f-count">{{ listeFiltree.length }} / {{ liste.length }}</span>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-row">
+      <div class="spinner"></div><span>Chargement...</span>
+    </div>
+
+    <!-- Vide -->
+    <div *ngIf="!loading && !liste.length" class="empty-state">
+      <span>✅</span>
+      <p>Aucune non-conformité — aucun audit n'a encore été finalisé.</p>
+    </div>
+
+    <!-- Table -->
+    <div *ngIf="!loading && listeFiltree.length" class="snc-table-wrap">
+      <table class="snc-table">
+        <thead>
+          <tr>
+            <th>Clause</th>
+            <th>Statut audit</th>
+            <th>Priorité</th>
+            <th>Session</th>
+            <th>Écart constaté</th>
+            <th>Action planifiée</th>
+            <th>Statut implémentation</th>
+            <th>Responsable </th>
+            <th>Échéance </th>
+            <th>Commentaire</th>
+            <th>Enregistrer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let nc of listeFiltree"
+            [class.row-retard]="isRetard(nc)"
+            [class.row-fait]="nc.statut_impl === 'fait' || nc.statut_impl === 'accepte'">
+
+            <td class="col-clause">
+              <div class="clause-code">{{ nc.clause_code }}</div>
+              <div class="clause-titre">{{ nc.clause_titre }}</div>
+            </td>
+
+            <td>
+              <span class="badge-audit"
+                [style.background]="getStatutAuditColor(nc.statut_audit) + '22'"
+                [style.color]="getStatutAuditColor(nc.statut_audit)">
+                {{ nc.statut_audit === 'non_conforme' ? 'Non conforme' : 'Partiel' }}
+              </span>
+            </td>
+
+            <td>
+              <span class="badge-prio"
+                [style.color]="getPrioriteColor(nc.priorite)">
+                {{ nc.priorite }}
+              </span>
+            </td>
+
+            <td class="col-session">{{ nc.audit_session_titre }}</td>
+
+            <td class="col-text">{{ nc.justification || '—' }}</td>
+
+            <td class="col-text">{{ nc.action_planifiee || '—' }}</td>
+
+            <td>
+              <select [(ngModel)]="nc.statut_impl" class="impl-select"
+                [style.border-color]="getStatutImplColor(nc.statut_impl)">
+                <option *ngFor="let s of STATUTS_IMPL" [value]="s.value">
+                  {{ s.label }}
+                </option>
+              </select>
+            </td>
+
+            <td>
+              <input [(ngModel)]="nc.responsable_rssi"
+                class="inp-inline" placeholder="Responsable..."/>
+            </td>
+
+            <td>
+              <input type="date" [(ngModel)]="nc.echeance_rssi"
+                class="inp-inline"
+                [class.date-retard]="isRetard(nc)"/>
+            </td>
+
+            <td>
+              <textarea [(ngModel)]="nc.commentaire_rssi"
+                class="ta-inline" rows="2"
+                placeholder="Commentaire...">
+              </textarea>
+            </td>
+
+            <td>
+              <button class="btn-save"
+                [disabled]="isSaving(nc.id)"
+                (click)="save(nc)">
+                {{ isSaving(nc.id) ? '...' : '💾' }}
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ TAB KPI ══ -->
+  <div *ngIf="activeTab === 'kpi'">
+
+    <div *ngIf="loadingKpi" class="loading-row">
+      <div class="spinner"></div><span>Calcul des KPI...</span>
+    </div>
+
+    <div *ngIf="!loadingKpi && !kpi?.has_data" class="empty-state">
+      <span>📊</span>
+      <p>Aucune donnée — finalisez un audit pour voir les KPI de suivi.</p>
+    </div>
+
+    <div *ngIf="!loadingKpi && kpi?.has_data">
+
+      <!-- Cards globales -->
+      <div class="snc-cards">
+        <div class="snc-card" style="border-left-color:#ef4444">
+          <div class="sc-val">{{ kpi!.total_nc }}</div>
+          <div class="sc-lbl">Total NC/Partiels</div>
+        </div>
+        <div class="snc-card" style="border-left-color:#10b981">
+          <div class="sc-val">{{ kpi!.nb_traites }}</div>
+          <div class="sc-lbl">Traités</div>
+        </div>
+        <div class="snc-card" style="border-left-color:#f59e0b">
+          <div class="sc-val">{{ kpi!.nb_en_cours }}</div>
+          <div class="sc-lbl">En cours</div>
+        </div>
+        <div class="snc-card"
+          [style.border-left-color]="kpi!.nb_en_retard > 0 ? '#ef4444' : '#9ca3af'">
+          <div class="sc-val" [style.color]="kpi!.nb_en_retard > 0 ? '#ef4444' : 'inherit'">
+            {{ kpi!.nb_en_retard }}
+          </div>
+          <div class="sc-lbl">En retard</div>
+        </div>
+        <div class="snc-card" style="border-left-color:#3b82f6">
+          <div class="sc-val">{{ kpi!.taux_traitement | number:'1.0-1' }}%</div>
+          <div class="sc-lbl">Taux de traitement</div>
+        </div>
+      </div>
+
+      <!-- Barre de progression globale -->
+      <div class="snc-progress-bar">
+        <div class="spb-label">
+          Progression globale du traitement
+          <strong>{{ kpi!.taux_traitement | number:'1.1-1' }}%</strong>
+        </div>
+        <div class="spb-track">
+          <div class="spb-fill"
+            [style.width.%]="kpi!.taux_traitement"
+            [style.background]="kpi!.taux_traitement >= 80 ? '#10b981' : kpi!.taux_traitement >= 50 ? '#f59e0b' : '#ef4444'">
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="snc-charts-grid">
+        <div class="snc-chart-panel">
+          <div class="scp-title">Répartition par statut</div>
+          <div class="chart-wrap">
+            <canvas [id]="ids.doughnut"></canvas>
+          </div>
+        </div>
+        <div class="snc-chart-panel">
+          <div class="scp-title">NC par clause principale</div>
+          <div class="chart-wrap">
+            <canvas [id]="ids.barClause"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tableau par clause -->
+      <div class="snc-clause-table">
+        <div class="sct-title">Détail par clause</div>
+        <table class="kpi-mini-table">
+          <thead>
+            <tr>
+              <th>Clause</th>
+              <th>Total</th>
+              <th>Traités</th>
+              <th>Non traités</th>
+              <th>Taux</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of kpi!.par_clause">
+              <td>Clause {{ c.clause_principale }}</td>
+              <td class="text-center">{{ c.total }}</td>
+              <td class="text-center text-green">{{ c.nb_traites }}</td>
+              <td class="text-center text-red">{{ c.nb_non_traites }}</td>
+              <td>
+                <div class="mini-bar-wrap">
+                  <div class="mini-bar">
+                    <div class="mini-fill"
+                      [style.width.%]="c.taux_traitement"
+                      [style.background]="c.taux_traitement >= 80 ? '#10b981' : c.taux_traitement >= 50 ? '#f59e0b' : '#ef4444'">
+                    </div>
+                  </div>
+                  <span>{{ c.taux_traitement | number:'1.0-1' }}%</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>

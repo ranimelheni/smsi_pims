@@ -107,7 +107,7 @@ isRiskAnalysisEnabled = false;
   ]
 },
 {
-  label:  'KPI & Tableau de bord',
+  label:  'KPIs',
   icon:   'chart',
   route:  '/dashboard/kpi-dashboard',
   roles:  ['rssi', 'direction']
@@ -118,6 +118,12 @@ isRiskAnalysisEnabled = false;
   icon:  'audit',
   route: '/dashboard/auditeur-dashboard',
   roles: ['auditeur']
+},
+{
+  label: 'Suivi des non-conformités',
+  icon:  'nc',
+  route: '/dashboard/suivi-nc',
+  roles: ['rssi', 'direction']
 }
 
   ];

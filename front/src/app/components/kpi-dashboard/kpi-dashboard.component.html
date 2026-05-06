@@ -4,7 +4,7 @@
   <div class="kv-header">
     <div class="kvh-left">
       <div>
-        <h1>📊 Indicateurs KPI</h1>
+        <h1>Indicateurs KPI</h1>
         <p class="kvh-sub">{{ kpi?.organism_nom || '...' }}</p>
       </div>
     </div>
@@ -44,19 +44,16 @@
 
   <!-- PAS DE DONNÉES -->
   <div *ngIf="!loading && (!kpi || !kpi.has_data)" class="kv-empty">
-    <div class="kve-icon">📊</div>
     <h2>Aucun indicateur disponible</h2>
     <p>{{ kpi?.message_vide || 'Aucune donnée KPI disponible pour votre organisme.' }}</p>
     <div class="kve-actions">
       <div class="kvea-item">
-        <span class="kvea-icon">🔐</span>
         <div>
           <div class="kvea-title">KPI Conformité SOA</div>
           <div class="kvea-hint">Configurez et validez votre SOA ISO 27001</div>
         </div>
       </div>
       <div class="kvea-item">
-        <span class="kvea-icon">📢</span>
         <div>
           <div class="kvea-title">KPI Publications</div>
           <div class="kvea-hint">Publiez des communications à votre équipe</div>
@@ -73,7 +70,6 @@
 
       <div class="kvs-header">
         <div class="kvsh-left">
-          <span class="kvsh-icon">🔐</span>
           <div>
             <div class="kvsh-title">Conformité SOA</div>
             <div class="kvsh-sub">Déclaration d'applicabilité</div>
@@ -89,22 +85,18 @@
       <div class="kv-cards">
         <div class="kv-card"
           [style.border-left-color]="getColor(kpi?.soa?.taux_global ?? 0)">
-          <div class="kvc-icon">✅</div>
           <div class="kvc-val">{{ kpi?.soa?.nb_implemente ?? 0 }}</div>
           <div class="kvc-lbl">Implémentés</div>
         </div>
         <div class="kv-card" style="border-left-color:#f59e0b">
-          <div class="kvc-icon">⏳</div>
           <div class="kvc-val">{{ kpi?.soa?.nb_en_cours ?? 0 }}</div>
           <div class="kvc-lbl">En cours</div>
         </div>
         <div class="kv-card" style="border-left-color:#9ca3af">
-          <div class="kvc-icon">📋</div>
           <div class="kvc-val">{{ kpi?.soa?.nb_non_commence ?? 0 }}</div>
           <div class="kvc-lbl">Non démarrés</div>
         </div>
         <div class="kv-card" style="border-left-color:#3b82f6">
-          <div class="kvc-icon">🔢</div>
           <div class="kvc-val">{{ kpi?.soa?.total_controles ?? 0 }}</div>
           <div class="kvc-lbl">Total contrôles</div>
         </div>
@@ -172,7 +164,7 @@
           <canvas [id]="ids.soaLine"></canvas>
         </div>
         <div *ngIf="!kpi?.soa?.evolution?.length" class="kv-no-data-inline">
-          ℹ️ Pas encore d'historique d'évolution.
+           Pas encore d'historique d'évolution.
           Les données apparaîtront après la première mise à jour journalière.
         </div>
       </div>
@@ -181,7 +173,6 @@
     <!-- Message SOA absent -->
     <div *ngIf="!loading && kpi?.has_data && !kpi?.soa?.has_data"
       class="kv-partial-empty">
-      <span>🔐</span>
       <p>KPI SOA non disponible — Configurez votre déclaration d'applicabilité ISO 27001.</p>
     </div>
 
@@ -192,7 +183,6 @@
 
   <div class="kvs-header">
     <div class="kvsh-left">
-      <span class="kvsh-icon">📢</span>
       <div>
         <div class="kvsh-title">Lecture des publications</div>
         <div class="kvsh-sub">Taux de lecture par publication publiée</div>
@@ -215,19 +205,16 @@
     </div>
 
     <div class="kv-card" style="border-left-color:#10b981">
-      <div class="kvc-icon">👁️</div>
       <div class="kvc-val">{{ kpi?.publications?.nb_lecteurs_uniques ?? 0 }}</div>
       <div class="kvc-lbl">Lecteurs uniques</div>
     </div>
 
     <div class="kv-card" style="border-left-color:#3b82f6">
-      <div class="kvc-icon">👥</div>
       <div class="kvc-val">{{ kpi?.publications?.total_users_actifs ?? 0 }}</div>
       <div class="kvc-lbl">Utilisateurs actifs</div>
     </div>
 
     <div class="kv-card" style="border-left-color:#f59e0b">
-      <div class="kvc-icon">📈</div>
       <div class="kvc-val">
         {{ (kpi?.publications?.taux_lecture_global ?? 0) | number:'1.0-1' }}%
       </div>
@@ -255,7 +242,7 @@
 
     <div *ngIf="!kpi?.publications?.par_publication?.length"
       class="kv-no-data-inline">
-      ℹ️ Aucune publication dans cette période.
+       Aucune publication dans cette période.
     </div>
   </div>
 
@@ -265,7 +252,6 @@
 
   <div class="kvs-header">
     <div class="kvsh-left">
-      <span class="kvsh-icon">🎓</span>
       <div>
         <div class="kvsh-title">Participation aux formations</div>
         <div class="kvsh-sub">Taux de présence par session</div>
@@ -281,26 +267,22 @@
   <div class="kv-cards">
 
     <div class="kv-card" style="border-left-color:#3b82f6">
-      <div class="kvc-icon">📅</div>
       <div class="kvc-val">{{ kpi?.formation?.total_sessions ?? 0 }}</div>
       <div class="kvc-lbl">Total sessions</div>
     </div>
 
     <div class="kv-card" style="border-left-color:#10b981">
-      <div class="kvc-icon">✅</div>
       <div class="kvc-val">{{ kpi?.formation?.sessions_terminees ?? 0 }}</div>
       <div class="kvc-lbl">Terminées</div>
     </div>
 
     <div class="kv-card" style="border-left-color:#f59e0b">
-      <div class="kvc-icon">⏳</div>
       <div class="kvc-val">{{ kpi?.formation?.sessions_planifiees ?? 0 }}</div>
       <div class="kvc-lbl">Planifiées</div>
     </div>
 
     <div class="kv-card"
       [style.border-left-color]="getColor(kpi?.formation?.taux_participation_global ?? 0)">
-      <div class="kvc-icon">👥</div>
       <div class="kvc-val">{{ kpi?.formation?.total_presents ?? 0 }}</div>
       <div class="kvc-lbl">Présents confirmés</div>
     </div>
@@ -326,7 +308,7 @@
 
     <div *ngIf="!kpi?.formation?.par_session?.length"
       class="kv-no-data-inline">
-      ℹ️ Aucune session dans cette période.
+       Aucune session dans cette période.
     </div>
   </div>
 
@@ -335,13 +317,11 @@
 <!-- Message formation absent -->
 <div *ngIf="!loading && kpi?.has_data && !kpi?.formation?.has_data"
   class="kv-partial-empty">
-  <span>🎓</span>
   <p>KPI Formation non disponible — Créez des sessions de formation pour voir les indicateurs.</p>
 </div>
 <!-- Message publications absent -->
 <div *ngIf="!loading && kpi?.has_data && !kpi?.publications?.has_data"
   class="kv-partial-empty">
-  <span>📢</span>
   <p>KPI Publications non disponible — Publiez des communications pour voir les indicateurs.</p>
 </div>
 

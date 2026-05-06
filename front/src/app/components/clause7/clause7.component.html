@@ -3,8 +3,7 @@
   <!-- HEADER -->
   <div class="c7-header">
     <div>
-      <h1>📋 Clause 7 — Soutien</h1>
-      <p class="c7-sub">ISO 27001 / 27701 · Compétences, Sensibilisation, Communication, Documents</p>
+      <h1>Support</h1>
     </div>
   </div>
 
@@ -31,7 +30,7 @@
       <!-- MON PROFIL (employé) -->
 <div class="section-card" *ngIf="monProfil && !isDirection && !isRssi">
         <div class="sc-header">
-          <div class="sc-title">🎓 Mon profil de compétences</div>
+          <div class="sc-title">Mon profil de compétences</div>
           <button class="btn-primary" (click)="editProfil = !editProfil">
             {{ editProfil ? 'Annuler' : '✏️ Modifier' }}
           </button>
@@ -62,11 +61,10 @@
           <!-- ── CV ── -->
           <div class="cv-section">
             <div class="cvs-header">
-              <div class="cs-title">📄 CV</div>
+              <div class="cs-title"> CV</div>
             </div>
             <!-- CV existant -->
             <div *ngIf="monProfil.nb_cvs > 0" class="cv-item">
-              <span class="file-icon">📕</span>
               <div class="cv-info">
                 <div class="cv-nom">{{ monProfil.cvs?.[0]?.nom_fichier || 'CV uploadé' }}</div>
                 <div class="cv-meta" *ngIf="monProfil.cvs?.[0]?.taille">
@@ -104,7 +102,7 @@
 
           <!-- Certifications -->
           <div class="certifs-section">
-            <div class="cs-title">🏅 Certifications ({{ monProfil.nb_certifications }})</div>
+            <div class="cs-title"> Certifications ({{ monProfil.nb_certifications }})</div>
             <div *ngIf="!monProfil.certifications?.length" class="cs-empty">Aucune certification ajoutée</div>
 
             <!-- Bouton ajouter -->
@@ -214,7 +212,7 @@
       <!-- LISTE EMPLOYÉS — RSSI/Admin (nouveau layout avec panneau détail) -->
       <div class="section-card" *ngIf="canVoirProfils && profils.length">
         <div class="sc-header">
-          <div class="sc-title">👥 Compétences des employés</div>
+          <div class="sc-title"> Compétences des employés</div>
           <span class="badge-count">{{ profils.length }}</span>
         </div>
 
@@ -264,7 +262,7 @@
                         {{ profilSelecte?.id === p.id ? '▲' : '▼ Détail' }}
                       </button>
                       <button *ngIf="canEvaluerEmploye" class="btn-primary btn-sm"
-                        (click)="ouvrirEvaluation(p)">✏️ Évaluer</button>
+                        (click)="ouvrirEvaluation(p)"> Évaluer</button>
                     </div>
                   </td>
                     <td *ngIf="isDirection" (click)="$event.stopPropagation()">
@@ -321,7 +319,6 @@
                 Aucun CV déposé
               </div>
               <div *ngFor="let cv of profilSelecte.cvs" class="cv-item">
-                <span class="file-icon">📕</span>
                 <div class="cv-info">
                   <div class="cv-nom">{{ cv.nom_fichier }}</div>
                   <div class="cv-meta">{{ formatTaille(cv.taille) }} · {{ cv.uploaded_at | slice:0:10 }}</div>
@@ -353,7 +350,6 @@
                       [class.text-red]="isCertifExpired(c.date_expiration)"
                       [class.text-amber]="isCertifExpiringSoon(c.date_expiration)">
                       Expire : {{ c.date_expiration }}
-                      <span *ngIf="isCertifExpired(c.date_expiration)">⚠️</span>
                     </span>
                   </div>
                 </div>
@@ -397,7 +393,7 @@
     <div *ngIf="activeTab === 'formations'">
 
       <div class="tab-toolbar">
-        <div class="tt-title">📚 Sessions de formation & sensibilisation</div>
+        <div class="tt-title"> Sessions de formation & sensibilisation</div>
         <button *ngIf="canPublish" class="btn-primary"
           (click)="showNewSession = !showNewSession">
           {{ showNewSession ? 'Annuler' : '+ Nouvelle session' }}
@@ -433,7 +429,7 @@
           <label><input type="checkbox" [(ngModel)]="sessionForm.obligatoire"/> Session obligatoire</label>
         </div>
         <div class="form-actions">
-          <button class="btn-primary" (click)="creerSession()">💾 Créer la session</button>
+          <button class="btn-primary" (click)="creerSession()"> Créer la session</button>
         </div>
       </div>
 
@@ -541,7 +537,7 @@
     <div *ngIf="activeTab === 'communication'">
 
       <div class="tab-toolbar">
-        <div class="tt-title">📢 Communications</div>
+        <div class="tt-title">Publications</div>
         <button *ngIf="canPublish" class="btn-primary"
           (click)="showNewPub = !showNewPub">
           {{ showNewPub ? 'Annuler' : '+ Nouvelle publication' }}
@@ -626,7 +622,7 @@
     <div *ngIf="activeTab === 'documents'">
 
       <div class="tab-toolbar">
-        <div class="tt-title">📄 Informations documentées</div>
+        <div class="tt-title">Informations documentées</div>
         <div class="tt-actions">
           <select [(ngModel)]="filtreTypeDoc" class="filter-select">
             <option value="">Tous types</option>
