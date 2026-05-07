@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SuiviNcService } from '../../services/suivi-nc.service';
 import { AuthService } from '../../services/auth.service';
-import { SuiviNc, SuiviNcKpi } from '../../models/suivi-nc.models';
+import { SuiviNc, SuiviNcKpi, SessionResume } from '../../models/suivi-nc.models';
 import {
   Chart, BarController, DoughnutController,
   BarElement, ArcElement,
@@ -20,29 +20,38 @@ Chart.register(
   CategoryScale, LinearScale,
   Tooltip, Legend
 );
-Chart.defaults.animation = false as any;
-Chart.defaults.responsive = true;
+Chart.defaults.animation   = false as any;
+Chart.defaults.responsive  = true;
 Chart.defaults.maintainAspectRatio = false;
 
 @Component({
-  selector: 'app-suivi-nc',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  selector:        'app-suivi-nc',
+  standalone:      true,
+  imports:         [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './suivi-nc.component.html',
-  styleUrls: ['./suivi-nc.component.scss']
+  templateUrl:     './suivi-nc.component.html',
+  styleUrls:       ['./suivi-nc.component.scss']
 })
 export class SuiviNcComponent implements OnInit, OnDestroy {
 
   currentUser: any = null;
-  liste: SuiviNc[]  = [];
-  kpi:  SuiviNcKpi | null = null;
 
-  loading      = true;
-  loadingKpi   = true;
-  saving       = new Set<number>();
-  success      = '';
-  error        = '';
+  // Sessions
+  sessions: SessionResume[]     = [];
+  selectedSession: SessionResume | null = null;
+  loadingSessions = true;
+
+  // NC de la session sélectionnée
+  liste: SuiviNc[]  = [];
+  loadingListe = false;
+
+  // KPI de la session sélectionnée
+  kpi: SuiviNcKpi | null = null;
+  loadingKpi = false;
+
+  saving  = new Set<number>();
+  success = '';
+  error   = '';
 
   filtreStatut   = '';
   filtrePriorite = '';
@@ -54,16 +63,16 @@ export class SuiviNcComponent implements OnInit, OnDestroy {
   private timers: ReturnType<typeof setTimeout>[] = [];
 
   readonly ids = {
-    doughnut: `nc-doughnut-${this.uid}`,
+    doughnut:  `nc-doughnut-${this.uid}`,
     barClause: `nc-bar-${this.uid}`
   };
 
   STATUTS_IMPL = [
-    { value: 'non_traite', label: 'Non traité',  color: '#9ca3af' },
-    { value: 'en_cours',   label: 'En cours',    color: '#f59e0b' },
-    { value: 'fait',       label: 'Fait',         color: '#10b981' },
-    { value: 'reporte',    label: 'Reporté',      color: '#6b7280' },
-    { value: 'accepte',    label: 'Accepté',      color: '#3b82f6' }
+    { value: 'non_traite', label: 'Non traité', color: '#9ca3af' },
+    { value: 'en_cours',   label: 'En cours',   color: '#f59e0b' },
+    { value: 'fait',       label: 'Fait',        color: '#10b981' },
+    { value: 'reporte',    label: 'Reporté',     color: '#6b7280' },
+    { value: 'accepte',    label: 'Accepté',     color: '#3b82f6' }
   ];
 
   PRIORITES = ['basse', 'normale', 'haute', 'critique'];
@@ -77,8 +86,7 @@ export class SuiviNcComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUser = this.auth.getCurrentUser();
-    this.loadListe();
-    this.loadKpi();
+    this.loadSessions();
   }
 
   ngOnDestroy(): void {
@@ -86,23 +94,64 @@ export class SuiviNcComponent implements OnInit, OnDestroy {
     this.charts.forEach(c => { try { c.destroy(); } catch (_) {} });
   }
 
-  loadListe(): void {
-    this.loading = true;
+  // ── Chargement sessions ───────────────────────────────────────
+  loadSessions(): void {
+    this.loadingSessions = true;
     this.cdr.markForCheck();
-    this.svc.getListe().subscribe({
+    this.svc.getSessions().subscribe({
       next: (data) => {
-        this.liste   = data;
-        this.loading = false;
+        this.sessions        = data;
+        this.loadingSessions = false;
+        // Sélectionner la première session automatiquement
+        if (data.length) this.selectSession(data[0]);
         this.cdr.markForCheck();
       },
-      error: () => { this.loading = false; this.cdr.markForCheck(); }
+      error: () => { this.loadingSessions = false; this.cdr.markForCheck(); }
     });
   }
 
-  loadKpi(): void {
-    this.loadingKpi = true;
+  // ── Sélection de session ──────────────────────────────────────
+  selectSession(session: SessionResume): void {
+    this.selectedSession = session;
+    this.liste           = [];
+    this.kpi             = null;
+    this.filtreStatut    = '';
+    this.filtrePriorite  = '';
+    this.filtreClause    = '';
+    this.destroyCharts();
     this.cdr.markForCheck();
-    this.svc.getKpi().subscribe({
+    this.loadListe();
+    this.loadKpi();
+  }
+
+  onSessionChange(event: Event): void {
+    const id = Number((event.target as HTMLSelectElement).value);
+    const s  = this.sessions.find(s => s.id === id);
+    if (s) this.selectSession(s);
+  }
+
+  // ── Chargement NC ─────────────────────────────────────────────
+  loadListe(): void {
+    if (!this.selectedSession) return;
+    this.loadingListe = true;
+    this.cdr.markForCheck();
+    this.svc.getBySession(this.selectedSession.id).subscribe({
+      next: (data) => {
+        this.liste        = data;
+        this.loadingListe = false;
+        this.cdr.markForCheck();
+      },
+      error: () => { this.loadingListe = false; this.cdr.markForCheck(); }
+    });
+  }
+
+  // ── Chargement KPI ────────────────────────────────────────────
+  loadKpi(): void {
+    if (!this.selectedSession) return;
+    this.loadingKpi = true;
+    this.destroyCharts();
+    this.cdr.markForCheck();
+    this.svc.getKpiSession(this.selectedSession.id).subscribe({
       next: (k) => {
         this.kpi        = k;
         this.loadingKpi = false;
@@ -121,6 +170,7 @@ export class SuiviNcComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ── Sauvegarde NC ─────────────────────────────────────────────
   save(nc: SuiviNc): void {
     this.saving.add(nc.id);
     this.svc.evaluer(nc.id, {
@@ -131,8 +181,11 @@ export class SuiviNcComponent implements OnInit, OnDestroy {
     }).subscribe({
       next: (updated) => {
         const idx = this.liste.findIndex(x => x.id === nc.id);
-        if (idx >= 0) this.liste[idx] = updated;
+        if (idx >= 0) this.liste[idx] = { ...this.liste[idx], ...updated };
         this.saving.delete(nc.id);
+        // Mettre à jour le compteur dans la session
+        const s = this.sessions.find(s => s.id === this.selectedSession?.id);
+        if (s) s.non_traites = this.liste.filter(x => x.statut_impl === 'non_traite').length;
         this.showSuccess('NC mise à jour');
         this.loadKpi();
         this.cdr.markForCheck();
@@ -192,15 +245,13 @@ export class SuiviNcComponent implements OnInit, OnDestroy {
               label: 'Traités',
               data: clauses.map(c => c.nb_traites),
               backgroundColor: '#10b981',
-              borderRadius: 4,
-              borderSkipped: false
+              borderRadius: 4, borderSkipped: false
             },
             {
               label: 'Non traités',
               data: clauses.map(c => c.nb_non_traites),
               backgroundColor: '#ef4444',
-              borderRadius: 4,
-              borderSkipped: false
+              borderRadius: 4, borderSkipped: false
             }
           ]
         },
@@ -208,9 +259,7 @@ export class SuiviNcComponent implements OnInit, OnDestroy {
           animation: false, responsive: true, maintainAspectRatio: false,
           plugins: {
             legend: { position: 'top', labels: { boxWidth: 10, font: { size: 11 } } },
-            tooltip: { callbacks: {
-              label: ctx => ` ${ctx.dataset.label} : ${ctx.parsed.y}`
-            }}
+            tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label} : ${ctx.parsed.y}` } }
           },
           scales: {
             y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 11 } } },
@@ -225,8 +274,8 @@ export class SuiviNcComponent implements OnInit, OnDestroy {
   // ── Filtres ───────────────────────────────────────────────────
   get listeFiltree(): SuiviNc[] {
     return this.liste.filter(nc => {
-      const ms = !this.filtreStatut   || nc.statut_impl  === this.filtreStatut;
-      const mp = !this.filtrePriorite || nc.priorite     === this.filtrePriorite;
+      const ms = !this.filtreStatut   || nc.statut_impl === this.filtreStatut;
+      const mp = !this.filtrePriorite || nc.priorite    === this.filtrePriorite;
       const mc = !this.filtreClause   || nc.clause_code.startsWith(this.filtreClause);
       return ms && mp && mc;
     });
@@ -246,15 +295,41 @@ export class SuiviNcComponent implements OnInit, OnDestroy {
   getStatutAuditColor(s: string): string {
     return s === 'non_conforme' ? '#ef4444' : '#f59e0b';
   }
-  getPrioriteColor(p: string): string {
-    return ({ critique:'#7c3aed', haute:'#ef4444', normale:'#3b82f6', basse:'#9ca3af' } as Record<string,string>)[p] ?? '#6b7280';
+getPrioriteColor(p: string): string {
+  const colors: Record<string, string> = {
+    critique: '#7c3aed',
+    haute: '#ef4444',
+    normale: '#3b82f6',
+    basse: '#9ca3af'
+  };
+
+  return colors[p] ?? '#6b7280';
+}
+switchTab(tab: 'liste' | 'kpi'): void {
+  this.activeTab = tab;
+  this.cdr.markForCheck();
+
+  // Recréer les charts quand on revient sur KPI
+  if (tab === 'kpi' && this.kpi?.has_data) {
+    this.zone.runOutsideAngular(() => {
+      const t = setTimeout(() => {
+        this.initCharts();
+      }, 100);
+
+      this.timers.push(t);
+    });
   }
+}
   isRetard(nc: SuiviNc): boolean {
     if (!nc.echeance_rssi) return false;
     return new Date(nc.echeance_rssi) < new Date() &&
            !['fait','accepte'].includes(nc.statut_impl);
   }
   isSaving(id: number): boolean { return this.saving.has(id); }
+
+  private destroyCharts(): void {
+    [this.ids.doughnut, this.ids.barClause].forEach(id => this.destroyChart(id));
+  }
 
   private destroyChart(id: string): void {
     const c = this.charts.get(id);
@@ -273,8 +348,4 @@ export class SuiviNcComponent implements OnInit, OnDestroy {
     const t = setTimeout(() => { this.success = ''; this.cdr.markForCheck(); }, 3000);
     this.timers.push(t);
   }
-  switchTab(tab: 'liste' | 'kpi'): void {
-  this.activeTab = tab;
-  this.cdr.markForCheck();
-}
 }

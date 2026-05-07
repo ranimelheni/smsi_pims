@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -21,26 +22,67 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SuiviNcController {
 
-    private final SuiviNcRepository  suiviNcRepo;
-    private final UserRepository     userRepo;
-    private final JdbcTemplate       jdbc;
+    private final SuiviNcRepository suiviNcRepo;
+    private final UserRepository    userRepo;
+    private final JdbcTemplate      jdbc;
 
-    private static final List<String> ROLES_RSSI =
-        List.of("rssi", "super_admin");
+    private static final List<String> ROLES_RSSI = List.of("rssi", "super_admin");
 
     private User getCurrentUser(UserDetails ud) {
         return userRepo.findById(Long.parseLong(ud.getUsername())).orElseThrow();
     }
 
-    // ── GET liste NC de l'organisme ──────────────────────────────────
-    @GetMapping
+    // ── GET sessions disponibles (celles qui ont des NC) ─────────────
+    @GetMapping("/sessions")
     @Transactional
-    public ResponseEntity<?> getListe(@AuthenticationPrincipal UserDetails ud) {
+    public ResponseEntity<?> getSessions(@AuthenticationPrincipal UserDetails ud) {
         User user = getCurrentUser(ud);
         if (!ROLES_RSSI.contains(user.getRole()))
             return ResponseEntity.status(403).body(Map.of("error", "Accès réservé au RSSI"));
 
-        List<SuiviNc> list = suiviNcRepo.findByOrganismId(user.getOrganism().getId());
+        // Récupérer les sessions distinctes qui ont des NC pour cet organisme
+        List<SuiviNc> all = suiviNcRepo.findByOrganismId(user.getOrganism().getId());
+
+        // Dédupliquer par session et construire la liste
+        List<Map<String, Object>> sessions = all.stream()
+            .collect(Collectors.groupingBy(nc -> nc.getAuditSession().getId()))
+            .entrySet().stream()
+            .map(entry -> {
+                AuditSession s = entry.getValue().get(0).getAuditSession();
+                long totalNc   = entry.getValue().size();
+                long nonTraites = entry.getValue().stream()
+                    .filter(nc -> "non_traite".equals(nc.getStatutImpl())).count();
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("id",           s.getId());
+                m.put("titre",        s.getTitre());
+                m.put("norme",        s.getNorme());
+                m.put("date_debut",   s.getDateDebut() != null ? s.getDateDebut().toString() : null);
+                m.put("date_fin",     s.getDateFin()   != null ? s.getDateFin().toString()   : null);
+                m.put("total_nc",     totalNc);
+                m.put("non_traites",  nonTraites);
+                return m;
+            })
+            .sorted(Comparator.comparing(m -> m.get("date_debut").toString(),
+                Comparator.reverseOrder()))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(sessions);
+    }
+
+    // ── GET NC d'une session ──────────────────────────────────────────
+    @GetMapping("/sessions/{sessionId}")
+    @Transactional
+    public ResponseEntity<?> getBySession(
+            @PathVariable Long sessionId,
+            @AuthenticationPrincipal UserDetails ud) {
+
+        User user = getCurrentUser(ud);
+        if (!ROLES_RSSI.contains(user.getRole()))
+            return ResponseEntity.status(403).body(Map.of("error", "Accès réservé au RSSI"));
+
+        List<SuiviNc> list = suiviNcRepo.findByOrganismIdAndSessionId(
+            user.getOrganism().getId(), sessionId);
+
         return ResponseEntity.ok(list.stream().map(this::toMap).toList());
     }
 
@@ -76,31 +118,74 @@ public class SuiviNcController {
         return ResponseEntity.ok(toMap(suiviNcRepo.save(nc)));
     }
 
-    // ── GET KPI ──────────────────────────────────────────────────────
-    @GetMapping("/kpi")
-    public ResponseEntity<?> getKpi(@AuthenticationPrincipal UserDetails ud) {
+    // ── GET KPI d'une session ─────────────────────────────────────────
+    @GetMapping("/sessions/{sessionId}/kpi")
+    public ResponseEntity<?> getKpiSession(
+            @PathVariable Long sessionId,
+            @AuthenticationPrincipal UserDetails ud) {
+
         User user = getCurrentUser(ud);
         if (!ROLES_RSSI.contains(user.getRole()))
             return ResponseEntity.status(403).body(Map.of("error", "Accès réservé au RSSI"));
 
         Long orgId = user.getOrganism().getId();
+        return ResponseEntity.ok(buildKpi(orgId, sessionId));
+    }
+
+    // ── Calcul KPI ────────────────────────────────────────────────────
+    private Map<String, Object> buildKpi(Long orgId, Long sessionId) {
+
+       String whereClause = sessionId != null
+    ? String.format(
+        "WHERE organism_id = %d AND audit_session_id = %d ",
+        orgId, sessionId)
+    : String.format(
+        "WHERE organism_id = %d ",
+        orgId);
 
         // Global
-        List<Map<String, Object>> globals = jdbc.queryForList(
-            "SELECT * FROM v_kpi_suivi_nc_global WHERE organism_id = ?", orgId);
+        String sqlGlobal = """
+            SELECT
+                COUNT(*)                                                    AS total_nc,
+                COUNT(*) FILTER (WHERE statut_audit = 'non_conforme')       AS nb_non_conforme,
+                COUNT(*) FILTER (WHERE statut_audit = 'partiel')            AS nb_partiel,
+                COUNT(*) FILTER (WHERE statut_impl  = 'fait')               AS nb_traites,
+                COUNT(*) FILTER (WHERE statut_impl  = 'en_cours')           AS nb_en_cours,
+                COUNT(*) FILTER (WHERE statut_impl  = 'non_traite')         AS nb_non_traites,
+                COUNT(*) FILTER (WHERE statut_impl  = 'reporte')            AS nb_reportes,
+                COUNT(*) FILTER (WHERE statut_impl  = 'accepte')            AS nb_acceptes,
+                CASE WHEN COUNT(*) = 0 THEN 0 ELSE ROUND(
+                    COUNT(*) FILTER (WHERE statut_impl IN ('fait','accepte'))
+                    ::numeric * 100.0 / COUNT(*), 2) END                    AS taux_traitement,
+                COUNT(*) FILTER (
+                    WHERE echeance_rssi < CURRENT_DATE
+                      AND statut_impl NOT IN ('fait','accepte'))             AS nb_en_retard
+            FROM suivi_nc
+            """ + whereClause;
 
-        if (globals.isEmpty())
-            return ResponseEntity.ok(Map.of(
-                "has_data", false,
-                "par_clause", List.of()
-            ));
+        List<Map<String, Object>> globals = jdbc.queryForList(sqlGlobal);
+        if (globals.isEmpty() || toInt(globals.get(0).get("total_nc")) == 0)
+            return Map.of("has_data", false, "par_clause", List.of());
 
         Map<String, Object> g = globals.get(0);
 
         // Par clause
-        List<Map<String, Object>> parClause = jdbc.queryForList(
-            "SELECT * FROM v_kpi_suivi_nc_par_clause WHERE organism_id = ? ORDER BY clause_principale",
-            orgId);
+        String sqlClause = """
+            SELECT
+                SPLIT_PART(clause_code, '.', 1)                              AS clause_principale,
+                COUNT(*)                                                      AS total,
+                COUNT(*) FILTER (WHERE statut_impl IN ('fait','accepte'))    AS nb_traites,
+                COUNT(*) FILTER (WHERE statut_impl = 'non_traite')           AS nb_non_traites,
+                CASE WHEN COUNT(*) = 0 THEN 0 ELSE ROUND(
+                    COUNT(*) FILTER (WHERE statut_impl IN ('fait','accepte'))
+                    ::numeric * 100.0 / COUNT(*), 2) END                     AS taux_traitement
+            FROM suivi_nc
+            """ + whereClause + """
+            GROUP BY SPLIT_PART(clause_code, '.', 1)
+            ORDER BY SPLIT_PART(clause_code, '.', 1)
+            """;
+
+        List<Map<String, Object>> parClause = jdbc.queryForList(sqlClause);
 
         Map<String, Object> kpi = new LinkedHashMap<>();
         kpi.put("has_data",        true);
@@ -124,39 +209,37 @@ public class SuiviNcController {
             return m;
         }).toList());
 
-        return ResponseEntity.ok(kpi);
+        return kpi;
     }
 
-    // ── Mapper ───────────────────────────────────────────────────────
+    // ── Mapper ────────────────────────────────────────────────────────
     private Map<String, Object> toMap(SuiviNc nc) {
         Map<String, Object> m = new LinkedHashMap<>();
-        m.put("id",                nc.getId());
-        m.put("audit_session_id",  nc.getAuditSession().getId());
-        m.put("audit_session_titre", nc.getAuditSession().getTitre());
-        m.put("clause_code",       nc.getClauseCode());
-        m.put("clause_titre",      nc.getClauseTitre());
-        m.put("statut_audit",      nc.getStatutAudit());
-        m.put("justification",     nc.getJustification());
-        m.put("action_planifiee",  nc.getActionPlanifiee());
-        m.put("priorite",          nc.getPriorite());
-        m.put("echeance_audit",    nc.getEcheanceAudit() != null
+        m.put("id",               nc.getId());
+        m.put("clause_code",      nc.getClauseCode());
+        m.put("clause_titre",     nc.getClauseTitre());
+        m.put("statut_audit",     nc.getStatutAudit());
+        m.put("justification",    nc.getJustification());
+        m.put("action_planifiee", nc.getActionPlanifiee());
+        m.put("priorite",         nc.getPriorite());
+        m.put("echeance_audit",   nc.getEcheanceAudit() != null
             ? nc.getEcheanceAudit().toString() : null);
-        m.put("responsable_audit", nc.getResponsableAudit());
-        m.put("statut_impl",       nc.getStatutImpl());
-        m.put("responsable_rssi",  nc.getResponsableRssi());
-        m.put("echeance_rssi",     nc.getEcheanceRssi() != null
+        m.put("responsable_audit",nc.getResponsableAudit());
+        m.put("statut_impl",      nc.getStatutImpl());
+        m.put("responsable_rssi", nc.getResponsableRssi());
+        m.put("echeance_rssi",    nc.getEcheanceRssi() != null
             ? nc.getEcheanceRssi().toString() : null);
-        m.put("commentaire_rssi",  nc.getCommentaireRssi());
-        m.put("evalue_par",        nc.getEvaluePar() != null
+        m.put("commentaire_rssi", nc.getCommentaireRssi());
+        m.put("evalue_par",       nc.getEvaluePar() != null
             ? nc.getEvaluePar().getPrenom() + " " + nc.getEvaluePar().getNom() : null);
-        m.put("evalue_at",         nc.getEvalueAt() != null
+        m.put("evalue_at",        nc.getEvalueAt() != null
             ? nc.getEvalueAt().toString() : null);
-        m.put("created_at",        nc.getCreatedAt() != null
+        m.put("created_at",       nc.getCreatedAt() != null
             ? nc.getCreatedAt().toString() : null);
         return m;
     }
 
-    private String str(Object v)   { return v != null ? v.toString() : null; }
-    private int toInt(Object v)    { if (v == null) return 0; if (v instanceof Number n) return n.intValue(); try { return Integer.parseInt(v.toString()); } catch (Exception e) { return 0; } }
+    private String str(Object v)      { return v != null ? v.toString() : null; }
+    private int toInt(Object v)       { if (v == null) return 0; if (v instanceof Number n) return n.intValue(); try { return Integer.parseInt(v.toString()); } catch (Exception e) { return 0; } }
     private double toDouble(Object v) { if (v == null) return 0.0; if (v instanceof Number n) return n.doubleValue(); try { return Double.parseDouble(v.toString()); } catch (Exception e) { return 0.0; } }
 }

@@ -1,24 +1,35 @@
-export interface SuiviNc {
-  id:                   number;
-  audit_session_id:     number;
-  audit_session_titre:  string;
-  clause_code:          string;
-  clause_titre:         string;
-  statut_audit:         string;   // non_conforme | partiel
-  justification:        string | null;
-  action_planifiee:     string | null;
-  priorite:             string;
-  echeance_audit:       string | null;
-  responsable_audit:    string | null;
-  statut_impl:          string;   // non_traite | en_cours | fait | reporte | accepte
-  responsable_rssi:     string | null;
-  echeance_rssi:        string | null;
-  commentaire_rssi:     string | null;
-  evalue_par:           string | null;
-  evalue_at:            string | null;
-  created_at:           string;
+// Ajouter cette interface
+export interface SessionResume {
+  id:          number;
+  titre:       string;
+  norme:       string;
+  date_debut:  string | null;
+  date_fin:    string | null;
+  total_nc:    number;
+  non_traites: number;
 }
 
+// SuiviNc — supprimer audit_session_titre (inutile maintenant)
+export interface SuiviNc {
+  id:                number;
+  clause_code:       string;
+  clause_titre:      string;
+  statut_audit:      string;
+  justification:     string | null;
+  action_planifiee:  string | null;
+  priorite:          string;
+  echeance_audit:    string | null;
+  responsable_audit: string | null;
+  statut_impl:       string;
+  responsable_rssi:  string | null;
+  echeance_rssi:     string | null;
+  commentaire_rssi:  string | null;
+  evalue_par:        string | null;
+  evalue_at:         string | null;
+  created_at:        string;
+}
+
+// SuiviNcKpi — inchangé
 export interface SuiviNcKpi {
   has_data:        boolean;
   total_nc:        number;
