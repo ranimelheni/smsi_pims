@@ -67,10 +67,10 @@ export class RssiComponent implements OnInit {
   ];
 
   clause4Sections = [
-    { label: '4.1 Enjeux',           icon: '⚖️'  },
-    { label: '4.2 Parties',          icon: '👥'  },
-    { label: '4.3 Périmètre SMSI',   icon: '🎯'  },
-    { label: '4.4 Ressources',       icon: '🔧'  }
+    { label: '4.1 Enjeux'          },
+    { label: '4.2 Parties'       },
+    { label: '4.3 Périmètre'   },
+    { label: '4.4 Ressources'     }
   ];
 
   fichesSections = [

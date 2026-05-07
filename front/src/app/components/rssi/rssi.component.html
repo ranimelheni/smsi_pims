@@ -3,9 +3,8 @@
   <!-- Header -->
   <div class="page-header">
     <div class="header-left">
-      <div class="rssi-badge">RSSI</div>
       <div>
-        <h1 class="page-title">Interface RSSI</h1>
+        <h1 class="page-title">Contexte Organisationnel</h1>
         <p class="page-sub">{{ currentUser?.prenom }} {{ currentUser?.nom }}</p>
       </div>
     </div>
@@ -17,14 +16,14 @@
   <!-- Tabs -->
   <div class="tabs">
     <button class="tab" [class.active]="activeTab === 'inventaire'" (click)="activeTab = 'inventaire'">
-      🗂️ Inventaire des actifs
+       Inventaire des actifs
       <span class="tab-count" *ngIf="consolidation?.nouveaux > 0">{{ consolidation?.nouveaux }}</span>
     </button>
     <button class="tab" [class.active]="activeTab === 'clause4'" (click)="activeTab = 'clause4'">
-      📋 Contexte de l'organisme
+       Contexte de l'organisme
     </button>
     <button class="tab" [class.active]="activeTab === 'fiches'" (click)="activeTab = 'fiches'">
-      ✅ Validation fiches
+       Validation fiches
       <span class="tab-count" *ngIf="fichesEnAttente.length + fichesTechEnAttente.length > 0">
         {{ fichesEnAttente.length + fichesTechEnAttente.length }}
       </span>
@@ -141,7 +140,7 @@
         <button *ngFor="let sec of clause4Sections; let i = index"
           class="c4-btn" [class.active]="activeClause4Section === i"
           (click)="activeClause4Section = i">
-          <span>{{ sec.icon }}</span> {{ sec.label }}
+           {{ sec.label }}
         </button>
       </div>
 

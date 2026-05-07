@@ -134,6 +134,27 @@ public boolean hasPublicationData(Long orgId) {
 // FORMATION
 // ═══════════════════════════════════════════════════════════════
 
+public List<Map<String, Object>> getFormationParSession(Long orgId, int jours) {
+    try {
+        String sql = """
+            SELECT session_id, titre, type, statut,
+                   date_session::text         AS date_session,
+                   max_participants,
+                   nb_inscrits,
+                   nb_presents,
+                   taux_participation
+            FROM v_kpi_formation_par_session
+            WHERE organism_id = ?
+              AND date_session >= CURRENT_DATE - (? * INTERVAL '1 day')
+            ORDER BY date_session ASC
+            """;
+        return jdbc.queryForList(sql, orgId, jours);
+    } catch (Exception e) {
+        log.warn("Formation par session KPI indisponible org={} : {}", orgId, e.getMessage());
+        return List.of();
+    }
+}
+
 public Optional<Map<String, Object>> getFormationGlobal(Long orgId) {
     try {
         String sql = """
@@ -148,25 +169,6 @@ public Optional<Map<String, Object>> getFormationGlobal(Long orgId) {
     } catch (Exception e) {
         log.warn("Formation global KPI indisponible org={} : {}", orgId, e.getMessage());
         return Optional.empty();
-    }
-}
-
-public List<Map<String, Object>> getFormationParSession(Long orgId, int jours) {
-    try {
-        String sql = """
-            SELECT session_id, titre, type, statut,
-                   date_session::text AS date_session,
-                   max_participants, nb_inscrits,
-                   nb_presents, taux_participation
-            FROM v_kpi_formation_par_session
-            WHERE organism_id = ?
-              AND date_session >= CURRENT_DATE - (? * INTERVAL '1 day')
-            ORDER BY date_session ASC
-            """;
-        return jdbc.queryForList(sql, orgId, jours);
-    } catch (Exception e) {
-        log.warn("Formation par session KPI indisponible org={} : {}", orgId, e.getMessage());
-        return List.of();
     }
 }
 

@@ -468,7 +468,7 @@
       <!-- Panneau participants -->
       <div *ngIf="sessionSelectee && isRssiOrAdmin" class="participants-panel">
         <div class="pp-header">
-          <div class="pp-title">Participants — {{ sessionSelectee.titre }}</div>
+          <div class="pp-title">Participants : {{ sessionSelectee.titre }}</div>
           <button class="btn-close-sm" (click)="sessionSelectee=null">✕</button>
         </div>
         <table class="c7-table">

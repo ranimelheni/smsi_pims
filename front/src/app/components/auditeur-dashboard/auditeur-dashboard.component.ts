@@ -564,18 +564,44 @@ private makeRssiFormBar(
   } catch (e) { console.warn('RSSI form bar:', e); }
 }
   // ── Getters liste filtrée ─────────────────────────────────────
-  get evaluationsFiltrees(): AuditEvaluation[] {
-    return this.evaluations.filter(ev => {
+ // Remplacer isParent() — plus utilisé directement
+// Remplacer evaluationsFiltrees
+
+get evaluationsFiltrees(): AuditEvaluation[] {
+  // Si filtres actifs → montrer uniquement les évaluables qui matchent
+  // + leurs titres parents pour le contexte
+  if (this.filtreStatutEval || this.filtreClause) {
+    const matchEval = this.evaluations.filter(ev => {
+      if (ev.est_titre) return false;
       const ms = !this.filtreStatutEval || ev.statut === this.filtreStatutEval;
       const mc = !this.filtreClause || ev.clause_code.startsWith(this.filtreClause);
       return ms && mc;
     });
+    // Collecter les codes parents nécessaires
+    const parentCodes = new Set<string>();
+    matchEval.forEach(ev => {
+      if (ev.parent_code) parentCodes.add(ev.parent_code);
+      // Parent du parent (ex: 4.1 → 4)
+      const grandParent = ev.parent_code?.split('.')[0];
+      if (grandParent) parentCodes.add(grandParent);
+    });
+    // Retourner titres parents + clauses filtrées dans l'ordre original
+    return this.evaluations.filter(ev =>
+      (ev.est_titre && parentCodes.has(ev.clause_code)) || matchEval.includes(ev)
+    );
   }
+  // Sans filtre → tout afficher
+  return this.evaluations;
+}
 
-  get clausesPrincipales(): string[] {
-    const codes = [...new Set(this.evaluations.map(e => e.clause_code.split('.')[0]))];
-    return codes.sort();
-  }
+get clausesPrincipales(): string[] {
+  // Uniquement les codes de niveau 1 (sans point)
+  return [...new Set(
+    this.evaluations
+      .filter(e => !e.est_titre && e.clause_code.includes('.'))
+      .map(e => e.clause_code.split('.')[0])
+  )].sort();
+}
 
   // ── Helpers ───────────────────────────────────────────────────
   getStatutColor(s: string): string {

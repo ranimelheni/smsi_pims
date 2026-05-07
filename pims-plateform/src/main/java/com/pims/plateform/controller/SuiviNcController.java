@@ -26,7 +26,7 @@ public class SuiviNcController {
     private final UserRepository    userRepo;
     private final JdbcTemplate      jdbc;
 
-    private static final List<String> ROLES_RSSI = List.of("rssi", "super_admin");
+    private static final List<String> ROLES_RSSI = List.of("rssi", "super_admin","direction");
 
     private User getCurrentUser(UserDetails ud) {
         return userRepo.findById(Long.parseLong(ud.getUsername())).orElseThrow();

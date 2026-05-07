@@ -82,17 +82,19 @@ export interface AuditContexte {
 }
 
 export interface AuditEvaluation {
-  id: number | null;
-  clause_code: string;
-  clause_titre: string;
-  clause_desc: string;
-  parent_code: string | null;
-  statut: string;
-  justification: string | null;
+  id:               number | null;
+  clause_code:      string;
+  clause_titre:     string;
+  clause_desc:      string;
+  parent_code:      string | null;
+  est_titre:        boolean;        // ← nouveau
+  est_evaluable:    boolean;        // ← nouveau
+  statut:           string | null;  // null si titre
+  justification:    string | null;
   action_planifiee: string | null;
-  priorite: string;
-  echeance: string | null;
-  responsable: string | null;
+  priorite:         string;
+  echeance:         string | null;
+  responsable:      string | null;
 }
 
 export interface AuditKpi {

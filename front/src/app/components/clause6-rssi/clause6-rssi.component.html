@@ -2,16 +2,15 @@
 
   <div class="page-header">
     <div class="header-left">
-      <div class="c6-badge">RSSI — Clause 6</div>
       <div>
-        <h1 class="page-title">Planification SMSI</h1>
+        <h1 class="page-title">Planification </h1>
         <p class="page-sub">{{ currentUser?.prenom }} {{ currentUser?.nom }}</p>
       </div>
     </div>
     <div *ngIf="soa" class="header-right">
       <!-- Badge type de norme -->
       <span class="badge-norm" [class.badge-27701]="isIso27701" [class.badge-27001]="!isIso27701">
-        {{ isIso27701 ? '🔒 ISO 27701' : '🛡️ ISO 27001' }}
+        {{ isIso27701 ? ' ISO 27701' : ' ISO 27001' }}
       </span>
       <span class="{{ soa.statut === 'valide' ? 'badge-green' : soa.statut === 'soumis_direction' ? 'badge-amber' : 'badge-gray' }}">
         SoA : {{ soa.statut === 'valide' ? '✓ Validée' : soa.statut === 'soumis_direction' ? '⏳ Soumise' : 'Brouillon' }}
@@ -24,32 +23,33 @@
   <!-- Tabs -->
   <div class="tabs">
     <button class="tab" [class.active]="activeTab === 'soa'" (click)="activeTab = 'soa'">
-      📋 SoA — Déclaration d'applicabilité
+      Déclaration d'applicabilité
     </button>
+    <!-- Ajouter dans .tabs -->
+<button class="tab" [class.active]="activeTab === 'implementation'"
+  (click)="activeTab = 'implementation'; loadImplementations()">
+ Implémentation contrôles
+  <span class="tab-count" *ngIf="implData?.stats?.complet > 0" style="background:#EAF3DE;color:#3B6D11">
+    {{ implData?.stats?.complet }}/{{ implData?.total_applicables }}
+  </span>
+</button>
     <button class="tab" [class.active]="activeTab === 'objectifs'" (click)="activeTab = 'objectifs'">
-      🎯 Objectifs de sécurité
+      Objectifs de sécurité
       <span class="tab-count" *ngIf="objStats?.total > 0">{{ objStats.total }}</span>
     </button>
     <button class="tab" [class.active]="activeTab === 'modifications'" (click)="activeTab = 'modifications'">
-      🔄 Gestion des modifications
+      Gestion des modifications
       <span class="tab-count" *ngIf="modifications.length > 0">{{ modifications.length }}</span>
     </button>
     <!-- Dans .tabs ajouter : -->
 <button class="tab" [class.active]="activeTab === 'methodologie'" (click)="activeTab = 'methodologie'">
-  ⚙️ Méthodologie de risque
+   Méthodologie de risque
   <span class="tab-count badge-amber" *ngIf="methodo?.statut === 'rejete'">!</span>
 </button>
 
   </div>
   
-<!-- Ajouter dans .tabs -->
-<button class="tab" [class.active]="activeTab === 'implementation'"
-  (click)="activeTab = 'implementation'; loadImplementations()">
-  🔐 Implémentation contrôles
-  <span class="tab-count" *ngIf="implData?.stats?.complet > 0" style="background:#EAF3DE;color:#3B6D11">
-    {{ implData?.stats?.complet }}/{{ implData?.total_applicables }}
-  </span>
-</button>
+
 
 <!-- ══ ONGLET IMPLÉMENTATION ══ -->
 <div *ngIf="activeTab === 'implementation'" class="tab-content">
@@ -142,7 +142,6 @@
       <!-- Colonne droite : formulaire détail -->
       <div class="impl-detail-col" *ngIf="!selectedControle">
         <div class="impl-no-selection">
-          <span>🔐</span>
           <p>Sélectionner un contrôle pour documenter son implémentation</p>
         </div>
       </div>
@@ -424,7 +423,6 @@
 
     <!-- Bandeau norme active -->
     <div class="norm-banner" [class.norm-27701]="isIso27701" [class.norm-27001]="!isIso27701">
-      <span class="norm-icon">{{ isIso27701 ? '🔒' : '🛡️' }}</span>
       <span class="norm-title">{{ soaLabel }}</span>
       <span *ngIf="isIso27701" class="norm-role">
         Rôle : {{ soa.role_organisme === 'responsable' ? 'Responsable de traitement'

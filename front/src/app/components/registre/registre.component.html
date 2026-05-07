@@ -3,7 +3,6 @@
   <!-- HEADER -->
   <div class="page-header">
     <div class="header-left">
-      <button class="btn-back" (click)="retourDashboard()">← Dashboard</button>
       <div>
         <h1>Registre des traitements</h1>
         <p class="subtitle">Article 30 RGPD · ISO 27701 · DPO</p>
@@ -41,7 +40,7 @@
     <!-- FILTRES -->
     <div class="filters-bar">
       <input class="filter-search" [(ngModel)]="filtreSearch"
-        placeholder="🔍 Rechercher service, finalité, responsable..."/>
+        placeholder=" Rechercher service, finalité, responsable..."/>
       <select [(ngModel)]="filtreRisque" class="filter-select">
         <option value="">Tous risques</option>
         <option value="Élevé">🔴 Élevé</option>

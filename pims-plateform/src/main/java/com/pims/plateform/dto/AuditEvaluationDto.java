@@ -6,16 +6,19 @@ import lombok.Data;
 
 @Data @Builder
 public class AuditEvaluationDto {
+
     private Long id;
 
-    @JsonProperty("clause_code")     private String clauseCode;
-    @JsonProperty("clause_titre")    private String clauseTitre;
-    @JsonProperty("clause_desc")     private String clauseDesc;
-    @JsonProperty("parent_code")     private String parentCode;
+    @JsonProperty("clause_code")      private String clauseCode;
+    @JsonProperty("clause_titre")     private String clauseTitre;
+    @JsonProperty("clause_desc")      private String clauseDesc;
+    @JsonProperty("parent_code")      private String parentCode;
 
-    private String statut;
+    @JsonProperty("est_titre")        private boolean estTitre;      // ← nouveau
+    @JsonProperty("est_evaluable")    private boolean estEvaluable;  // ← nouveau
+
+    private String statut;            // null si titre
     private String justification;
-
     @JsonProperty("action_planifiee") private String actionPlanifiee;
     private String priorite;
     private String echeance;

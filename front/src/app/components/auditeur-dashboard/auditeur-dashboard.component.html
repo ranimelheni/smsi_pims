@@ -3,7 +3,6 @@
   <!-- HEADER -->
   <div class="aud-header">
     <div class="ah-left">
-      <div class="ah-avatar">🔍</div>
       <div>
         <h1>Tableau de bord Auditeur</h1>
         <p class="ah-sub">
@@ -93,8 +92,6 @@
         [class.banner-attente]="!contexte.statut_direction || contexte.statut_direction === 'en_attente'"
         [class.banner-rejete]="contexte.statut_direction === 'rejete'">
         <div class="cdb-icon">
-          <span *ngIf="contexte.statut_direction === 'valide'">✅</span>
-          <span *ngIf="contexte.statut_direction === 'rejete'">❌</span>
           <span *ngIf="!contexte.statut_direction || contexte.statut_direction === 'en_attente'">⏳</span>
         </div>
         <div class="cdb-info">
@@ -116,7 +113,7 @@
 
       <!-- ── En-tête organisme ── -->
       <div class="ctx-block">
-        <div class="cb-title">🏢 Organisme</div>
+        <div class="cb-title"> Organisme</div>
         <div class="cb-row">
           <span class="cb-label">Nom</span>
           <span class="cb-val">{{ contexte.organism_nom }}</span>
@@ -141,7 +138,7 @@
 
       <!-- ── 4.3 Périmètre SMSI/PIMS ── -->
       <div class="ctx-block">
-        <div class="cb-title">📐 Périmètre (clause 4.3)</div>
+        <div class="cb-title"> Périmètre (clause 4.3)</div>
         <div class="cb-row">
           <span class="cb-label">Périmètre SMSI</span>
           <span class="cb-val pre">{{ contexte.perimetre_smsi || '—' }}</span>
@@ -177,7 +174,7 @@
 
       <!-- ── 4.1 Enjeux externes ── -->
       <div class="ctx-block">
-        <div class="cb-title">🌍 Enjeux externes (clause 4.1)</div>
+        <div class="cb-title"> Enjeux externes (clause 4.1)</div>
         <div class="cb-row">
           <span class="cb-label">Validation direction</span>
           <span class="cb-badge valid-{{ contexte.validation_enjeux_externes }}">
@@ -196,7 +193,7 @@
 
       <!-- ── 4.1 Enjeux internes ── -->
       <div class="ctx-block">
-        <div class="cb-title">🏭 Enjeux internes (clause 4.1)</div>
+        <div class="cb-title"> Enjeux internes (clause 4.1)</div>
         <div class="cb-row">
           <span class="cb-label">Validation direction</span>
           <span class="cb-badge valid-{{ contexte.validation_enjeux_internes }}">
@@ -214,7 +211,7 @@
 
       <!-- ── 4.2 Parties intéressées ── -->
       <div class="ctx-block">
-        <div class="cb-title">👥 Parties intéressées (clause 4.2)</div>
+        <div class="cb-title"> Parties intéressées (clause 4.2)</div>
         <div class="cb-row">
           <span class="cb-label">Validation direction</span>
           <span class="cb-badge valid-{{ contexte.validation_parties }}">
@@ -233,7 +230,7 @@
 
       <!-- ── 4.4 Politique de sécurité (Direction) ── -->
       <div class="ctx-block">
-        <div class="cb-title">🔐 Politique de sécurité (clause 5.2)</div>
+        <div class="cb-title"> Politique de sécurité (clause 5.2)</div>
         <div class="cb-row" *ngIf="contexte.engagement_direction">
           <span class="cb-label">Engagement direction</span>
           <span class="cb-val pre">{{ contexte.engagement_direction }}</span>
@@ -261,7 +258,7 @@
 
       <!-- ── Objectifs SMSI (clause 4) + Objectifs sécurité RSSI ── -->
       <div class="ctx-block">
-        <div class="cb-title">🎯 Objectifs SMSI (RSSI)</div>
+        <div class="cb-title"> Objectifs SMSI</div>
         <div *ngIf="contexte.objectifs_smsi?.length" class="cb-list-wrap">
           <div *ngFor="let o of contexte.objectifs_smsi" class="cb-list-item">
             <span class="cli-cat" *ngIf="o.objectif">{{ o.objectif }}</span>
@@ -280,7 +277,7 @@
 
       <!-- ── Objectifs de sécurité définis par le RSSI ── -->
       <div class="ctx-block">
-        <div class="cb-title">🎯 Objectifs de sécurité (définis par le RSSI)</div>
+        <div class="cb-title"> Objectifs de sécurité </div>
         <div *ngIf="contexte.objectifs_securite_rssi?.length" class="ctx-obj-grid">
           <div *ngFor="let o of contexte.objectifs_securite_rssi" class="ctx-obj-card">
             <div class="coc-header">
@@ -311,7 +308,7 @@
 
       <!-- ── Gestion des modifications SMSI ── -->
       <div class="ctx-block">
-        <div class="cb-title">🔄 Gestion des modifications SMSI</div>
+        <div class="cb-title"> Gestion des modifications SMSI</div>
         <div *ngIf="contexte.modifications_smsi?.length" class="ctx-modif-list">
           <div *ngFor="let m of contexte.modifications_smsi" class="ctx-modif-item">
             <div class="cmi-header">
@@ -335,7 +332,7 @@
 
       <!-- ── Ressources ── -->
       <div class="ctx-block">
-        <div class="cb-title">🛠️ Ressources (clause 4.4)</div>
+        <div class="cb-title"> Ressources </div>
         <div class="cb-row">
           <span class="cb-label">Validation direction</span>
           <span class="cb-badge valid-{{ contexte.validation_ressources }}">
@@ -375,7 +372,7 @@
 
       <!-- ── Procédures & Outils ── -->
       <div class="ctx-block" *ngIf="contexte.procedures?.length || contexte.outils_protection?.length">
-        <div class="cb-title">📋 Procédures & Outils de protection</div>
+        <div class="cb-title"> Procédures & Outils de protection</div>
         <div *ngIf="contexte.procedures?.length">
           <div class="cb-sub-title">Procédures</div>
           <div *ngFor="let p of contexte.procedures" class="cb-list-item">
@@ -394,7 +391,7 @@
 
       <!-- ── Méthodologie risque ── -->
       <div class="ctx-block">
-        <div class="cb-title">⚠️ Méthodologie de gestion des risques</div>
+        <div class="cb-title"> Méthodologie de gestion des risques</div>
 
         <!-- Carte méthode choisie -->
         <div class="methodo-card" *ngIf="contexte.methode_risque">
@@ -415,9 +412,9 @@
           </div>
           <div class="mc-right">
             <span class="mc-statut-badge" [class]="'mcs-' + contexte.methode_statut">
-              {{ contexte.methode_statut === 'valide' ? '✅ Validée' :
-              contexte.methode_statut === 'soumis_direction' ? '⏳ Soumise à direction' :
-              contexte.methode_statut === 'rejete' ? '❌ Rejetée' :
+              {{ contexte.methode_statut === 'valide' ? ' Validée' :
+              contexte.methode_statut === 'soumis_direction' ? ' Soumise à direction' :
+              contexte.methode_statut === 'rejete' ? ' Rejetée' :
               contexte.methode_statut || 'Non soumise' }}
             </span>
           </div>
@@ -432,7 +429,7 @@
           </div>
           <div class="mv-row" *ngIf="contexte.methode_valide_at">
             <span class="mv-label">Le</span>
-            <span class="mv-val">📅 {{ contexte.methode_valide_at | slice:0:10 }}</span>
+            <span class="mv-val"> {{ contexte.methode_valide_at | slice:0:10 }}</span>
           </div>
           <div class="mv-row" *ngIf="contexte.methode_commentaire_direction">
             <span class="mv-label">Commentaire direction</span>
@@ -479,7 +476,7 @@
 
       <!-- ── SOA ── -->
       <div class="ctx-block">
-        <div class="cb-title">🔐 Déclaration d'applicabilité (SOA)</div>
+        <div class="cb-title"> Déclaration d'applicabilité (SOA)</div>
         <div class="cb-row">
           <span class="cb-label">Statut</span>
           <span class="cb-badge statut-{{ contexte.soa_statut }}">
@@ -539,7 +536,7 @@
       <!-- ── SOA ── -->
       <div *ngIf="kpiRssi!.soa?.has_data" class="kpi-section">
         <div class="ks-header">
-          <div class="ks-title">🔐 Conformité SOA</div>
+          <div class="ks-title"> Conformité SOA</div>
           <div class="ks-score" [style.color]="getProgressColor(kpiRssi!.soa!.taux_global)">
             {{ kpiRssi!.soa!.taux_global | number:'1.1-1' }}%
           </div>
@@ -595,7 +592,7 @@
       <!-- ── Publications ── -->
       <div *ngIf="kpiRssi!.publications?.has_data" class="kpi-section">
         <div class="ks-header">
-          <div class="ks-title">📢 Lecture des publications</div>
+          <div class="ks-title"> Lecture des publications</div>
           <div class="ks-score" [style.color]="getProgressColor(kpiRssi!.publications!.taux_lecture_global)">
             {{ kpiRssi!.publications!.taux_lecture_global | number:'1.1-1' }}%
           </div>
@@ -645,7 +642,7 @@
       <!-- ── Formation ── -->
       <div *ngIf="kpiRssi!.formation?.has_data" class="kpi-section">
         <div class="ks-header">
-          <div class="ks-title">🎓 Participation aux formations</div>
+          <div class="ks-title"> Participation aux formations</div>
           <div class="ks-score" [style.color]="getProgressColor(kpiRssi!.formation!.taux_participation_global)">
             {{ kpiRssi!.formation!.taux_participation_global | number:'1.1-1' }}%
           </div>
@@ -706,7 +703,7 @@
       <!-- Filtres -->
       <div class="eval-toolbar">
         <div class="et-title">
-          ✅ Tableau de conformité — {{ selectedSession.titre }}
+           Tableau de conformité: {{ selectedSession.titre }}
         </div>
         <div class="et-filters">
           <select [(ngModel)]="filtreClause" class="filter-select">
@@ -746,60 +743,87 @@
               <th class="col-ech">Échéance</th>
             </tr>
           </thead>
-          <tbody>
-            <ng-container *ngFor="let ev of evaluationsFiltrees">
-              <!-- Ligne parent (clause principale) -->
-              <tr *ngIf="isParent(ev)" class="row-parent">
-                <td class="col-code code-parent">{{ ev.clause_code }}</td>
-                <td class="col-titre" colspan="6">
-                  <strong>{{ ev.clause_titre }}</strong>
-                </td>
-              </tr>
-              <!-- Ligne sous-clause -->
-              <tr *ngIf="!isParent(ev)" class="row-child" [class.row-nc]="ev.statut === 'non_conforme'"
-                [class.row-partial]="ev.statut === 'partiel'">
+         <tbody>
+  <ng-container *ngFor="let ev of evaluationsFiltrees">
 
-                <td class="col-code code-child">{{ ev.clause_code }}</td>
+    <!-- ── Titre de niveau 1 (ex: "4", "5", "10") ── -->
+    <tr *ngIf="ev.est_titre && !ev.parent_code" class="row-titre-1">
+      <td colspan="7">
+        <strong>{{ ev.clause_code }}.{{ ev.clause_titre }}</strong>
+      </td>
+    </tr>
 
-                <td class="col-titre">
-                  <div class="clause-titre">{{ ev.clause_titre }}</div>
-                  <div class="clause-desc" *ngIf="ev.clause_desc">{{ ev.clause_desc | slice:0:80 }}...</div>
-                </td>
+    <!-- ── Titre de niveau 2 (ex: "4.1", "5.2") ── -->
+    <tr *ngIf="ev.est_titre && ev.parent_code" class="row-titre-2">
+      <td colspan="7">
+        <span class="titre-code">{{ ev.clause_code }}</span>
+        {{ ev.clause_titre }}
+      </td>
+    </tr>
 
-                <td class="col-statut">
-                  <select [(ngModel)]="ev.statut" class="statut-select" [style.border-color]="getStatutColor(ev.statut)"
-                    (change)="onStatutChange(ev)">
-                    <option *ngFor="let s of STATUTS" [value]="s.value">
-                      {{ s.label }}
-                    </option>
-                  </select>
-                  <div *ngIf="isSaving(ev.clause_code)" class="saving-dot">💾</div>
-                </td>
+    <!-- ── Clause évaluable ── -->
+    <tr *ngIf="ev.est_evaluable && !ev.est_titre"
+      class="row-clause"
+      [class.row-nc]="ev.statut === 'non_conforme'"
+      [class.row-partial]="ev.statut === 'partiel'">
 
-                <td class="col-justif">
-                  <textarea [(ngModel)]="ev.justification" class="textarea-inline"
-                    placeholder="Justification / écart constaté..." rows="2" (blur)="saveEvaluation(ev)">
-                  </textarea>
-                </td>
+      <td class="col-code code-child">{{ ev.clause_code }}</td>
 
-                <td class="col-action">
-                  <textarea [(ngModel)]="ev.action_planifiee" class="textarea-inline"
-                    placeholder="Action corrective planifiée..." rows="2" (blur)="saveEvaluation(ev)">
-                  </textarea>
-                </td>
+      <td class="col-titre">
+        <div class="clause-titre">{{ ev.clause_titre }}</div>
+        <div class="clause-desc" *ngIf="ev.clause_desc">
+          {{ ev.clause_desc }}
+        </div>
+      </td>
 
-                <td class="col-prio">
-                  <select [(ngModel)]="ev.priorite" class="prio-select" (change)="saveEvaluation(ev)">
-                    <option *ngFor="let p of PRIORITES" [value]="p">{{ p }}</option>
-                  </select>
-                </td>
+      <td class="col-statut">
+        <select [(ngModel)]="ev.statut"
+          class="statut-select"
+          [style.border-color]="getStatutColor(ev.statut ?? '')"
+          (change)="onStatutChange(ev)">
+          <option *ngFor="let s of STATUTS" [value]="s.value">
+            {{ s.label }}
+          </option>
+        </select>
+        <div *ngIf="isSaving(ev.clause_code)" class="saving-dot">💾</div>
+      </td>
 
-                <td class="col-ech">
-                  <input type="date" [(ngModel)]="ev.echeance" class="date-input" (change)="saveEvaluation(ev)" />
-                </td>
-              </tr>
-            </ng-container>
-          </tbody>
+      <td class="col-justif">
+        <textarea [(ngModel)]="ev.justification"
+          class="textarea-inline"
+          placeholder="Justification / écart constaté..."
+          rows="2"
+          (blur)="saveEvaluation(ev)">
+        </textarea>
+      </td>
+
+      <td class="col-action">
+        <textarea [(ngModel)]="ev.action_planifiee"
+          class="textarea-inline"
+          placeholder="Action corrective planifiée..."
+          rows="2"
+          (blur)="saveEvaluation(ev)">
+        </textarea>
+      </td>
+
+      <td class="col-prio">
+        <select [(ngModel)]="ev.priorite"
+          class="prio-select"
+          (change)="saveEvaluation(ev)">
+          <option *ngFor="let p of PRIORITES" [value]="p">{{ p }}</option>
+        </select>
+      </td>
+
+      <td class="col-ech">
+        <input type="date"
+          [(ngModel)]="ev.echeance"
+          class="date-input"
+          (change)="saveEvaluation(ev)" />
+      </td>
+    </tr>
+
+  </ng-container>
+</tbody>
         </table>
       </div>
     </div>
@@ -927,7 +951,6 @@
 
           <!-- Non-conformités -->
           <div *ngIf="kpiAudit.nb_non_conforme > 0" class="nc-alert">
-            <div class="nca-icon">⚠️</div>
             <div>
               <strong>{{ kpiAudit.nb_non_conforme }} non-conformité(s) identifiée(s)</strong>
               <p>Consultez le tableau de conformité pour les détails et planifiez les actions correctives.</p>

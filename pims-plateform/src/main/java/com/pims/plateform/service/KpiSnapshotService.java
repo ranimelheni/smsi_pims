@@ -63,15 +63,16 @@ public class KpiSnapshotService {
         log.info("SOA snapshot OK org={} taux={}", orgId, taux);
     }
 
- private void snapshotFormation(Long orgId) {
+private void snapshotFormation(Long orgId) {
     Optional<Map<String, Object>> globalOpt = repo.getFormationGlobal(orgId);
     if (globalOpt.isEmpty()) return;
 
     Map<String, Object> g = globalOpt.get();
-    double taux      = toDouble(g.get("taux_participation_global"));
-    int    presents  = toInt(g.get("total_presents"));
-    int    inscrits  = toInt(g.get("total_inscriptions"));
+    double taux     = toDouble(g.get("taux_participation_global"));
+    int    presents = toInt(g.get("total_presents"));
+    int    inscrits = toInt(g.get("total_inscriptions"));
 
+    // Snapshot même si taux = 0 (première fois)
     if (!hasChanged(orgId, "participation_formation", taux)) return;
 
     insertKpi(orgId, "participation_formation", taux, presents, inscrits);

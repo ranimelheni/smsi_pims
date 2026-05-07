@@ -541,3 +541,35 @@
 .mv-val { color: #111827; flex: 1; }
 
 .chip-blue { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+
+
+.row-titre-1 {
+  background: var(--color-background-secondary);
+  td {
+    padding: 12px 10px 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    border-bottom: 2px solid var(--color-border-secondary);
+  }
+}
+
+.row-titre-2 {
+  background: var(--color-background-tertiary);
+  td {
+    padding: 8px 10px 6px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border-tertiary);
+  }
+  .titre-code {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-right: 6px;
+  }
+}
+
+.row-clause {
+  &:hover { background: var(--color-background-secondary); }
+}

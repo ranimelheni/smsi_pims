@@ -79,24 +79,27 @@ public class AuditController {
         return ResponseEntity.status(201).body(sessionToMap(session));
     }
 
-    private void initEvaluations(AuditSession session) {
-        String sql = """
-            SELECT code, titre FROM audit_clause_referentiel
-            WHERE norme = ? ORDER BY ordre
-            """;
-        List<Map<String, Object>> clauses = jdbc.queryForList(sql, session.getNorme());
+  private void initEvaluations(AuditSession session) {
+    String sql = """
+        SELECT code, titre FROM audit_clause_referentiel
+        WHERE norme = ?
+          AND est_evaluable = true
+          AND (est_titre = false OR est_titre IS NULL)
+        ORDER BY ordre
+        """;
+    List<Map<String, Object>> clauses = jdbc.queryForList(sql, session.getNorme());
 
-        List<AuditEvaluation> evals = clauses.stream().map(c ->
-            AuditEvaluation.builder()
-                .session(session)
-                .clauseCode(str(c.get("code")))
-                .clauseTitre(str(c.get("titre")))
-                .statut("non_evalue")
-                .build()
-        ).collect(Collectors.toList());
+    List<AuditEvaluation> evals = clauses.stream().map(c ->
+        AuditEvaluation.builder()
+            .session(session)
+            .clauseCode(str(c.get("code")))
+            .clauseTitre(str(c.get("titre")))
+            .statut("non_evalue")
+            .build()
+    ).collect(Collectors.toList());
 
-        evalRepo.saveAll(evals);
-    }
+    evalRepo.saveAll(evals);
+}
 
     // ════════════════════════════════════════════════════════════
     // CONTEXTE RSSI — lecture seule pour l'auditeur
@@ -261,48 +264,59 @@ public ResponseEntity<?> getContexte(@AuthenticationPrincipal UserDetails ud) {
     // ÉVALUATIONS
     // ════════════════════════════════════════════════════════════
 
-    @GetMapping("/sessions/{sessionId}/evaluations")
-    @Transactional
-    public ResponseEntity<?> getEvaluations(
-            @PathVariable Long sessionId,
-            @AuthenticationPrincipal UserDetails ud) {
+   @GetMapping("/sessions/{sessionId}/evaluations")
+@Transactional
+public ResponseEntity<?> getEvaluations(
+        @PathVariable Long sessionId,
+        @AuthenticationPrincipal UserDetails ud) {
 
-        User user = getCurrentUser(ud);
-        AuditSession session = sessionRepo.findById(sessionId).orElse(null);
-        if (session == null) return ResponseEntity.notFound().build();
-        if (!session.getOrganism().getId().equals(user.getOrganism().getId()))
-            return ResponseEntity.status(403).body(Map.of("error", "Accès non autorisé"));
+    User user = getCurrentUser(ud);
+    AuditSession session = sessionRepo.findById(sessionId).orElse(null);
+    if (session == null) return ResponseEntity.notFound().build();
+    if (!session.getOrganism().getId().equals(user.getOrganism().getId()))
+        return ResponseEntity.status(403).body(Map.of("error", "Accès non autorisé"));
 
-        // Charger évaluations + métadonnées du référentiel
-        List<Map<String, Object>> refMap = jdbc.queryForList(
-            "SELECT code, titre, description, parent_code FROM audit_clause_referentiel WHERE norme = ? ORDER BY ordre",
-            session.getNorme()
-        );
+    // Charger TOUT le référentiel (titres + évaluables) pour l'affichage
+    List<Map<String, Object>> refMap = jdbc.queryForList("""
+        SELECT code, titre, description, parent_code,
+               est_titre, est_evaluable
+        FROM audit_clause_referentiel
+        WHERE norme = ?
+        ORDER BY ordre
+        """, session.getNorme());
 
-        List<AuditEvaluation> evals = evalRepo.findBySessionId(sessionId);
-        Map<String, AuditEvaluation> evalByCode = evals.stream()
-            .collect(Collectors.toMap(AuditEvaluation::getClauseCode, e -> e));
+    // Charger uniquement les évaluations (clauses évaluables)
+    List<AuditEvaluation> evals = evalRepo.findBySessionId(sessionId);
+    Map<String, AuditEvaluation> evalByCode = evals.stream()
+        .collect(Collectors.toMap(AuditEvaluation::getClauseCode, e -> e));
 
-        List<AuditEvaluationDto> result = refMap.stream().map(r -> {
-            String code = str(r.get("code"));
-            AuditEvaluation ev = evalByCode.get(code);
-            return AuditEvaluationDto.builder()
-                .id(ev != null ? ev.getId() : null)
-                .clauseCode(code)
-                .clauseTitre(str(r.get("titre")))
-                .clauseDesc(str(r.get("description")))
-                .parentCode(str(r.get("parent_code")))
-                .statut(ev != null ? ev.getStatut() : "non_evalue")
-                .justification(ev != null ? ev.getJustification() : null)
-                .actionPlanifiee(ev != null ? ev.getActionPlanifiee() : null)
-                .priorite(ev != null ? ev.getPriorite() : "normale")
-                .echeance(ev != null && ev.getEcheance() != null ? ev.getEcheance().toString() : null)
-                .responsable(ev != null ? ev.getResponsable() : null)
-                .build();
-        }).toList();
+    List<AuditEvaluationDto> result = refMap.stream().map(r -> {
+        String  code        = str(r.get("code"));
+        boolean estTitre    = Boolean.TRUE.equals(r.get("est_titre"));
+        boolean estEvaluable= Boolean.TRUE.equals(r.get("est_evaluable"));
 
-        return ResponseEntity.ok(result);
-    }
+        AuditEvaluation ev = evalByCode.get(code);
+
+        return AuditEvaluationDto.builder()
+            .id(ev != null ? ev.getId() : null)
+            .clauseCode(code)
+            .clauseTitre(str(r.get("titre")))
+            .clauseDesc(str(r.get("description")))
+            .parentCode(str(r.get("parent_code")))
+            .estTitre(estTitre)
+            .estEvaluable(estEvaluable)
+            .statut(estEvaluable && ev != null ? ev.getStatut() : null)
+            .justification(ev != null ? ev.getJustification() : null)
+            .actionPlanifiee(ev != null ? ev.getActionPlanifiee() : null)
+            .priorite(ev != null ? ev.getPriorite() : "normale")
+            .echeance(ev != null && ev.getEcheance() != null
+                ? ev.getEcheance().toString() : null)
+            .responsable(ev != null ? ev.getResponsable() : null)
+            .build();
+    }).toList();
+
+    return ResponseEntity.ok(result);
+}
 
     @PutMapping("/sessions/{sessionId}/evaluations/{clauseCode}")
     @Transactional
